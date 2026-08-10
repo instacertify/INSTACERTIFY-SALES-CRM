@@ -12,12 +12,9 @@ export async function GET() {
 
     if (user.role === "ADMIN") return jsonOk(items);
 
-    // Sales/Ops: hide purchase price
+    // Sales/Ops & any non-admin: selling price + lab only — never purchase price
     return jsonOk(
-      items.map(({ purchasePrice: _p, ...rest }) => ({
-        ...rest,
-        purchasePrice: undefined,
-      })),
+      items.map(({ purchasePrice: _purchasePrice, ...rest }) => rest),
     );
   } catch (error) {
     return handleRouteError(error);

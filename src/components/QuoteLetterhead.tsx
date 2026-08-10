@@ -140,7 +140,7 @@ export function QuoteLetterhead({
                 <tr>
                   <th>Test</th>
                   <th>Lab</th>
-                  <th>Sales price</th>
+                  <th>Selling price</th>
                 </tr>
               </thead>
               <tbody>

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { PageHeader, Panel, Badge, statusTone } from "@/components/ui";
 import { QuoteLetterhead } from "@/components/QuoteLetterhead";
 import { QuoteActions } from "@/components/QuoteActions";
-import { quotePublicUrl } from "@/lib/quotes";
+import { parseCustomerTestingItems, quotePublicUrl } from "@/lib/quotes";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -27,7 +27,7 @@ export default async function QuoteDetailPage({ params }: Props) {
   if (!quote) notFound();
 
   const publicUrl = quotePublicUrl(quote.publicToken);
-  const testingItems = JSON.parse(quote.testingItemsJson || "[]");
+  const testingItems = parseCustomerTestingItems(quote.testingItemsJson);
 
   return (
     <div>

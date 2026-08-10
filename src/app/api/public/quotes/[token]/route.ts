@@ -1,9 +1,62 @@
 import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/api";
 import { notifyUsers, notifyAllStaff } from "@/lib/notifications";
-import { quotePublicUrl } from "@/lib/quotes";
+import { parseCustomerTestingItems, quotePublicUrl } from "@/lib/quotes";
 
 type Params = { params: Promise<{ token: string }> };
+
+function customerQuotePayload(quote: {
+  quoteNumber: string;
+  status: string;
+  customerName: string;
+  company: string;
+  email: string;
+  phone: string;
+  country: string;
+  state: string | null;
+  serviceName: string;
+  description: string;
+  validityDate: Date;
+  consultingPrice: number;
+  testingPrice: number;
+  otherCommercials: number;
+  otherCommercialsNote: string | null;
+  testingItemsJson: string;
+  bodyHtml: string;
+  bankSnapshot: string;
+  customerRemark: string | null;
+  revisionMessage: string | null;
+  publicToken: string;
+  acceptedAt: Date | null;
+  sharedAt: Date | null;
+}) {
+  return {
+    quoteNumber: quote.quoteNumber,
+    status: quote.status,
+    customerName: quote.customerName,
+    company: quote.company,
+    email: quote.email,
+    phone: quote.phone,
+    country: quote.country,
+    state: quote.state,
+    serviceName: quote.serviceName,
+    description: quote.description,
+    validityDate: quote.validityDate,
+    consultingPrice: quote.consultingPrice,
+    testingPrice: quote.testingPrice,
+    otherCommercials: quote.otherCommercials,
+    otherCommercialsNote: quote.otherCommercialsNote,
+    // Selling price only — purchase price is never exposed to customers
+    testingItems: parseCustomerTestingItems(quote.testingItemsJson),
+    bodyHtml: quote.bodyHtml,
+    bankSnapshot: quote.bankSnapshot,
+    customerRemark: quote.customerRemark,
+    revisionMessage: quote.revisionMessage,
+    publicUrl: quotePublicUrl(quote.publicToken),
+    acceptedAt: quote.acceptedAt,
+    sharedAt: quote.sharedAt,
+  };
+}
 
 export async function GET(_req: Request, { params }: Params) {
   try {
@@ -15,32 +68,7 @@ export async function GET(_req: Request, { params }: Params) {
     if (quote.status === "DRAFT") {
       return jsonError("Quote is not shared yet", 403);
     }
-    return jsonOk({
-      id: quote.id,
-      quoteNumber: quote.quoteNumber,
-      status: quote.status,
-      customerName: quote.customerName,
-      company: quote.company,
-      email: quote.email,
-      phone: quote.phone,
-      country: quote.country,
-      state: quote.state,
-      serviceName: quote.serviceName,
-      description: quote.description,
-      validityDate: quote.validityDate,
-      consultingPrice: quote.consultingPrice,
-      testingPrice: quote.testingPrice,
-      otherCommercials: quote.otherCommercials,
-      otherCommercialsNote: quote.otherCommercialsNote,
-      testingItems: JSON.parse(quote.testingItemsJson || "[]"),
-      bodyHtml: quote.bodyHtml,
-      bankSnapshot: quote.bankSnapshot,
-      customerRemark: quote.customerRemark,
-      revisionMessage: quote.revisionMessage,
-      publicUrl: quotePublicUrl(quote.publicToken),
-      acceptedAt: quote.acceptedAt,
-      sharedAt: quote.sharedAt,
-    });
+    return jsonOk(customerQuotePayload(quote));
   } catch (error) {
     return handleRouteError(error);
   }
@@ -84,7 +112,7 @@ export async function POST(req: Request, { params }: Params) {
           data: { status: "WON" },
         });
       }
-      return jsonOk(updated);
+      return jsonOk(customerQuotePayload(updated));
     }
 
     if (body.action === "revise") {
@@ -104,7 +132,7 @@ export async function POST(req: Request, { params }: Params) {
         `${quote.quoteNumber}: ${message}`,
         `/quotes/${quote.id}`,
       );
-      return jsonOk(updated);
+      return jsonOk(customerQuotePayload(updated));
     }
 
     return jsonError("Unknown action");

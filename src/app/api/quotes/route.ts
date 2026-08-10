@@ -5,6 +5,7 @@ import {
   bankDetailToText,
   makePublicToken,
   nextQuoteNumber,
+  sanitizeTestingItemsForCustomer,
 } from "@/lib/quotes";
 
 export async function GET() {
@@ -99,7 +100,10 @@ export async function POST(req: Request) {
         testingPrice: Number(testingPrice || 0),
         otherCommercials: Number(otherCommercials || 0),
         otherCommercialsNote: otherCommercialsNote || null,
-        testingItemsJson: JSON.stringify(testingItems || []),
+        // Persist selling price only — never store purchase price on quotes
+        testingItemsJson: JSON.stringify(
+          sanitizeTestingItemsForCustomer(testingItems || []),
+        ),
         bodyHtml: bodyHtml || "",
         bankDetailId: resolvedBankId,
         bankSnapshot,

@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireUser } from "@/lib/auth";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/api";
-import { bankDetailToText, quotePublicUrl } from "@/lib/quotes";
+import {
+  bankDetailToText,
+  parseCustomerTestingItems,
+  quotePublicUrl,
+  sanitizeTestingItemsForCustomer,
+} from "@/lib/quotes";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -26,7 +31,7 @@ export async function GET(_req: Request, { params }: Params) {
     return jsonOk({
       ...quote,
       publicUrl: quotePublicUrl(quote.publicToken),
-      testingItems: JSON.parse(quote.testingItemsJson || "[]"),
+      testingItems: parseCustomerTestingItems(quote.testingItemsJson),
     });
   } catch (error) {
     return handleRouteError(error);
@@ -104,7 +109,9 @@ export async function PATCH(req: Request, { params }: Params) {
       data.otherCommercials = Number(body.otherCommercials || 0);
     }
     if (body.testingItems !== undefined) {
-      data.testingItemsJson = JSON.stringify(body.testingItems || []);
+      data.testingItemsJson = JSON.stringify(
+        sanitizeTestingItemsForCustomer(body.testingItems || []),
+      );
     }
 
     if (body.bankDetailId !== undefined) {

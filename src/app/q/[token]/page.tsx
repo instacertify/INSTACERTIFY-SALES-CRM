@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { QuoteLetterhead } from "@/components/QuoteLetterhead";
 import { PublicQuoteActions } from "@/components/PublicQuoteActions";
+import { parseCustomerTestingItems } from "@/lib/quotes";
 
 type Props = { params: Promise<{ token: string }> };
 
@@ -15,7 +16,8 @@ export default async function PublicQuotePage({ params }: Props) {
       <QuoteLetterhead
         quote={{
           ...quote,
-          testingItems: JSON.parse(quote.testingItemsJson || "[]"),
+          // Customers only see selling price — never purchase price
+          testingItems: parseCustomerTestingItems(quote.testingItemsJson),
         }}
       />
       <PublicQuoteActions

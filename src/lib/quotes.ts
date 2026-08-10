@@ -58,3 +58,38 @@ export function quotePublicUrl(token: string) {
 export function documentPublicUrl(token: string) {
   return `${appBaseUrl()}/d/${token}`;
 }
+
+/** Customer-safe testing lines: selling price only — never purchase price. */
+export type CustomerTestingItem = {
+  name: string;
+  labName: string;
+  price: number; // selling / sales price
+};
+
+export function sanitizeTestingItemsForCustomer(
+  items: unknown,
+): CustomerTestingItem[] {
+  if (!Array.isArray(items)) return [];
+  return items.map((raw) => {
+    const item = (raw && typeof raw === "object" ? raw : {}) as Record<
+      string,
+      unknown
+    >;
+    const sellingPrice = Number(
+      item.price ?? item.salesPrice ?? item.sellingPrice ?? 0,
+    );
+    return {
+      name: String(item.name || "Testing service"),
+      labName: String(item.labName || "—"),
+      price: Number.isFinite(sellingPrice) ? sellingPrice : 0,
+    };
+  });
+}
+
+export function parseCustomerTestingItems(json: string | null | undefined) {
+  try {
+    return sanitizeTestingItemsForCustomer(JSON.parse(json || "[]"));
+  } catch {
+    return [];
+  }
+}
