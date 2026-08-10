@@ -56,11 +56,11 @@
   <p><strong>{{ doc.subject or doc.service }}</strong><br>{{ doc.description }}</p>
 
   {% if doc.about_html %}
-  <div class="ic-section"><h3>About</h3><div>{{ doc.about_html | safe }}</div></div>
+  <div class="ic-section"><h3>{{ doc.about_header or "About" }}</h3><div>{{ doc.about_html | safe }}</div></div>
   {% endif %}
 
   {% if doc.standards_html %}
-  <div class="ic-section"><h3>Applicable Standards</h3><div>{{ doc.standards_html | safe }}</div></div>
+  <div class="ic-section"><h3>{{ doc.standards_header or "Applicable Standard" }}</h3><div>{{ doc.standards_html | safe }}</div></div>
   {% endif %}
 
   {% if doc.accreditation_html %}
@@ -68,14 +68,14 @@
   {% endif %}
 
   {% if doc.sample_requirements_html %}
-  <div class="ic-section"><h3>Sample Requirements</h3><div>{{ doc.sample_requirements_html | safe }}</div></div>
+  <div class="ic-section"><h3>{{ doc.sample_requirements_header or "Sample Required" }}</h3><div>{{ doc.sample_requirements_html | safe }}</div></div>
   {% endif %}
 
   {% if doc.body_html %}
   <div class="ic-section">{{ doc.body_html | safe }}</div>
   {% endif %}
 
-  <h3>Commercials</h3>
+  <h3>{{ doc.commercials_header or "Commercials" }}</h3>
   {% if doc.quote_type == 'Testing' and doc.testing_items %}
   <table class="ic">
     <tr>
@@ -118,24 +118,33 @@
   </table>
   <p class="ic-tag">Note: GST shall be applicable extra as per prevailing government regulations.</p>
   {% endif %}
-
-  {% if doc.deliverables_html %}
-  <div class="ic-section"><h3>Deliverables</h3><div>{{ doc.deliverables_html | safe }}</div></div>
-  {% endif %}
-  {% if doc.timeline_html %}
-  <div class="ic-section"><h3>Timeline</h3><div>{{ doc.timeline_html | safe }}</div></div>
-  {% endif %}
   {% if doc.payment_terms_html %}
-  <div class="ic-section"><h3>Payment Terms</h3><div>{{ doc.payment_terms_html | safe }}</div></div>
+  <div class="ic-section">{{ doc.payment_terms_html | safe }}</div>
+  {% endif %}
+
+  {% if doc.timeline_html %}
+  <div class="ic-section"><h3>{{ doc.timeline_header or "Timeline" }}</h3><div>{{ doc.timeline_html | safe }}</div></div>
+  {% endif %}
+  {% if doc.deliverables_html %}
+  <div class="ic-section"><h3>{{ doc.deliverables_header or "Deliverable" }}</h3><div>{{ doc.deliverables_html | safe }}</div></div>
   {% endif %}
   {% if doc.sample_handling_html %}
-  <div class="ic-section"><h3>Sample Handling & Disposal Policy</h3><div>{{ doc.sample_handling_html | safe }}</div></div>
+  <div class="ic-section"><h3>{{ doc.sample_handling_header or "Sample Handling and Disposal Policy" }}</h3><div>{{ doc.sample_handling_html | safe }}</div></div>
   {% endif %}
 
-  <h3>Bank Details for Payment</h3>
+  <h3>{{ doc.banking_header or "Banking Details" }}</h3>
   <pre class="ic-bank">{{ doc.bank_snapshot }}</pre>
 
-  {% if doc.policies_html %}
+  {% if doc.cancellation_refund_html %}
+  <div class="ic-section"><h3>{{ doc.cancellation_header or "Cancellation and Refund Policy" }}</h3><div>{{ doc.cancellation_refund_html | safe }}</div></div>
+  {% endif %}
+  {% if doc.force_majeure_html %}
+  <div class="ic-section"><h3>{{ doc.force_majeure_header or "Force Majeure" }}</h3><div>{{ doc.force_majeure_html | safe }}</div></div>
+  {% endif %}
+  {% if doc.confidentiality_html %}
+  <div class="ic-section"><h3>{{ doc.confidentiality_header or "Confidentiality and Data Protection" }}</h3><div>{{ doc.confidentiality_html | safe }}</div></div>
+  {% endif %}
+  {% if not doc.cancellation_refund_html and not doc.force_majeure_html and not doc.confidentiality_html and doc.policies_html %}
   <div class="ic-section"><h3>Policies</h3><div>{{ doc.policies_html | safe }}</div></div>
   {% endif %}
 

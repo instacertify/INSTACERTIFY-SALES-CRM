@@ -66,13 +66,13 @@
       <h3>Subject</h3>
       <p><strong>{{ quote.subject or quote.service }}</strong><br>{{ quote.description }}</p>
     </section>
-    {% if quote.about_html %}<section><h3>About</h3><div>{{ quote.about_html | safe }}</div></section>{% endif %}
-    {% if quote.standards_html %}<section><h3>Applicable Standards</h3><div>{{ quote.standards_html | safe }}</div></section>{% endif %}
+    {% if quote.about_html %}<section><h3>{{ quote.about_header or 'About' }}</h3><div>{{ quote.about_html | safe }}</div></section>{% endif %}
+    {% if quote.standards_html %}<section><h3>{{ quote.standards_header or 'Applicable Standard' }}</h3><div>{{ quote.standards_html | safe }}</div></section>{% endif %}
     {% if quote.accreditation_html %}<section><h3>Accreditation</h3><div>{{ quote.accreditation_html | safe }}</div></section>{% endif %}
-    {% if quote.sample_requirements_html %}<section><h3>Sample Requirements</h3><div>{{ quote.sample_requirements_html | safe }}</div></section>{% endif %}
+    {% if quote.sample_requirements_html %}<section><h3>{{ quote.sample_requirements_header or 'Sample Required' }}</h3><div>{{ quote.sample_requirements_html | safe }}</div></section>{% endif %}
     {% if quote.body_html %}<section>{{ quote.body_html | safe }}</section>{% endif %}
     <section>
-      <h3>Commercials</h3>
+      <h3>{{ quote.commercials_header or 'Commercials' }}</h3>
       {% if quote.quote_type == 'Testing' and quote.testing_items %}
       <table class="ic-price">
         <tr>
@@ -105,16 +105,21 @@
         <tr><th>Total</th><th>{{ frappe.format(quote.total_revenue, {'fieldtype':'Currency'}) }}</th></tr>
       </table>
       {% endif %}
+      {% if quote.payment_terms_html %}<div style="margin-top:10px">{{ quote.payment_terms_html | safe }}</div>{% endif %}
     </section>
-    {% if quote.deliverables_html %}<section><h3>Deliverables</h3><div>{{ quote.deliverables_html | safe }}</div></section>{% endif %}
-    {% if quote.timeline_html %}<section><h3>Timeline</h3><div>{{ quote.timeline_html | safe }}</div></section>{% endif %}
-    {% if quote.payment_terms_html %}<section><h3>Payment Terms</h3><div>{{ quote.payment_terms_html | safe }}</div></section>{% endif %}
-    {% if quote.sample_handling_html %}<section><h3>Sample Handling & Disposal</h3><div>{{ quote.sample_handling_html | safe }}</div></section>{% endif %}
+    {% if quote.timeline_html %}<section><h3>{{ quote.timeline_header or 'Timeline' }}</h3><div>{{ quote.timeline_html | safe }}</div></section>{% endif %}
+    {% if quote.deliverables_html %}<section><h3>{{ quote.deliverables_header or 'Deliverable' }}</h3><div>{{ quote.deliverables_html | safe }}</div></section>{% endif %}
+    {% if quote.sample_handling_html %}<section><h3>{{ quote.sample_handling_header or 'Sample Handling and Disposal Policy' }}</h3><div>{{ quote.sample_handling_html | safe }}</div></section>{% endif %}
     <section>
-      <h3>Bank Details for Payment</h3>
+      <h3>{{ quote.banking_header or 'Banking Details' }}</h3>
       <pre class="bank">{{ quote.bank_snapshot }}</pre>
     </section>
-    {% if quote.policies_html %}<section><h3>Policies</h3><div>{{ quote.policies_html | safe }}</div></section>{% endif %}
+    {% if quote.cancellation_refund_html %}<section><h3>{{ quote.cancellation_header or 'Cancellation and Refund Policy' }}</h3><div>{{ quote.cancellation_refund_html | safe }}</div></section>{% endif %}
+    {% if quote.force_majeure_html %}<section><h3>{{ quote.force_majeure_header or 'Force Majeure' }}</h3><div>{{ quote.force_majeure_html | safe }}</div></section>{% endif %}
+    {% if quote.confidentiality_html %}<section><h3>{{ quote.confidentiality_header or 'Confidentiality and Data Protection' }}</h3><div>{{ quote.confidentiality_html | safe }}</div></section>{% endif %}
+    {% if not quote.cancellation_refund_html and not quote.force_majeure_html and not quote.confidentiality_html and quote.policies_html %}
+    <section><h3>Policies</h3><div>{{ quote.policies_html | safe }}</div></section>
+    {% endif %}
   </div>
   <div class="ic-actions">
     <button class="ic-btn ghost" onclick="window.print()">Print / Download PDF</button>
