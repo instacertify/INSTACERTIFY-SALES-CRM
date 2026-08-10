@@ -70,20 +70,17 @@ def schedule_renewal_reminders(
 		intervals.append(("Custom", getdate(custom_renewal_on)))
 
 	for label, remind_on in intervals:
-		existing = frappe.db.exists(
-			"IC Renewal Reminder",
-			{
-				"delivery_record": delivery,
-				"interval_label": label,
-				"status": ["in", ["Scheduled", "Notified"]],
-			}
-			if delivery
-			else {
-				"quote": quote,
-				"interval_label": label,
-				"status": ["in", ["Scheduled", "Notified"]],
-			},
-		)
+		filters = {
+			"interval_label": label,
+			"status": ["in", ["Scheduled", "Notified"]],
+		}
+		if delivery:
+			filters["delivery_record"] = delivery
+		elif quote:
+			filters["quote"] = quote
+		elif project:
+			filters["project"] = project
+		existing = frappe.db.get_value("IC Renewal Reminder", filters, "name")
 		if existing:
 			created.append(existing)
 			continue
