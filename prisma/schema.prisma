@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("SALES_OPS") // ADMIN | SALES_OPS
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  leadsCreated      Lead[]             @relation("LeadCreator")
+  leadLogs          LeadLog[]
+  quotesCreated     Quote[]            @relation("QuoteCreator")
+  templatesCreated  QuoteTemplate[]
+  notifications     Notification[]
+  documentRequests  DocumentRequest[]  @relation("DocRequestCreator")
+}
+
+model LeadSource {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  leads     Lead[]
+}
+
+model Lead {
+  id           String    @id @default(cuid())
+  customerName String
+  company      String
+  companySize  String // MICRO | SMALL | LARGE | MEDIUM
+  email        String
+  phone        String
+  country      String
+  state        String?
+  status       String    @default("NEW") // NEW | CONTACTED | FOLLOW_UP | QUOTE_SENT | WON | LOST
+  followUpAt   DateTime?
+  lastContactAt DateTime?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  leadSourceId String
+  leadSource   LeadSource @relation(fields: [leadSourceId], references: [id])
+  createdById  String
+  createdBy    User       @relation("LeadCreator", fields: [createdById], references: [id])
+
+  logs   LeadLog[]
+  quotes Quote[]
+}
+
+model LeadLog {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+
+  leadId      String
+  lead        Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  documents DocumentLibraryItem[]
+  requests  DocumentRequest[]
+}
+
+model DocumentLibraryItem {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  required    Boolean @default(true)
+  active      Boolean @default(true)
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  uploads CustomerDocumentUpload[]
+}
+
+model BankDetail {
+  id            String   @id @default(cuid())
+  accountName   String
+  bankName      String
+  accountNumber String
+  ifsc          String
+  branch        String?
+  upi           String?
+  notes         String?
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  templates QuoteTemplate[]
+  quotes    Quote[]
+}
+
+model QuoteTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  // Editable formatting body used as starting point for quotes
+  bodyHtml    String   @default("")
+  validityDays Int     @default(30)
+  consultingPrice Float @default(0)
+  testingPrice    Float @default(0)
+  otherCommercials Float @default(0)
+  otherCommercialsNote String?
+  serviceNote String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bankDetailId String?
+  bankDetail   BankDetail? @relation(fields: [bankDetailId], references: [id])
+  createdById  String
+  createdBy    User        @relation(fields: [createdById], references: [id])
+
+  quotes Quote[]
+}
+
+model Quote {
+  id          String @id @default(cuid())
+  quoteNumber String @unique
+  publicToken String @unique
+  status      String @default("DRAFT")
+  // DRAFT | SHARED | REVISION_REQUESTED | ACCEPTED | SUPERSEDED
+
+  customerName String
+  company      String
+  email        String
+  phone        String
+  country      String
+  state        String?
+
+  serviceName   String
+  description   String
+  validityDate  DateTime
+  consultingPrice Float @default(0)
+  testingPrice    Float @default(0)
+  otherCommercials Float @default(0)
+  otherCommercialsNote String?
+  // Testing line items selected from library (JSON)
+  testingItemsJson String @default("[]")
+  bodyHtml      String @default("")
+  bankSnapshot  String @default("") // frozen banking text for this quote
+  customerRemark String?
+  revisionMessage String?
+  sharedAt      DateTime?
+  acceptedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id])
+
+  templateId String?
+  template   QuoteTemplate? @relation(fields: [templateId], references: [id])
+
+  bankDetailId String?
+  bankDetail   BankDetail? @relation(fields: [bankDetailId], references: [id])
+
+  createdById String
+  createdBy   User   @relation("QuoteCreator", fields: [createdById], references: [id])
+
+  documentRequests DocumentRequest[]
+}
+
+model DocumentRequest {
+  id          String   @id @default(cuid())
+  publicToken String   @unique
+  status      String   @default("SHARED")
+  // SHARED | UPLOADED | FINAL | NEEDS_MORE
+  teamRemark  String?
+  questionnaire String?
+  customerFinalNote String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  quoteId String
+  quote   Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  createdById String
+  createdBy   User @relation("DocRequestCreator", fields: [createdById], references: [id])
+
+  uploads CustomerDocumentUpload[]
+}
+
+model CustomerDocumentUpload {
+  id           String   @id @default(cuid())
+  originalName String
+  storedName   String
+  mimeType     String?
+  size         Int      @default(0)
+  remark       String?
+  createdAt    DateTime @default(now())
+
+  requestId String
+  request   DocumentRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  libraryItemId String?
+  libraryItem   DocumentLibraryItem? @relation(fields: [libraryItemId], references: [id])
+}
+
+model TestingService {
+  id            String   @id @default(cuid())
+  name          String
+  labName       String
+  purchasePrice Float
+  salesPrice    Float
+  description   String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
