@@ -8,7 +8,9 @@ export default async function OperationsPage() {
   const [leads, accepted, revisions, docs, reports] = await Promise.all([
     prisma.lead.findMany({
       where: {
-        status: { in: ["NEW", "CONTACTED", "FOLLOW_UP", "QUOTE_SENT"] },
+        status: {
+          in: ["NEW", "CONTACTED", "QUALIFIED", "QUOTATION", "NEGOTIATION"],
+        },
       },
       include: { leadSource: true },
       orderBy: [{ followUpAt: "asc" }, { updatedAt: "desc" }],

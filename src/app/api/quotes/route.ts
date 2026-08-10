@@ -7,6 +7,7 @@ import {
   nextQuoteNumber,
   sanitizeTestingItemsForCustomer,
 } from "@/lib/quotes";
+import { upsertCustomer } from "@/lib/crm";
 
 export async function GET() {
   try {
@@ -81,11 +82,21 @@ export async function POST(req: Request) {
       }
     }
 
+    const customer = await upsertCustomer({
+      email,
+      customerName,
+      company,
+      phone,
+      country,
+      state: country === "India" ? state || null : state || null,
+    });
+
     const quote = await prisma.quote.create({
       data: {
         quoteNumber: await nextQuoteNumber(),
         publicToken: makePublicToken(),
         leadId: leadId || null,
+        customerId: customer?.id || null,
         templateId: templateId || null,
         customerName,
         company,
@@ -115,7 +126,11 @@ export async function POST(req: Request) {
     if (leadId) {
       await prisma.lead.update({
         where: { id: leadId },
-        data: { status: "QUOTE_SENT" },
+        data: {
+          status: "QUOTATION",
+          customerId: customer?.id || undefined,
+          serviceName,
+        },
       });
       await prisma.leadLog.create({
         data: {

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { prisma } from "@/lib/prisma";
+import { formatINR } from "@/lib/constants";
 import { PageHeader, Panel, Badge, statusTone } from "@/components/ui";
 import { LeadOperations } from "@/components/LeadOperations";
 import { LeadForm } from "@/components/LeadForm";
+import { CreateProjectButton } from "@/components/CreateProjectButton";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -14,14 +16,23 @@ function toLocalInput(date?: Date | null) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
+function toDateInput(date?: Date | null) {
+  if (!date) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export default async function LeadDetailPage({ params }: Props) {
   const { id } = await params;
-  const [lead, sources] = await Promise.all([
+  const [lead, sources, users] = await Promise.all([
     prisma.lead.findUnique({
       where: { id },
       include: {
         leadSource: true,
         createdBy: true,
+        assignedTo: true,
+        customer: true,
+        projects: { orderBy: { createdAt: "desc" } },
         logs: {
           include: { createdBy: true },
           orderBy: { createdAt: "desc" },
@@ -30,6 +41,11 @@ export default async function LeadDetailPage({ params }: Props) {
       },
     }),
     prisma.leadSource.findMany({ orderBy: { name: "asc" } }),
+    prisma.user.findMany({
+      where: { active: true },
+      select: { id: true, name: true, email: true },
+      orderBy: { name: "asc" },
+    }),
   ]);
   if (!lead) notFound();
 
@@ -39,12 +55,16 @@ export default async function LeadDetailPage({ params }: Props) {
         title={lead.customerName}
         subtitle={`${lead.company} · ${lead.leadSource.name}`}
         actions={
-          <Link
-            href={`/quotes/new?leadId=${lead.id}`}
-            className="btn accent"
-          >
-            Create Quote
-          </Link>
+          <>
+            <Link href={`/quotes/new?leadId=${lead.id}`} className="btn accent">
+              Create Quote
+            </Link>
+            {lead.customer ? (
+              <Link href={`/customers/${lead.customer.id}`} className="btn primary">
+                View customer
+              </Link>
+            ) : null}
+          </>
         }
       />
 
@@ -68,6 +88,18 @@ export default async function LeadDetailPage({ params }: Props) {
             <p>
               <strong>Size:</strong> {lead.companySize}
             </p>
+            <p>
+              <strong>Service:</strong> {lead.serviceName || "—"}
+            </p>
+            <p>
+              <strong>Product:</strong> {lead.product || "—"}
+            </p>
+            <p>
+              <strong>Expected value:</strong> {formatINR(lead.expectedValue || 0)}
+            </p>
+            <p>
+              <strong>Owner:</strong> {lead.assignedTo?.name || lead.createdBy.name}
+            </p>
             <p className="muted">
               Created by {lead.createdBy.name} on{" "}
               {format(lead.createdAt, "dd MMM yyyy")}
@@ -84,6 +116,16 @@ export default async function LeadDetailPage({ params }: Props) {
               followUpAt={toLocalInput(lead.followUpAt)}
               lastContactAt={toLocalInput(lead.lastContactAt)}
             />
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <h3 style={{ marginBottom: 8 }}>Project</h3>
+            {lead.projects[0] ? (
+              <Link href={`/projects/${lead.projects[0].id}`} className="btn primary">
+                Open {lead.projects[0].projectNumber}
+              </Link>
+            ) : (
+              <CreateProjectButton leadId={lead.id} />
+            )}
           </div>
         </Panel>
       </div>
@@ -148,6 +190,7 @@ export default async function LeadDetailPage({ params }: Props) {
         <div style={{ marginTop: 12 }}>
           <LeadForm
             sources={sources}
+            users={users}
             initial={{
               id: lead.id,
               customerName: lead.customerName,
@@ -160,6 +203,12 @@ export default async function LeadDetailPage({ params }: Props) {
               leadSourceId: lead.leadSourceId,
               notes: lead.notes,
               followUpAt: toLocalInput(lead.followUpAt),
+              product: lead.product,
+              serviceName: lead.serviceName,
+              expectedValue: lead.expectedValue,
+              expectedClose: toDateInput(lead.expectedClose),
+              assignedToId: lead.assignedToId,
+              status: lead.status,
             }}
           />
         </div>

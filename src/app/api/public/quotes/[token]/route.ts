@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/api";
 import { notifyUsers, notifyAllStaff } from "@/lib/notifications";
 import { parseCustomerTestingItems, quotePublicUrl } from "@/lib/quotes";
+import { ensureProjectForQuote } from "@/lib/crm";
 
 type Params = { params: Promise<{ token: string }> };
 
@@ -112,6 +113,7 @@ export async function POST(req: Request, { params }: Params) {
           data: { status: "WON" },
         });
       }
+      await ensureProjectForQuote(updated.id);
       return jsonOk(customerQuotePayload(updated));
     }
 

@@ -2,15 +2,23 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { COMPANY_SIZES, COUNTRIES, INDIAN_STATES } from "@/lib/constants";
+import {
+  COMPANY_SIZES,
+  COUNTRIES,
+  INDIAN_STATES,
+  LEAD_STATUSES,
+} from "@/lib/constants";
 
 type Source = { id: string; name: string; active: boolean };
+type UserOption = { id: string; name: string; email: string };
 
 export function LeadForm({
   sources,
+  users = [],
   initial,
 }: {
   sources: Source[];
+  users?: UserOption[];
   initial?: {
     id?: string;
     customerName?: string;
@@ -23,6 +31,12 @@ export function LeadForm({
     leadSourceId?: string;
     notes?: string | null;
     followUpAt?: string | null;
+    product?: string | null;
+    serviceName?: string | null;
+    expectedValue?: number | null;
+    expectedClose?: string | null;
+    assignedToId?: string | null;
+    status?: string | null;
   };
 }) {
   const router = useRouter();
@@ -50,6 +64,12 @@ export function LeadForm({
       leadSourceId: String(form.get("leadSourceId") || ""),
       notes: String(form.get("notes") || "") || null,
       followUpAt: String(form.get("followUpAt") || "") || null,
+      product: String(form.get("product") || "") || null,
+      serviceName: String(form.get("serviceName") || "") || null,
+      expectedValue: Number(form.get("expectedValue") || 0),
+      expectedClose: String(form.get("expectedClose") || "") || null,
+      assignedToId: String(form.get("assignedToId") || "") || null,
+      status: String(form.get("status") || "NEW"),
     };
 
     const res = await fetch(initial?.id ? `/api/leads/${initial.id}` : "/api/leads", {
@@ -162,6 +182,61 @@ export function LeadForm({
             <input name="state" defaultValue={initial?.state || ""} />
           </label>
         )}
+      </div>
+      <div className="form-grid two">
+        <label>
+          Product
+          <input name="product" defaultValue={initial?.product || ""} />
+        </label>
+        <label>
+          Service
+          <input name="serviceName" defaultValue={initial?.serviceName || ""} />
+        </label>
+      </div>
+      <div className="form-grid two">
+        <label>
+          Expected value (INR)
+          <input
+            type="number"
+            name="expectedValue"
+            min="0"
+            step="1"
+            defaultValue={initial?.expectedValue ?? 0}
+          />
+        </label>
+        <label>
+          Expected close
+          <input
+            type="date"
+            name="expectedClose"
+            defaultValue={initial?.expectedClose || ""}
+          />
+        </label>
+      </div>
+      <div className="form-grid two">
+        <label>
+          Status
+          <select name="status" defaultValue={initial?.status || "NEW"}>
+            {LEAD_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Assigned to
+          <select
+            name="assignedToId"
+            defaultValue={initial?.assignedToId || users[0]?.id || ""}
+          >
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       <label>
         Follow-up reminder

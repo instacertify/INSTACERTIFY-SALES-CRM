@@ -175,6 +175,131 @@ async function main() {
     }
   }
 
+  const sales = await prisma.user.findUnique({
+    where: { email: "sales@instacertify.in" },
+  });
+  const source = await prisma.leadSource.findFirst({
+    where: { name: "IndiaMART" },
+  });
+
+  if (sales && source) {
+    const customer = await prisma.customer.upsert({
+      where: { email: "ops@greenpack.in" },
+      update: {
+        customerName: "Ravi Sharma",
+        company: "GreenPack Industries",
+        phone: "9876543210",
+        status: "ACTIVE",
+        lastActivityAt: new Date(),
+      },
+      create: {
+        customerName: "Ravi Sharma",
+        company: "GreenPack Industries",
+        email: "ops@greenpack.in",
+        phone: "9876543210",
+        country: "India",
+        state: "Delhi",
+        lifetimeValue: 85000,
+        lastActivityAt: new Date(),
+      },
+    });
+
+    const existingLead = await prisma.lead.findFirst({
+      where: { email: "ops@greenpack.in", company: "GreenPack Industries" },
+    });
+
+    const lead =
+      existingLead ||
+      (await prisma.lead.create({
+        data: {
+          customerName: "Ravi Sharma",
+          company: "GreenPack Industries",
+          companySize: "MEDIUM",
+          email: "ops@greenpack.in",
+          phone: "9876543210",
+          country: "India",
+          state: "Delhi",
+          product: "Plastic packaging",
+          serviceName: "EPR Plastic",
+          expectedValue: 85000,
+          expectedClose: new Date(Date.now() + 1000 * 60 * 60 * 24 * 21),
+          status: "QUOTATION",
+          leadSourceId: source.id,
+          createdById: sales.id,
+          assignedToId: sales.id,
+          customerId: customer.id,
+          followUpAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2),
+          notes: "Seeded demo lead for EPR Plastic.",
+          logs: {
+            create: {
+              message: "Demo lead seeded",
+              createdById: sales.id,
+            },
+          },
+        },
+      }));
+
+    const existingProject = await prisma.project.findFirst({
+      where: { leadId: lead.id },
+    });
+
+    if (!existingProject) {
+      const project = await prisma.project.create({
+        data: {
+          projectNumber: `IC-${new Date().getFullYear()}-00001`,
+          title: "GreenPack Industries — EPR Plastic",
+          status: "QUOTED",
+          serviceName: "EPR Plastic",
+          projectValue: 85000,
+          waitingFor: "Client",
+          waitingNote: "Awaiting GST and incorporation docs",
+          waitingExpectedOn: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5),
+          customerId: customer.id,
+          leadId: lead.id,
+          commercialOwnerId: sales.id,
+          deliveryOwnerId: admin.id,
+          customerName: lead.customerName,
+          company: lead.company,
+          email: lead.email,
+          phone: lead.phone,
+          country: lead.country,
+          state: lead.state,
+          scopeSummary: "End-to-end EPR Plastic registration support.",
+          lastActivityAt: new Date(),
+          tasks: {
+            create: [
+              {
+                title: "Collect company documents",
+                status: "WAITING",
+                waitingFor: "Client",
+                sequence: 10,
+                assignedToId: sales.id,
+                waitingExpectedOn: new Date(
+                  Date.now() + 1000 * 60 * 60 * 24 * 5,
+                ),
+              },
+              {
+                title: "Prepare EPR application draft",
+                status: "TODO",
+                sequence: 20,
+                assignedToId: admin.id,
+                dueDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+              },
+            ],
+          },
+          remarks: {
+            create: {
+              stage: "Documents",
+              remark: "Client confirmed interest; docs pending.",
+              createdById: sales.id,
+            },
+          },
+        },
+      });
+      console.log("Demo project:", project.projectNumber);
+    }
+  }
+
   console.log("Seed complete.");
   console.log("Admin: admin@instacertify.in / Admin@123");
   console.log("Sales: sales@instacertify.in / Sales@123");

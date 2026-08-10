@@ -18,10 +18,19 @@ export const COMPANY_SIZES = ["MICRO", "SMALL", "MEDIUM", "LARGE"] as const;
 export const LEAD_STATUSES = [
   "NEW",
   "CONTACTED",
-  "FOLLOW_UP",
-  "QUOTE_SENT",
+  "QUALIFIED",
+  "QUOTATION",
+  "NEGOTIATION",
   "WON",
   "LOST",
+] as const;
+
+export const ACTIVE_LEAD_STATUSES = [
+  "NEW",
+  "CONTACTED",
+  "QUALIFIED",
+  "QUOTATION",
+  "NEGOTIATION",
 ] as const;
 
 export const INDIAN_STATES = [

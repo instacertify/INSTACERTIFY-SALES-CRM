@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Instacertify CRM",
-  description: "Instacertify sales, operations, quotes and document CRM",
+  description: "Next.js sales & delivery CRM for Instacertify",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="font-sans antialiased text-brand-ink">{children}</body>
     </html>
   );
 }

@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/api";
 import { notifyAdmins } from "@/lib/notifications";
+import { upsertCustomer } from "@/lib/crm";
+import { LEAD_STATUSES } from "@/lib/constants";
 
 export async function GET() {
   try {
@@ -10,7 +12,8 @@ export async function GET() {
       include: {
         leadSource: true,
         createdBy: { select: { id: true, name: true } },
-        _count: { select: { logs: true, quotes: true } },
+        assignedTo: { select: { id: true, name: true } },
+        _count: { select: { logs: true, quotes: true, projects: true } },
       },
       orderBy: { updatedAt: "desc" },
     });
@@ -35,6 +38,12 @@ export async function POST(req: Request) {
       leadSourceId,
       notes,
       followUpAt,
+      product,
+      serviceName,
+      expectedValue,
+      expectedClose,
+      assignedToId,
+      status,
     } = body;
 
     if (
@@ -51,6 +60,18 @@ export async function POST(req: Request) {
     if (country === "India" && !state) {
       return jsonError("State is required for India");
     }
+    if (status && !LEAD_STATUSES.includes(status)) {
+      return jsonError("Invalid lead status");
+    }
+
+    const customer = await upsertCustomer({
+      email,
+      customerName,
+      company,
+      phone,
+      country,
+      state: country === "India" ? state : state || null,
+    });
 
     const lead = await prisma.lead.create({
       data: {
@@ -63,6 +84,13 @@ export async function POST(req: Request) {
         state: country === "India" ? state : null,
         leadSourceId,
         notes: notes || null,
+        product: product || null,
+        serviceName: serviceName || null,
+        expectedValue: Number(expectedValue || 0),
+        expectedClose: expectedClose ? new Date(expectedClose) : null,
+        assignedToId: assignedToId || user.id,
+        customerId: customer?.id || null,
+        status: status || "NEW",
         followUpAt: followUpAt ? new Date(followUpAt) : null,
         createdById: user.id,
         logs: {
@@ -72,7 +100,7 @@ export async function POST(req: Request) {
           },
         },
       },
-      include: { leadSource: true },
+      include: { leadSource: true, assignedTo: true },
     });
 
     await notifyAdmins(

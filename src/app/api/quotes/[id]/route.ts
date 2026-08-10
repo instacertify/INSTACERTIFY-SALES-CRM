@@ -7,6 +7,7 @@ import {
   quotePublicUrl,
   sanitizeTestingItemsForCustomer,
 } from "@/lib/quotes";
+import { ensureProjectForQuote } from "@/lib/crm";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -55,6 +56,13 @@ export async function PATCH(req: Request, { params }: Params) {
           revisionMessage: null,
         },
       });
+      await ensureProjectForQuote(quote.id);
+      if (quote.leadId) {
+        await prisma.lead.update({
+          where: { id: quote.leadId },
+          data: { status: "QUOTATION" },
+        });
+      }
       return jsonOk({
         ...quote,
         publicUrl: quotePublicUrl(quote.publicToken),
