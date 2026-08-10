@@ -40,7 +40,17 @@ after_migrate = "instacertify_crm.install.after_migrate"
 
 doc_events = {
 	"IC Quote": {
-		"on_update": "instacertify_crm.instacertify_crm.doctype.ic_quote.ic_quote.on_update",
+		"on_update": [
+			"instacertify_crm.instacertify_crm.doctype.ic_quote.ic_quote.on_update",
+			"instacertify_crm.lifecycle.on_quote_update",
+		],
+	},
+	"IC Report": {
+		"on_update": "instacertify_crm.lifecycle.on_report_update",
+		"after_insert": "instacertify_crm.lifecycle.on_report_update",
+	},
+	"IC Document Request": {
+		"on_update": "instacertify_crm.lifecycle.on_document_request_update",
 	},
 }
 

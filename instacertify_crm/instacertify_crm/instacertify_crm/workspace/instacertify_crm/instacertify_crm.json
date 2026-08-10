@@ -7,7 +7,7 @@
  "public": 1,
  "is_hidden": 0,
  "sequence_id": 20.0,
- "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_settings\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branding / Logo\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}}]",
+ "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Projects\",\"col\":3}},{\"id\":\"ic_deliveries\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Records\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_settings\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branding / Logo\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}}]",
  "shortcuts": [
   {
    "label": "IC Leads",
@@ -25,6 +25,18 @@
   {
    "label": "IC Quotes",
    "link_to": "IC Quote",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Customer Projects",
+   "link_to": "IC Customer Project",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Delivery Records",
+   "link_to": "IC Delivery Record",
    "type": "DocType",
    "doc_view": "List"
   },
@@ -85,6 +97,22 @@
   {
    "label": "IC Service",
    "link_to": "IC Service",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Customer lifecycle",
+   "type": "Card Break"
+  },
+  {
+   "label": "IC Customer Project",
+   "link_to": "IC Customer Project",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Delivery Record",
+   "link_to": "IC Delivery Record",
    "link_type": "DocType",
    "type": "Link"
   },

@@ -102,7 +102,7 @@
    "fieldname": "status",
    "label": "Status",
    "fieldtype": "Select",
-   "options": "Draft\nShared\nRevision Requested\nAccepted\nSuperseded",
+   "options": "Draft\nShared\nRevision Requested\nAccepted\nDelivered\nSuperseded",
    "default": "Draft",
    "reqd": 1,
    "in_list_view": 1

@@ -20,6 +20,7 @@ Verified against:
 - Customer **past history** on lead/quote (services, testing, reports)
 - After accept: **select documents** and share upload link `/d/<token>`
 - Final report ready portal `/r/<token>`
+- **Customer lifecycle** — projects, delivery records, reports shared, customer data received, and project remarks
 - Testing library — purchase price admin-only; customers only see selling price
 
 ## Install on an ERPNext 16 bench
@@ -72,6 +73,20 @@ Upload logos in **Branding / Logo** (`IC Settings`) — company logo, optional l
 On **IC Quote** choose **Quote For = Testing or Service**, apply a template, then **Share / Reshare Quote**.
 After **Accepted**, use **Select Documents & Share** to pick the checklist and send the customer upload link.
 Use **Customer History** on Lead/Quote to see past testing, services and reports.
+
+### Customer lifecycle
+
+Track everything delivered to / received from the customer across the engagement:
+
+| Record | Purpose |
+|--------|---------|
+| **IC Customer Project** | One project per open engagement — scope, lifecycle status, remarks timeline |
+| **IC Delivery Record** | Log service delivered, quote service delivered, reports shared, certificates, or customer data received (with attachment) |
+
+- On Lead / Quote: **Customer Lifecycle**, **Open / Create Project**, **Log Delivery Record**
+- On accepted Quote: **Mark Service Delivered** (creates delivery + sets project to Delivered)
+- Reports marked Ready and customer document uploads are logged automatically
+- Workspace shortcuts: **Customer Projects**, **Delivery Records**
 
 ## Requirements
 

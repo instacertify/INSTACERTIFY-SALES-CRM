@@ -155,6 +155,171 @@ instacertify_crm.show_customer_history = function (args) {
 	});
 };
 
+instacertify_crm.render_customer_lifecycle = function (data) {
+	const totals = data.totals || {};
+	const summary = `
+		<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px">
+			${[
+				[__("Quotes"), totals.quotes || 0],
+				[__("Accepted"), totals.accepted_quotes || 0],
+				[__("Delivered to customer"), totals.deliveries_to_customer || 0],
+				[__("Data from customer"), totals.data_from_customer || 0],
+				[__("Reports"), totals.reports || 0],
+				[__("Remarks"), totals.remarks || 0],
+			]
+				.map(
+					([label, value]) =>
+						`<div style="min-width:110px"><div class="text-muted">${label}</div><div style="font-size:20px;font-weight:700">${value}</div></div>`,
+				)
+				.join("")}
+		</div>`;
+
+	const projects = (data.projects || [])
+		.map(
+			(p) =>
+				`<li><a href="/app/ic-customer-project/${encodeURIComponent(p.name)}">${frappe.utils.escape_html(
+					p.project_title || p.name,
+				)}</a> <span class="indicator-pill orange">${frappe.utils.escape_html(p.status || "")}</span></li>`,
+		)
+		.join("");
+
+	const deliveries = (data.deliveries || [])
+		.slice(0, 12)
+		.map((d) => {
+			const file = d.attachment
+				? ` · <a href="${frappe.utils.escape_html(d.attachment)}" target="_blank">${__("File")}</a>`
+				: "";
+			return `<tr>
+				<td>${frappe.datetime.str_to_user(d.delivered_on) || ""}</td>
+				<td>${frappe.utils.escape_html(d.delivery_type || "")}</td>
+				<td>${frappe.utils.escape_html(d.direction || "")}</td>
+				<td><a href="/app/ic-delivery-record/${encodeURIComponent(d.name)}">${frappe.utils.escape_html(
+					d.title || d.name,
+				)}</a>${file}</td>
+			</tr>`;
+		})
+		.join("");
+
+	const timeline = (data.timeline || [])
+		.slice(0, 25)
+		.map((t) => {
+			const file = t.attachment
+				? ` <a href="${frappe.utils.escape_html(t.attachment)}" target="_blank">📎</a>`
+				: "";
+			const link = t.link
+				? `<a href="${frappe.utils.escape_html(t.link)}">${frappe.utils.escape_html(t.title || "")}</a>`
+				: frappe.utils.escape_html(t.title || "");
+			return `<div style="border-left:3px solid var(--border-color);padding:6px 0 6px 12px;margin:6px 0">
+				<div class="text-muted" style="font-size:12px">${frappe.datetime.str_to_user(t.when) || ""} · ${frappe.utils.escape_html(
+					t.kind || "",
+				)}</div>
+				<div>${link}${file}</div>
+				<div class="text-muted">${frappe.utils.escape_html(t.detail || "")}</div>
+			</div>`;
+		})
+		.join("");
+
+	return `<div>
+		<div style="margin-bottom:6px"><strong>${frappe.utils.escape_html(
+			data.customer_name || "",
+		)}</strong> · ${frappe.utils.escape_html(data.company || "")}</div>
+		${summary}
+		${
+			projects
+				? `<div style="margin-bottom:12px"><strong>${__("Projects")}</strong><ul>${projects}</ul></div>`
+				: ""
+		}
+		<div style="margin-bottom:12px">
+			<strong>${__("Delivery & shared records")}</strong>
+			<table class="table table-bordered" style="margin-top:6px">
+				<thead><tr><th>${__("When")}</th><th>${__("Type")}</th><th>${__("Direction")}</th><th>${__(
+					"Record",
+				)}</th></tr></thead>
+				<tbody>${
+					deliveries ||
+					`<tr><td colspan="4" class="text-muted">${__("No delivery records yet. Log deliveries, reports, or customer uploads.")}</td></tr>`
+				}</tbody>
+			</table>
+		</div>
+		<div><strong>${__("Lifecycle timeline")}</strong>${
+			timeline || `<div class="text-muted">${__("No lifecycle events yet.")}</div>`
+		}</div>
+	</div>`;
+};
+
+instacertify_crm.show_customer_lifecycle = function (args) {
+	frappe.call({
+		method: "instacertify_crm.api.get_customer_lifecycle",
+		args,
+		freeze: true,
+		callback(r) {
+			const data = r.message || {};
+			const d = new frappe.ui.Dialog({
+				title: __("Customer lifecycle — {0}", [data.customer_name || data.company || __("Customer")]),
+				size: "extra-large",
+				fields: [{ fieldtype: "HTML", fieldname: "body" }],
+				primary_action_label: data.project ? __("Open project") : __("Create project"),
+				primary_action() {
+					d.hide();
+					if (data.project) {
+						frappe.set_route("Form", "IC Customer Project", data.project);
+						return;
+					}
+					frappe.call({
+						method: "instacertify_crm.api.ensure_customer_project",
+						args: { lead: args.lead, quote: args.quote },
+						freeze: true,
+						callback(res) {
+							if (res.message?.name) {
+								frappe.set_route("Form", "IC Customer Project", res.message.name);
+							}
+						},
+					});
+				},
+			});
+			d.fields_dict.body.$wrapper.html(instacertify_crm.render_customer_lifecycle(data));
+			d.show();
+		},
+	});
+};
+
+instacertify_crm.mark_service_delivered_dialog = function (quote) {
+	const d = new frappe.ui.Dialog({
+		title: __("Mark quote service delivered"),
+		fields: [
+			{
+				fieldtype: "HTML",
+				fieldname: "help",
+				options: `<p class="text-muted">${__(
+					"Logs a delivery record for this quote and updates the customer project lifecycle.",
+				)}</p>`,
+			},
+			{ fieldname: "remarks", label: __("Delivery remarks"), fieldtype: "Small Text" },
+			{ fieldname: "attachment", label: __("Proof / deliverable file"), fieldtype: "Attach" },
+		],
+		primary_action_label: __("Mark delivered"),
+		primary_action(values) {
+			frappe.call({
+				method: "instacertify_crm.api.mark_service_delivered",
+				args: {
+					quote: quote.name || quote,
+					remarks: values.remarks,
+					attachment: values.attachment,
+				},
+				freeze: true,
+				callback(r) {
+					d.hide();
+					frappe.show_alert({ message: __("Service delivery logged"), indicator: "green" });
+					if (r.message?.delivery) {
+						frappe.set_route("Form", "IC Delivery Record", r.message.delivery);
+					}
+				},
+			});
+		},
+	});
+	d.show();
+};
+
 instacertify_crm.create_document_request_dialog = function (quote) {
 	frappe.call({
 		method: "instacertify_crm.api.get_service_documents",

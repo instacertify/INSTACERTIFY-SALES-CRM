@@ -16,6 +16,40 @@ frappe.ui.form.on("IC Quote", {
 			frm.add_custom_button(__("Customer History"), () => {
 				instacertify_crm.show_customer_history({ lead: frm.doc.lead });
 			});
+			frm
+				.add_custom_button(__("Customer Lifecycle"), () => {
+					instacertify_crm.show_customer_lifecycle({
+						lead: frm.doc.lead,
+						quote: frm.doc.name,
+					});
+				})
+				.addClass("btn-primary");
+		}
+		if (!frm.is_new()) {
+			frm.add_custom_button(__("Open / Create Project"), () => {
+				frappe.call({
+					method: "instacertify_crm.api.ensure_customer_project",
+					args: { quote: frm.doc.name, lead: frm.doc.lead },
+					freeze: true,
+					callback(r) {
+						if (r.message?.name) {
+							frappe.set_route("Form", "IC Customer Project", r.message.name);
+						}
+					},
+				});
+			});
+			frm.add_custom_button(__("Log Delivery / Shared Record"), () => {
+				frappe.new_doc("IC Delivery Record", {
+					quote: frm.doc.name,
+					lead: frm.doc.lead,
+					service: frm.doc.service,
+					customer_name: frm.doc.customer_name,
+					company: frm.doc.company,
+					email: frm.doc.email,
+					direction: "To Customer",
+					delivery_type: "Service Delivered",
+				});
+			});
 		}
 		if (!frm.is_new() && frm.doc.public_url) {
 			frm.add_custom_button(__("Copy Customer Link"), () => {
@@ -56,6 +90,11 @@ frappe.ui.form.on("IC Quote", {
 					message: __("Your report for quote {0} is ready to download.", [frm.doc.name]),
 				});
 			});
+			frm
+				.add_custom_button(__("Mark Service Delivered"), () => {
+					instacertify_crm.mark_service_delivered_dialog(frm.doc);
+				})
+				.addClass("btn-primary");
 		}
 	},
 

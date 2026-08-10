@@ -22,6 +22,33 @@ frappe.ui.form.on("IC Lead", {
 			frm.add_custom_button(__("Customer History"), () => {
 				instacertify_crm.show_customer_history({ lead: frm.doc.name });
 			});
+			frm
+				.add_custom_button(__("Customer Lifecycle"), () => {
+					instacertify_crm.show_customer_lifecycle({ lead: frm.doc.name });
+				})
+				.addClass("btn-primary");
+			frm.add_custom_button(__("Open / Create Project"), () => {
+				frappe.call({
+					method: "instacertify_crm.api.ensure_customer_project",
+					args: { lead: frm.doc.name },
+					freeze: true,
+					callback(r) {
+						if (r.message?.name) {
+							frappe.set_route("Form", "IC Customer Project", r.message.name);
+						}
+					},
+				});
+			});
+			frm.add_custom_button(__("Log Delivery Record"), () => {
+				frappe.new_doc("IC Delivery Record", {
+					lead: frm.doc.name,
+					customer_name: frm.doc.customer_name,
+					company: frm.doc.company,
+					email: frm.doc.email,
+					direction: "To Customer",
+					delivery_type: "Service Delivered",
+				});
+			});
 			if (frappe.user.has_role("IC Admin") || frappe.user.has_role("System Manager")) {
 				frm.add_custom_button(__("Team Workload"), () => {
 					frappe.set_route("query-report", "IC Team Lead Workload");

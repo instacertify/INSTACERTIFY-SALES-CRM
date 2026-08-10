@@ -227,6 +227,75 @@ def get_team_workload(group_by: str = "Assigned To", active_only: int = 1):
 
 
 @frappe.whitelist(methods=["GET"])
+def get_customer_lifecycle(
+	lead: str | None = None,
+	project: str | None = None,
+	email: str | None = None,
+):
+	"""Full customer lifecycle: quotes, deliveries, reports, customer data, remarks."""
+	from instacertify_crm.lifecycle import build_lifecycle
+
+	return build_lifecycle(lead=lead, project=project, email=email)
+
+
+@frappe.whitelist(methods=["POST"])
+def mark_service_delivered(quote: str, remarks: str | None = None, attachment: str | None = None):
+	"""Mark accepted quote service as delivered and log a delivery record."""
+	frappe.has_permission("IC Delivery Record", "create", throw=True)
+	quote_doc = frappe.get_doc("IC Quote", quote)
+	if quote_doc.status not in {"Accepted", "Delivered"}:
+		frappe.throw(_("Only accepted quotes can be marked delivered"))
+
+	from instacertify_crm.instacertify_crm.doctype.ic_customer_project.ic_customer_project import (
+		ensure_project_for_quote,
+	)
+	from instacertify_crm.lifecycle import log_delivery
+
+	project = ensure_project_for_quote(quote_doc.name)
+	record = log_delivery(
+		title=f"Service delivered — {quote_doc.subject or quote_doc.service or quote_doc.name}",
+		delivery_type="Quote Service Delivered",
+		direction="To Customer",
+		quote=quote_doc.name,
+		lead=quote_doc.lead,
+		project=project.name,
+		service=quote_doc.service,
+		details=f"Delivered scope: {quote_doc.description or ''}",
+		attachment=attachment,
+		remarks=remarks,
+		status="Shared",
+		dedupe_key={
+			"quote": quote_doc.name,
+			"delivery_type": "Quote Service Delivered",
+		},
+	)
+	if project.status not in {"Closed", "Lost"}:
+		project.db_set("status", "Delivered", update_modified=True)
+		project.db_set("last_activity_on", now_datetime(), update_modified=False)
+	if quote_doc.status != "Delivered":
+		quote_doc.db_set("status", "Delivered", update_modified=True)
+	return {"delivery": record.name, "project": project.name}
+
+
+@frappe.whitelist(methods=["POST"])
+def ensure_customer_project(lead: str | None = None, quote: str | None = None):
+	"""Create or return the open customer project for a lead/quote."""
+	frappe.has_permission("IC Customer Project", "create", throw=True)
+	from instacertify_crm.instacertify_crm.doctype.ic_customer_project.ic_customer_project import (
+		ensure_project_for_lead,
+		ensure_project_for_quote,
+	)
+
+	if quote:
+		project = ensure_project_for_quote(quote)
+	elif lead:
+		project = ensure_project_for_lead(lead)
+	else:
+		frappe.throw(_("Lead or quote is required"))
+	return {"name": project.name, "status": project.status}
+
+
+@frappe.whitelist(methods=["GET"])
 def get_customer_history(lead: str | None = None, email: str | None = None, company: str | None = None):
 	"""Past quotes, testing/services delivered, document packs and reports for a customer."""
 	frappe.has_permission("IC Quote", "read", throw=True)
