@@ -52,6 +52,13 @@ doc_events = {
 	"IC Document Request": {
 		"on_update": "instacertify_crm.lifecycle.on_document_request_update",
 	},
+	"IC Customer Project": {
+		"on_update": "instacertify_crm.assignments.on_project_update",
+	},
+}
+
+has_permission = {
+	"IC Quote Template": "instacertify_crm.permissions.quote_template_has_permission",
 }
 
 scheduler_events = {

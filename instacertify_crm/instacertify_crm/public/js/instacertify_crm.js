@@ -6,6 +6,64 @@ instacertify_crm.copy_text = async function (text) {
 	frappe.show_alert({ message: __("Copied"), indicator: "green" });
 };
 
+instacertify_crm.assign_dialog = function (opts) {
+	/** Assign a lead or project to any team member. Admins can always assign. */
+	const d = new frappe.ui.Dialog({
+		title: opts.title || __("Assign to teammate"),
+		fields: [
+			{
+				fieldtype: "HTML",
+				fieldname: "help",
+				options: `<p class="text-muted">${__(
+					"Any team member can assign. If you cannot save the assignment, ask an IC Admin.",
+				)}</p>`,
+			},
+			{
+				fieldname: "user",
+				label: __("Assign To"),
+				fieldtype: "Link",
+				options: "User",
+				default: opts.current || "",
+				get_query() {
+					return {
+						query: "frappe.core.doctype.user.user.user_query",
+						filters: { ignore_user_type: 1 },
+					};
+				},
+			},
+		],
+		primary_action_label: __("Assign"),
+		primary_action(values) {
+			frappe.call({
+				method: opts.method,
+				args: {
+					[opts.docfield]: opts.name,
+					user: values.user || null,
+				},
+				freeze: true,
+				callback(r) {
+					d.hide();
+					frappe.show_alert({
+						message: values.user ? __("Assigned") : __("Unassigned"),
+						indicator: "green",
+					});
+					if (opts.on_success) opts.on_success(r.message);
+				},
+				error() {
+					frappe.msgprint({
+						title: __("Could not assign"),
+						message: __(
+							"You may not have permission on this record. Ask an IC Admin to assign it.",
+						),
+						indicator: "orange",
+					});
+				},
+			});
+		},
+	});
+	d.show();
+};
+
 instacertify_crm.is_admin = function () {
 	return frappe.user.has_role("IC Admin") || frappe.user.has_role("System Manager");
 };

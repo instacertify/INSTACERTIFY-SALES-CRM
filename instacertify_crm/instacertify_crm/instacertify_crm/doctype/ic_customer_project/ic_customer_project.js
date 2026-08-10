@@ -53,6 +53,21 @@ frappe.ui.form.on("IC Customer Project", {
 			});
 		}
 
+		frm
+			.add_custom_button(__("Assign Project"), () => {
+				instacertify_crm.assign_dialog({
+					title: __("Assign project"),
+					method: "instacertify_crm.assignments.assign_project",
+					docfield: "project",
+					name: frm.doc.name,
+					current: frm.doc.assigned_to,
+					on_success() {
+						frm.reload_doc();
+					},
+				});
+			})
+			.addClass("btn-primary");
+
 		load_lifecycle(frm);
 	},
 

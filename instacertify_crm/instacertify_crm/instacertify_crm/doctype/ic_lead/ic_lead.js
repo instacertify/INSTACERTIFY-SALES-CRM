@@ -49,6 +49,20 @@ frappe.ui.form.on("IC Lead", {
 					delivery_type: "Service Delivered",
 				});
 			});
+			frm
+				.add_custom_button(__("Assign Lead / Project"), () => {
+					instacertify_crm.assign_dialog({
+						title: __("Assign lead"),
+						method: "instacertify_crm.assignments.assign_lead",
+						docfield: "lead",
+						name: frm.doc.name,
+						current: frm.doc.assigned_to,
+						on_success() {
+							frm.reload_doc();
+						},
+					});
+				})
+				.addClass("btn-primary");
 			if (frappe.user.has_role("IC Admin") || frappe.user.has_role("System Manager")) {
 				frm.add_custom_button(__("Team Workload"), () => {
 					frappe.set_route("query-report", "IC Team Lead Workload");

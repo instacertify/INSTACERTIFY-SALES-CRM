@@ -57,8 +57,12 @@ Assign to users after install:
 
 | Role | Access |
 |------|--------|
-| `IC Admin` | All CRM data + export; **Team Workload** report + assignment alerts |
-| `IC Sales Ops` | All CRM data, no export; purchase price hidden |
+| `IC Admin` | All CRM data + export; **Team Workload** / **Lead Cost Spend**; edit quote templates; always reassign |
+| `IC Sales Ops` | CRM data (no export); can **assign** leads/projects; can **create** quote templates (admin-only edit) |
+
+**Assignment:** On Lead / Project use **Assign** — any IC user can assign to a teammate; if blocked, an IC Admin can always assign.
+
+**Quote templates:** Anyone (IC Sales Ops / Admin) can create; **only IC Admin** can edit after save.
 
 Open the **Instacertify CRM** workspace from Desk. Admins can open **Team Workload** to see how many active leads each team member is working on (by Assigned To / Owner, with status breakup and chart).
 
