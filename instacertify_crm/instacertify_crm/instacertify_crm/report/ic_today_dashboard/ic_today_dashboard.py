@@ -7,12 +7,14 @@ import frappe
 from frappe import _
 
 from instacertify_crm.control_tower import build_today_dashboard
+from instacertify_crm.customers import build_daily_progress
 
 
 def execute(filters=None):
 	data = build_today_dashboard()
 	today = data.get("today") or {}
 	control = data.get("project_control") or {}
+	progress = build_daily_progress(days=14)
 
 	columns = [
 		{"label": _("Metric"), "fieldname": "metric", "fieldtype": "Data", "width": 260},
@@ -60,13 +62,7 @@ def execute(filters=None):
 	]
 
 	for row in control.get("by_status") or []:
-		rows.append(
-			{
-				"metric": row.status,
-				"value": row.cnt,
-				"section": _("By Status"),
-			}
-		)
+		rows.append({"metric": row.status, "value": row.cnt, "section": _("By Status")})
 	for row in control.get("waiting") or []:
 		rows.append(
 			{
@@ -76,9 +72,51 @@ def execute(filters=None):
 			}
 		)
 
+	# Representative today snapshot bars + 14-day trend line datasets merged for desk chart
+	chart = {
+		"data": {
+			"labels": [
+				_("Leads"),
+				_("Follow-ups"),
+				_("Quotes"),
+				_("Projects"),
+				_("Tasks Due"),
+				_("Overdue"),
+			],
+			"datasets": [
+				{
+					"name": _("Today"),
+					"values": [
+						today.get("new_leads", 0),
+						today.get("followups_due", 0),
+						today.get("new_quotations", 0),
+						today.get("projects_started", 0),
+						today.get("tasks_due_today", 0),
+						today.get("overdue_tasks", 0),
+					],
+				}
+			],
+		},
+		"type": "bar",
+		"height": 300,
+		"colors": ["#0A4A6C"],
+	}
+
+	# Prefer trend chart when there is history
+	trend = progress.get("chart")
+	if trend and any(
+		sum(ds.get("values") or []) > 0 for ds in (trend.get("data") or {}).get("datasets") or []
+	):
+		chart = trend
+
 	summary = [
 		{"label": _("Active Projects"), "value": control.get("active_projects", 0), "indicator": "blue"},
 		{"label": _("Overdue Tasks"), "value": today.get("overdue_tasks", 0), "indicator": "orange"},
 		{"label": _("Follow-ups Due"), "value": today.get("followups_due", 0), "indicator": "red"},
+		{
+			"label": _("14d Completions"),
+			"value": (progress.get("totals") or {}).get("projects_completed", 0),
+			"indicator": "green",
+		},
 	]
-	return columns, rows, None, None, summary
+	return columns, rows, None, chart, summary

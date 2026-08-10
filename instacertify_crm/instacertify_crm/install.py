@@ -117,6 +117,12 @@ def after_migrate():
 	seed_masters()
 	_backfill_lead_costs()
 	_backfill_project_centric_fields()
+	try:
+		from instacertify_crm.customers import backfill_customers
+
+		backfill_customers()
+	except Exception:
+		frappe.log_error(title="IC Customer backfill failed")
 	frappe.clear_cache()
 
 

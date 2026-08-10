@@ -7,11 +7,29 @@
  "public": 1,
  "is_hidden": 0,
  "sequence_id": 20.0,
- "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_today\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Dashboard\",\"col\":3}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ic_sales\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales / Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects\",\"col\":3}},{\"id\":\"ic_tasks\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tasks\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_labs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Library\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Documents\",\"col\":3}},{\"id\":\"ic_ratio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales-Delivery Ratio\",\"col\":3}},{\"id\":\"ic_admin\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Admin Settings\",\"col\":3}}]",
+ "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_today\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Dashboard\",\"col\":3}},{\"id\":\"ic_daily\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Progress\",\"col\":3}},{\"id\":\"ic_customers\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customers\",\"col\":3}},{\"id\":\"ic_cust_ov\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Charts\",\"col\":3}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ic_sales\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales / Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects\",\"col\":3}},{\"id\":\"ic_tasks\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tasks\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_labs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Library\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Documents\",\"col\":3}},{\"id\":\"ic_admin\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Admin Settings\",\"col\":3}}]",
  "shortcuts": [
   {
    "label": "Today Dashboard",
    "link_to": "IC Today Dashboard",
+   "type": "Report",
+   "doc_view": "Report"
+  },
+  {
+   "label": "Daily Progress",
+   "link_to": "IC Daily Progress",
+   "type": "Report",
+   "doc_view": "Report"
+  },
+  {
+   "label": "Customers",
+   "link_to": "IC Customer",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Customer Charts",
+   "link_to": "IC Customer Overview",
    "type": "Report",
    "doc_view": "Report"
   },
@@ -58,12 +76,6 @@
    "doc_view": "List"
   },
   {
-   "label": "Sales-Delivery Ratio",
-   "link_to": "IC Sales Delivery Ratio",
-   "type": "Report",
-   "doc_view": "Report"
-  },
-  {
    "label": "Admin Settings",
    "link_to": "IC Settings",
    "type": "DocType",
@@ -74,6 +86,12 @@
   {
    "label": "Main",
    "type": "Card Break"
+  },
+  {
+   "label": "Customers",
+   "link_to": "IC Customer",
+   "link_type": "DocType",
+   "type": "Link"
   },
   {
    "label": "Leads",
@@ -98,6 +116,45 @@
    "link_to": "IC Project Task",
    "link_type": "DocType",
    "type": "Link"
+  },
+  {
+   "label": "Charts & Progress",
+   "type": "Card Break"
+  },
+  {
+   "label": "Today Dashboard",
+   "link_to": "IC Today Dashboard",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Daily Progress",
+   "link_to": "IC Daily Progress",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Customer Charts",
+   "link_to": "IC Customer Overview",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Sales-Delivery Ratio",
+   "link_to": "IC Sales Delivery Ratio",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Team Workload",
+   "link_to": "IC Team Lead Workload",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
   },
   {
    "label": "Delivery & Follow-up",
@@ -142,38 +199,6 @@
    "link_to": "IC Testing Service",
    "link_type": "DocType",
    "type": "Link"
-  },
-  {
-   "label": "Reports",
-   "type": "Card Break"
-  },
-  {
-   "label": "Today Dashboard",
-   "link_to": "IC Today Dashboard",
-   "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
-  },
-  {
-   "label": "Sales-Delivery Ratio",
-   "link_to": "IC Sales Delivery Ratio",
-   "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
-  },
-  {
-   "label": "Team Workload",
-   "link_to": "IC Team Lead Workload",
-   "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
-  },
-  {
-   "label": "Lead Cost Spend",
-   "link_to": "IC Lead Cost Spend",
-   "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
   },
   {
    "label": "Admin",

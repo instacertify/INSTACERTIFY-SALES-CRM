@@ -290,6 +290,14 @@ def get_today_dashboard():
 	return build_today_dashboard()
 
 
+@frappe.whitelist(methods=["GET"])
+def get_daily_progress(days: int | str = 14):
+	"""Chart-ready daily progress series."""
+	from instacertify_crm.customers import build_daily_progress
+
+	return build_daily_progress(days=int(days or 14))
+
+
 @frappe.whitelist(methods=["POST"])
 def mark_service_delivered(
 	quote: str,
