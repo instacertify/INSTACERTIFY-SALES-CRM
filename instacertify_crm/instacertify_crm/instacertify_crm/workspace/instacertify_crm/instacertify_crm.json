@@ -1,0 +1,80 @@
+{
+ "doctype": "Workspace",
+ "name": "Instacertify CRM",
+ "label": "Instacertify CRM",
+ "title": "Instacertify CRM",
+ "module": "Instacertify CRM",
+ "public": 1,
+ "is_hidden": 0,
+ "sequence_id": 20.0,
+ "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}}]",
+ "shortcuts": [
+  {
+   "label": "IC Leads",
+   "link_to": "IC Lead",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Operations Leads",
+   "link_to": "IC Lead",
+   "type": "DocType",
+   "doc_view": "List",
+   "filters": "[[\"IC Lead\",\"status\",\"in\",[\"NEW\",\"CONTACTED\",\"FOLLOW_UP\",\"QUOTE_SENT\"]]]"
+  },
+  {
+   "label": "IC Quotes",
+   "link_to": "IC Quote",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "IC Reports",
+   "link_to": "IC Report",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Document Requests",
+   "link_to": "IC Document Request",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Testing Library",
+   "link_to": "IC Testing Service",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Quote Templates",
+   "link_to": "IC Quote Template",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Bank Details",
+   "link_to": "IC Bank Detail",
+   "type": "DocType",
+   "doc_view": "List"
+  }
+ ],
+ "links": [
+  {
+   "label": "Masters",
+   "type": "Card Break"
+  },
+  {
+   "label": "IC Lead Source",
+   "link_to": "IC Lead Source",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Service",
+   "link_to": "IC Service",
+   "link_type": "DocType",
+   "type": "Link"
+  }
+ ]
+}

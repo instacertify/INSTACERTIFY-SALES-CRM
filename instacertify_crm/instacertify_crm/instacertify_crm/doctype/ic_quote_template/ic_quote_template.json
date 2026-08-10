@@ -1,0 +1,148 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote Template",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "template_name",
+  "service",
+  "validity_days",
+  "column_break_1",
+  "consulting_price",
+  "testing_price",
+  "other_commercials",
+  "section_body",
+  "body_html",
+  "other_commercials_note",
+  "section_bank",
+  "bank_detail"
+ ],
+ "autoname": "field:template_name",
+ "naming_rule": "By fieldname",
+ "title_field": "template_name",
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "label": "Template Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "service",
+   "label": "Service",
+   "fieldtype": "Link",
+   "options": "IC Service"
+  },
+  {
+   "fieldname": "validity_days",
+   "label": "Validity Days",
+   "fieldtype": "Int",
+   "default": "30"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consulting_price",
+   "label": "Consulting Price",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "testing_price",
+   "label": "Testing Price",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "other_commercials",
+   "label": "Other Commercials",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "section_body",
+   "label": "Letter Body",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Body HTML",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "other_commercials_note",
+   "label": "Other Commercials Note",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_bank",
+   "label": "Banking (Admin only edit)",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "bank_detail",
+   "label": "Bank Detail",
+   "fieldtype": "Link",
+   "options": "IC Bank Detail"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}

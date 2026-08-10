@@ -1,0 +1,335 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "naming_series",
+  "quote_number",
+  "public_token",
+  "status",
+  "column_break_1",
+  "lead",
+  "template",
+  "validity_date",
+  "section_customer",
+  "customer_name",
+  "company",
+  "email",
+  "column_break_2",
+  "phone",
+  "country",
+  "state",
+  "section_service",
+  "service",
+  "description",
+  "body_html",
+  "section_testing",
+  "testing_items",
+  "section_commercials",
+  "consulting_price",
+  "testing_price",
+  "other_commercials",
+  "column_break_3",
+  "other_commercials_note",
+  "total_revenue",
+  "section_bank",
+  "bank_detail",
+  "bank_snapshot",
+  "section_customer_response",
+  "customer_remark",
+  "revision_message",
+  "shared_on",
+  "accepted_on",
+  "public_url"
+ ],
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "quote_number",
+ "search_fields": "quote_number,customer_name,company,status,service",
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "label": "Series",
+   "fieldtype": "Select",
+   "options": "ICQ-.YYYY.-",
+   "default": "ICQ-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quote_number",
+   "label": "Quote Number",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "public_token",
+   "label": "Public Token",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "Draft\nShared\nRevision Requested\nAccepted\nSuperseded",
+   "default": "Draft",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lead",
+   "label": "Lead",
+   "fieldtype": "Link",
+   "options": "IC Lead"
+  },
+  {
+   "fieldname": "template",
+   "label": "Template",
+   "fieldtype": "Link",
+   "options": "IC Quote Template"
+  },
+  {
+   "fieldname": "validity_date",
+   "label": "Validity Date",
+   "fieldtype": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_customer",
+   "label": "Customer",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer_name",
+   "label": "Customer Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email",
+   "label": "Email",
+   "fieldtype": "Data",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "phone",
+   "label": "Phone",
+   "fieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "country",
+   "label": "Country",
+   "fieldtype": "Link",
+   "options": "Country",
+   "default": "India",
+   "reqd": 1
+  },
+  {
+   "fieldname": "state",
+   "label": "State",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_service",
+   "label": "Service & Scope",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "service",
+   "label": "Service",
+   "fieldtype": "Link",
+   "options": "IC Service",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Small Text",
+   "reqd": 1
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Letter Body",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_testing",
+   "label": "Testing Lines (Selling Price only)",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "testing_items",
+   "label": "Testing Items",
+   "fieldtype": "Table",
+   "options": "IC Quote Testing Item"
+  },
+  {
+   "fieldname": "section_commercials",
+   "label": "Commercials",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "consulting_price",
+   "label": "Commercial Consulting Price",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "testing_price",
+   "label": "Testing Price",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "other_commercials",
+   "label": "Other Commercials",
+   "fieldtype": "Currency",
+   "default": "0",
+   "description": "Included in revenue"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_commercials_note",
+   "label": "Other Commercials Note",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "total_revenue",
+   "label": "Total Revenue",
+   "fieldtype": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_bank",
+   "label": "Banking Details",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "bank_detail",
+   "label": "Bank Profile",
+   "fieldtype": "Link",
+   "options": "IC Bank Detail"
+  },
+  {
+   "fieldname": "bank_snapshot",
+   "label": "Banking Text on Quote",
+   "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "section_customer_response",
+   "label": "Customer Response",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer_remark",
+   "label": "Customer Remark",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "revision_message",
+   "label": "Revision Message",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "shared_on",
+   "label": "Shared On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accepted_on",
+   "label": "Accepted On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "public_url",
+   "label": "Public URL",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}

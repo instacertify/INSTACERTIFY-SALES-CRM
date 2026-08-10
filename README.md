@@ -1,42 +1,32 @@
-# Instacertify Sales CRM
+# INSTACERTIFY-SALES-CRM
 
-Simple sales & operations CRM for [Instacertify](https://instacertify.in) — leads, follow-ups, branded quotes with scannable QR links, templates, document collection, and testing price library.
+Instacertify sales & operations CRM.
 
-## Features
+## Production target: ERPNext 16
 
-- **Leads** from Consultant, Google Ads, Phone Call, IndiaMART, Referral (admin can add more)
-- Company size, country, and **India state** dropdown
-- **Admin** vs **Sales & Operations** roles (Excel export for admin only)
-- **Operations**: lead status, follow-up reminders, last contact, conversation logs
-- **Quotes** with unique IDs, Instacertify letterhead, Google Lens–scannable QR URL
-- Quote commercials: consulting, testing, other commercials (included in revenue), banking details
-- **Templates** shared across team; bank details on templates editable by admin only
-- Customer **accept / revise** on public quote link (print/download supported)
-- After acceptance: share **document checklist** by service; customer upload + final confirm
-- Team can download uploads and notify customer for missing/extra documents
-- **Testing library**: purchase price admin-only; sales price + lab visible to sales/ops
+The installable Frappe app lives in [`instacertify_crm/`](./instacertify_crm/).
 
-## Quick start
+It is designed for an **existing ERPNext version-16** site (your sample EPR Plastic quote was already generated from Frappe print formats).
 
 ```bash
-npm install
-cp .env.example .env
-npm run db:setup
-npm run dev
+cd /path/to/frappe-bench
+bench get-app ./path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
+bench --site <site> install-app instacertify_crm
+bench --site <site> migrate
+bench build --app instacertify_crm
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+See [`instacertify_crm/README.md`](./instacertify_crm/README.md) for roles, public quote/document/report links, and feature details.
 
-### Default logins
+### Roles
+- **IC Admin** — full data + export
+- **IC Sales Ops** — full data, no export; purchase price hidden
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@instacertify.in` | `Admin@123` |
-| Sales & Ops | `sales@instacertify.in` | `Sales@123` |
+### Customer portals (on your ERPNext site)
+- `/q/<token>` — quote accept / revise / print
+- `/d/<token>` — document checklist upload
+- `/r/<token>` — report ready download
 
-## Production notes
+## Optional: Next.js prototype
 
-- Set `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, and `APP_URL` to your `instacertify.in` host
-- SQLite is used by default (`prisma/dev.db`). Switch `DATABASE_URL` to Postgres for multi-instance hosting
-- Uploaded customer files are stored under `/uploads`
-- Change default passwords after first login
+The repository root also contains an earlier **Next.js** prototype of the same flows for demos without a bench. Prefer the ERPNext 16 app for production on `instacertify.in`.
