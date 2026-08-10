@@ -4,6 +4,7 @@
 <style>
   .ic-card{max-width:860px;margin:28px auto;background:#fff;border:1px solid #d7e2ea;border-radius:18px;padding:28px;box-shadow:0 18px 50px rgba(10,74,108,.08)}
   .ic-brand{font-weight:800;font-size:26px}.ic-brand .a{color:#0A4A6C}.ic-brand .b{color:#EB7D2D}
+  .ic-logo{display:block;max-height:56px;max-width:200px;object-fit:contain;margin-bottom:8px}
   .ic-btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;background:#0A4A6C;color:#fff}
   .ic-btn.accent{background:#EB7D2D}
   .notice{padding:12px 14px;border-radius:12px;background:rgba(10,74,108,.08);margin:12px 0}
@@ -16,6 +17,9 @@
 <div class="ic-card"><p>Document link not found.</p></div>
 {% else %}
 <div class="ic-card">
+  {% if branding and (branding.company_logo_url or branding.letterhead_logo_url) %}
+  <img class="ic-logo" src="{{ branding.letterhead_logo_url or branding.company_logo_url }}" alt="{{ branding.brand_name }}" />
+  {% endif %}
   <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
   <h1>Documents requested</h1>
   <p>Quote <strong>{{ docreq.quote_number }}</strong> · {{ docreq.company }} · {{ docreq.service }}</p>

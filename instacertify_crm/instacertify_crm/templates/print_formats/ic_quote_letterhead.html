@@ -17,12 +17,17 @@
   .ic-footer { margin-top:28px; border-top:1px solid #d7e2ea; padding-top:10px; color:#5F5E6B; font-size:11px; }
   pre.ic-bank { white-space:pre-wrap; font-family:inherit; background:#f8fbfd; border:1px solid #d7e2ea; border-radius:8px; padding:12px; }
 </style>
+{% set branding = frappe.get_attr("instacertify_crm.instacertify_crm.doctype.ic_settings.ic_settings.get_branding")() %}
+{% set logo = branding.letterhead_logo_url or branding.company_logo_url %}
 <div class="ic-print">
   <div class="ic-top">
     <div>
+      {% if logo %}
+      <img src="{{ logo }}" alt="{{ branding.brand_name }}" style="max-height:64px;max-width:220px;object-fit:contain;margin-bottom:8px;display:block;" />
+      {% endif %}
       <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
-      <div class="ic-tag">certifications made simple</div>
-      <div class="ic-tag">Instacertify Labs Pvt Ltd</div>
+      <div class="ic-tag">{{ branding.tagline }}</div>
+      <div class="ic-tag">{{ branding.legal_name }}</div>
       <div class="ic-badge {% if doc.quote_type == 'Service' %}service{% endif %}">
         {{ doc.quote_type or "Testing" }} Quotation
       </div>
@@ -135,9 +140,10 @@
   {% endif %}
 
   <div class="ic-footer">
-    For other Product Certification and Compliance, please visit www.instacertify.com<br>
+    For other Product Certification and Compliance, please visit {{ branding.website }} for more details.<br>
     Thanking You,<br>
-    <strong>For Instacertify Labs Private Limited</strong><br>
-    PK 1 Sector 63 A Noida, Uttar Pradesh, India - 201301 · +91 9999118039 · contact@instacertify.com
+    <strong>For {{ branding.legal_name }}</strong><br>
+    {{ branding.address_line }} · {{ branding.phone }} · {{ branding.email }}
+    {% if branding.cin %}<br>CIN : {{ branding.cin }}{% endif %}
   </div>
 </div>

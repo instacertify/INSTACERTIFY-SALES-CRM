@@ -7,7 +7,7 @@
  "public": 1,
  "is_hidden": 0,
  "sequence_id": 20.0,
- "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}}]",
+ "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_settings\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branding / Logo\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}}]",
  "shortcuts": [
   {
    "label": "IC Leads",
@@ -59,12 +59,16 @@
    "doc_view": "List"
   },
   {
+   "label": "Branding / Logo",
+   "link_to": "IC Settings",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
    "label": "Team Workload",
    "link_to": "IC Team Lead Workload",
    "type": "Report",
-   "doc_view": "Report",
-   "restrict_to_domain": "",
-   "stats_filter": ""
+   "doc_view": "Report"
   }
  ],
  "links": [
@@ -87,6 +91,12 @@
   {
    "label": "Admin",
    "type": "Card Break"
+  },
+  {
+   "label": "IC Settings (Logo / Letterhead)",
+   "link_to": "IC Settings",
+   "link_type": "DocType",
+   "type": "Link"
   },
   {
    "label": "IC Team Lead Workload",

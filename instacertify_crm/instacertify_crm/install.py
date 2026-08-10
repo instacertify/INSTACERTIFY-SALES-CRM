@@ -122,6 +122,7 @@ def ensure_roles():
 
 
 def seed_masters():
+	_seed_settings()
 	for source in LEAD_SOURCES:
 		if not frappe.db.exists("IC Lead Source", source):
 			frappe.get_doc(
@@ -163,6 +164,35 @@ def seed_masters():
 	_seed_bank()
 	_seed_testing_services()
 	_seed_quote_templates()
+
+
+def _seed_settings():
+	if not frappe.db.exists("DocType", "IC Settings"):
+		return
+	settings = frappe.get_single("IC Settings")
+	changed = False
+	defaults = {
+		"brand_name": "Instacertify",
+		"legal_name": "Instacertify Labs Pvt Ltd",
+		"tagline": "certifications made simple",
+		"phone": "+91 9999118039",
+		"email": "contact@instacertify.com",
+		"website": "www.instacertify.com",
+		"address_line": "PK 1 Sector 63 A Noida, Uttar Pradesh, India - 201301",
+		"cin": "UP74999UP2022PTC170291",
+		"apply_logo_sitewide": 1,
+		"apply_letter_head": 1,
+	}
+	for key, value in defaults.items():
+		if not settings.get(key):
+			settings.set(key, value)
+			changed = True
+	# Prefer bundled logo if nothing uploaded yet
+	if not settings.company_logo:
+		settings.company_logo = "/assets/instacertify_crm/images/logo.svg"
+		changed = True
+	if changed:
+		settings.save(ignore_permissions=True)
 
 
 def _seed_bank():

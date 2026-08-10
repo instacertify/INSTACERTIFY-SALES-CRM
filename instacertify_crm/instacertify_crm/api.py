@@ -183,6 +183,32 @@ def create_document_request(quote: str, documents=None, questionnaire: str | Non
 	return {"name": req.name, "public_url": req.public_url}
 
 
+@frappe.whitelist(methods=["POST"])
+def sync_branding():
+	"""IC Admin: sync IC Settings logos to Letter Head + Website Settings."""
+	roles = set(frappe.get_roles())
+	if not roles.intersection({"IC Admin", "System Manager"}):
+		frappe.throw(_("Only IC Admin can sync branding"), frappe.PermissionError)
+	from instacertify_crm.instacertify_crm.doctype.ic_settings.ic_settings import (
+		get_branding,
+		sync_letter_head,
+		sync_website_branding,
+	)
+
+	settings = frappe.get_single("IC Settings")
+	sync_letter_head(settings)
+	sync_website_branding(settings)
+	frappe.clear_cache()
+	return get_branding(use_cache=False)
+
+
+@frappe.whitelist(methods=["GET"])
+def get_branding():
+	from instacertify_crm.instacertify_crm.doctype.ic_settings.ic_settings import get_branding as _get
+
+	return _get()
+
+
 @frappe.whitelist(methods=["GET"])
 def get_team_workload(group_by: str = "Assigned To", active_only: int = 1):
 	"""Admin view: how many leads each team member is working on."""

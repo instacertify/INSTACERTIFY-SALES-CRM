@@ -22,6 +22,7 @@
   table.ic-price th { background:#f3f7fa; color:#0A4A6C; }
   h3 { color:#0A4A6C; margin:0 0 8px; border-left:3px solid #EB7D2D; padding-left:8px; }
   .ic-qr img { border:1px solid #d7e2ea; border-radius:10px; padding:6px; background:#fff; }
+  .ic-logo { display:block; max-height:64px; max-width:220px; width:auto; height:auto; object-fit:contain; margin-bottom:8px; }
   pre.bank { white-space:pre-wrap; font-family:inherit; background:#f8fbfd; border:1px solid #d7e2ea; border-radius:12px; padding:14px; }
   @media (max-width:720px){ .ic-top{flex-direction:column} .ic-top > div:last-child{text-align:left !important} }
   @media print { .ic-actions { display:none !important; } }
@@ -33,9 +34,12 @@
 <article class="ic-quote">
   <header class="ic-top">
     <div>
+      {% if branding and (branding.letterhead_logo_url or branding.company_logo_url) %}
+      <img class="ic-logo" src="{{ branding.letterhead_logo_url or branding.company_logo_url }}" alt="{{ branding.brand_name }}" />
+      {% endif %}
       <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
-      <div class="ic-tag">certifications made simple</div>
-      <div class="ic-tag">Instacertify Labs Pvt Ltd</div>
+      <div class="ic-tag">{{ branding.tagline if branding else 'certifications made simple' }}</div>
+      <div class="ic-tag">{{ branding.legal_name if branding else 'Instacertify Labs Pvt Ltd' }}</div>
       <div class="ic-badge {% if quote.quote_type == 'Service' %}service{% endif %}">
         {{ quote.quote_type or 'Testing' }} Quotation
       </div>

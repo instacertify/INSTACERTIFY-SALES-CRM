@@ -1,0 +1,22 @@
+{# Shared brand header for portals / print. Expects `branding` dict. #}
+{% set b = branding or {} %}
+{% set logo = b.letterhead_logo_url or b.company_logo_url or b.letterhead_logo or b.company_logo %}
+<div class="ic-brand-block">
+  {% if logo %}
+  <img class="ic-logo" src="{{ logo }}" alt="{{ b.brand_name or 'Instacertify' }}" />
+  {% endif %}
+  <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
+  {% if b.tagline %}<div class="ic-tag">{{ b.tagline }}</div>{% endif %}
+  {% if b.legal_name %}<div class="ic-tag">{{ b.legal_name }}</div>{% endif %}
+</div>
+<style>
+  .ic-brand-block .ic-logo {
+    display:block;
+    max-height:64px;
+    max-width:220px;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+    margin-bottom:8px;
+  }
+</style>

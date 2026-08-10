@@ -59,6 +59,8 @@ Assign to users after install:
 
 Open the **Instacertify CRM** workspace from Desk. Admins can open **Team Workload** to see how many active leads each team member is working on (by Assigned To / Owner, with status breakup and chart).
 
+Upload logos in **Branding / Logo** (`IC Settings`) — company logo, optional letterhead logo, favicon. Saving syncs quote letterhead, customer portals, Website Settings, and the Instacertify Letter Head.
+
 ## Customer portals
 
 | Flow | URL |
