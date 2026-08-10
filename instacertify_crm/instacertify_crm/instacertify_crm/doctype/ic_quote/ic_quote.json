@@ -31,29 +31,51 @@
   "section_service",
   "service",
   "description",
+  "section_about",
+  "about_header",
   "about_html",
+  "section_standards",
+  "standards_header",
   "standards_html",
   "accreditation_html",
+  "section_sample_req",
+  "sample_requirements_header",
   "sample_requirements_html",
-  "section_testing",
-  "testing_items",
   "section_commercials",
+  "commercials_header",
+  "testing_items",
   "consulting_price",
   "testing_price",
   "other_commercials",
   "column_break_3",
   "other_commercials_note",
   "total_revenue",
-  "section_terms",
-  "deliverables_html",
-  "timeline_html",
   "payment_terms_html",
+  "section_timeline",
+  "timeline_header",
+  "timeline_html",
+  "section_deliverables",
+  "deliverables_header",
+  "deliverables_html",
+  "section_sample_handling",
+  "sample_handling_header",
   "sample_handling_html",
-  "policies_html",
-  "body_html",
   "section_bank",
+  "banking_header",
   "bank_detail",
   "bank_snapshot",
+  "section_cancellation",
+  "cancellation_header",
+  "cancellation_refund_html",
+  "section_force_majeure",
+  "force_majeure_header",
+  "force_majeure_html",
+  "section_confidentiality",
+  "confidentiality_header",
+  "confidentiality_html",
+  "section_extra",
+  "policies_html",
+  "body_html",
   "section_customer_response",
   "customer_remark",
   "revision_message",
@@ -89,7 +111,7 @@
    "default": "Testing",
    "reqd": 1,
    "in_list_view": 1,
-   "description": "Choose Testing or Service business before preparing the customer quotation."
+   "description": "For Testing quotes, use the collapsible sections below with customisable headers."
   },
   {
    "fieldname": "public_token",
@@ -205,13 +227,40 @@
    "reqd": 1
   },
   {
+   "fieldname": "section_about",
+   "label": "1. About",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "about_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "About",
+   "description": "Customer-facing heading (customisable)"
+  },
+  {
    "fieldname": "about_html",
-   "label": "About",
+   "label": "About Content",
    "fieldtype": "Text Editor"
   },
   {
+   "fieldname": "section_standards",
+   "label": "2. Applicable Standard",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "standards_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Applicable Standard"
+  },
+  {
    "fieldname": "standards_html",
-   "label": "Applicable Standards",
+   "label": "Applicable Standard Content",
    "fieldtype": "Text Editor"
   },
   {
@@ -221,28 +270,43 @@
    "depends_on": "eval:doc.quote_type=='Service'"
   },
   {
+   "fieldname": "section_sample_req",
+   "label": "3. Sample Required",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "sample_requirements_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Sample Required"
+  },
+  {
    "fieldname": "sample_requirements_html",
-   "label": "Sample Requirements",
+   "label": "Sample Required Content",
    "fieldtype": "Text Editor"
   },
   {
-   "fieldname": "section_testing",
-   "label": "Commercial Line Items",
+   "fieldname": "section_commercials",
+   "label": "4. Commercials",
    "fieldtype": "Section Break",
-   "depends_on": "eval:doc.quote_type=='Testing'",
-   "description": "Customers only see selling / total charges — never purchase price."
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'",
+   "description": "Customers only see selling / total charges \u2014 never purchase price."
+  },
+  {
+   "fieldname": "commercials_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Commercials"
   },
   {
    "fieldname": "testing_items",
-   "label": "Testing Items",
+   "label": "Testing Line Items",
    "fieldtype": "Table",
    "options": "IC Quote Testing Item",
    "depends_on": "eval:doc.quote_type=='Testing'"
-  },
-  {
-   "fieldname": "section_commercials",
-   "label": "Commercial Summary",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "consulting_price",
@@ -280,44 +344,76 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_terms",
-   "label": "Deliverables & Terms",
-   "fieldtype": "Section Break"
+   "fieldname": "payment_terms_html",
+   "label": "Payment Terms (under Commercials)",
+   "fieldtype": "Text Editor"
   },
   {
-   "fieldname": "deliverables_html",
-   "label": "Deliverables",
-   "fieldtype": "Text Editor"
+   "fieldname": "section_timeline",
+   "label": "5. Timeline",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "timeline_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Timeline"
   },
   {
    "fieldname": "timeline_html",
-   "label": "Timeline",
+   "label": "Timeline Content",
    "fieldtype": "Text Editor"
   },
   {
-   "fieldname": "payment_terms_html",
-   "label": "Payment Terms",
+   "fieldname": "section_deliverables",
+   "label": "6. Deliverable",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "deliverables_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Deliverable"
+  },
+  {
+   "fieldname": "deliverables_html",
+   "label": "Deliverable Content",
    "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_sample_handling",
+   "label": "7. Sample Handling and Disposal Policy",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "sample_handling_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Sample Handling and Disposal Policy"
   },
   {
    "fieldname": "sample_handling_html",
-   "label": "Sample Handling & Disposal",
-   "fieldtype": "Text Editor"
-  },
-  {
-   "fieldname": "policies_html",
-   "label": "Policies",
-   "fieldtype": "Text Editor"
-  },
-  {
-   "fieldname": "body_html",
-   "label": "Extra Letter Body",
+   "label": "Sample Handling Content",
    "fieldtype": "Text Editor"
   },
   {
    "fieldname": "section_bank",
-   "label": "Banking Details",
-   "fieldtype": "Section Break"
+   "label": "8. Banking Details",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "banking_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Banking Details"
   },
   {
    "fieldname": "bank_detail",
@@ -329,6 +425,78 @@
    "fieldname": "bank_snapshot",
    "label": "Banking Text on Quote",
    "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "section_cancellation",
+   "label": "9. Cancellation and Refund Policy",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "cancellation_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Cancellation and Refund Policy"
+  },
+  {
+   "fieldname": "cancellation_refund_html",
+   "label": "Cancellation and Refund Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_force_majeure",
+   "label": "10. Force Majeure",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "force_majeure_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Force Majeure"
+  },
+  {
+   "fieldname": "force_majeure_html",
+   "label": "Force Majeure Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_confidentiality",
+   "label": "11. Confidentiality and Data Protection",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "confidentiality_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Confidentiality and Data Protection"
+  },
+  {
+   "fieldname": "confidentiality_html",
+   "label": "Confidentiality Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_extra",
+   "label": "Extra / Legacy",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "1"
+  },
+  {
+   "fieldname": "policies_html",
+   "label": "Legacy Combined Policies",
+   "fieldtype": "Text Editor",
+   "description": "Legacy field. Prefer the separate Cancellation / Force Majeure / Confidentiality sections above."
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Extra Letter Body",
+   "fieldtype": "Text Editor"
   },
   {
    "fieldname": "section_customer_response",

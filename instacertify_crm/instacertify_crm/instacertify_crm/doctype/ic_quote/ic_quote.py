@@ -10,8 +10,11 @@ from frappe.utils import flt, get_url
 
 class ICQuote(Document):
 	def validate(self):
+		from instacertify_crm.quote_sections import apply_default_headers
+
 		self.quote_number = self.quote_number or self.name
 		self.quote_type = self.quote_type or "Testing"
+		apply_default_headers(self)
 		if self.testing_items:
 			for row in self.testing_items:
 				units = flt(row.units) or 1

@@ -69,21 +69,33 @@ SAMPLE_HANDLING_HTML = """
 </ol>
 """
 
-POLICIES_HTML = """
-<p><strong>Cancellation & Refund Policy</strong><br>
-Testing fees are payable in advance and are non-refundable once samples have been submitted or testing has commenced.
+CANCELLATION_HTML = """
+<p>Testing fees are payable in advance and are non-refundable once samples have been submitted or testing has commenced.
 Government fees may be refunded only if they have not been deposited with the relevant authority.
 Consultancy fees are charged based on work completed and are non-refundable once services have been rendered.
 Any eligible refund request must be submitted in writing within 7 working days of payment.</p>
-<p><strong>Force Majeure</strong><br>
-Instacertify Labs Pvt. Ltd. shall not be liable for delay or failure due to circumstances beyond reasonable control,
+"""
+
+FORCE_MAJEURE_HTML = """
+<p>Instacertify Labs Pvt. Ltd. shall not be liable for delay or failure due to circumstances beyond reasonable control,
 including natural disasters, government actions, regulatory changes, strikes, pandemics, war, civil unrest,
 transportation disruptions, laboratory delays, or certification authority actions. Affected timelines shall be extended accordingly.</p>
-<p><strong>Confidentiality & Data Protection</strong><br>
-Instacertify Labs Pvt. Ltd. shall maintain strict confidentiality of all documents, technical information, business data,
+"""
+
+CONFIDENTIALITY_HTML = """
+<p>Instacertify Labs Pvt. Ltd. shall maintain strict confidentiality of all documents, technical information, business data,
 and records shared by the Client. Information will be used solely for providing the agreed services and will not be disclosed
 except where required by law, regulatory authorities, laboratories, or certification bodies.</p>
 """
+
+POLICIES_HTML = (
+	"<p><strong>Cancellation & Refund Policy</strong></p>"
+	+ CANCELLATION_HTML
+	+ "<p><strong>Force Majeure</strong></p>"
+	+ FORCE_MAJEURE_HTML
+	+ "<p><strong>Confidentiality & Data Protection</strong></p>"
+	+ CONFIDENTIALITY_HTML
+)
 
 
 def has_app_permission():
@@ -440,6 +452,20 @@ Testing will be conducted as per the applicable standard requirements.</p>
 </ul>
 """,
 			"sample_handling_html": SAMPLE_HANDLING_HTML,
+			"about_header": "About",
+			"standards_header": "Applicable Standard",
+			"sample_requirements_header": "Sample Required",
+			"commercials_header": "Commercials",
+			"timeline_header": "Timeline",
+			"deliverables_header": "Deliverable",
+			"sample_handling_header": "Sample Handling and Disposal Policy",
+			"banking_header": "Banking Details",
+			"cancellation_header": "Cancellation and Refund Policy",
+			"cancellation_refund_html": CANCELLATION_HTML,
+			"force_majeure_header": "Force Majeure",
+			"force_majeure_html": FORCE_MAJEURE_HTML,
+			"confidentiality_header": "Confidentiality and Data Protection",
+			"confidentiality_html": CONFIDENTIALITY_HTML,
 			"policies_html": POLICIES_HTML,
 			"bank_detail": bank,
 		},
@@ -486,6 +512,20 @@ Additional samples may be requested by the BIS-recognized ISO/IEC 17025 accredit
 </ul>
 """,
 			"sample_handling_html": SAMPLE_HANDLING_HTML,
+			"about_header": "About",
+			"standards_header": "Applicable Standard",
+			"sample_requirements_header": "Sample Required",
+			"commercials_header": "Commercials",
+			"timeline_header": "Timeline",
+			"deliverables_header": "Deliverable",
+			"sample_handling_header": "Sample Handling and Disposal Policy",
+			"banking_header": "Banking Details",
+			"cancellation_header": "Cancellation and Refund Policy",
+			"cancellation_refund_html": CANCELLATION_HTML,
+			"force_majeure_header": "Force Majeure",
+			"force_majeure_html": FORCE_MAJEURE_HTML,
+			"confidentiality_header": "Confidentiality and Data Protection",
+			"confidentiality_html": CONFIDENTIALITY_HTML,
 			"policies_html": POLICIES_HTML,
 			"bank_detail": bank,
 		},

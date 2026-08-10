@@ -109,26 +109,45 @@ frappe.ui.form.on("IC Quote", {
 	template(frm) {
 		if (!frm.doc.template) return;
 		frappe.db.get_doc("IC Quote Template", frm.doc.template).then((t) => {
+			const sectionFields = [
+				"about_header",
+				"about_html",
+				"standards_header",
+				"standards_html",
+				"accreditation_html",
+				"sample_requirements_header",
+				"sample_requirements_html",
+				"commercials_header",
+				"deliverables_header",
+				"deliverables_html",
+				"timeline_header",
+				"timeline_html",
+				"payment_terms_html",
+				"sample_handling_header",
+				"sample_handling_html",
+				"banking_header",
+				"cancellation_header",
+				"cancellation_refund_html",
+				"force_majeure_header",
+				"force_majeure_html",
+				"confidentiality_header",
+				"confidentiality_html",
+				"policies_html",
+				"body_html",
+			];
 			const values = {
 				quote_type: t.quote_type || frm.doc.quote_type,
 				subject: t.subject,
 				service: t.service,
-				about_html: t.about_html,
-				standards_html: t.standards_html,
-				accreditation_html: t.accreditation_html,
-				sample_requirements_html: t.sample_requirements_html,
-				deliverables_html: t.deliverables_html,
-				timeline_html: t.timeline_html,
-				payment_terms_html: t.payment_terms_html,
-				sample_handling_html: t.sample_handling_html,
-				policies_html: t.policies_html,
-				body_html: t.body_html,
 				consulting_price: t.consulting_price,
 				testing_price: t.testing_price,
 				other_commercials: t.other_commercials,
 				other_commercials_note: t.other_commercials_note,
 				bank_detail: t.bank_detail,
 			};
+			sectionFields.forEach((field) => {
+				if (t[field] !== undefined && t[field] !== null) values[field] = t[field];
+			});
 			if (t.subject && !frm.doc.description) {
 				values.description = t.subject;
 			}
@@ -211,7 +230,14 @@ function recalc_testing(frm) {
 function toggle_quote_type(frm) {
 	const testing = frm.doc.quote_type === "Testing";
 	frm.toggle_display("testing_items", testing);
-	frm.toggle_display("section_testing", testing);
 	frm.toggle_display("consulting_price", !testing);
 	frm.toggle_display("accreditation_html", !testing);
+	if (testing) {
+		frm.dashboard.set_headline_alert(
+			__(
+				"Testing quote: use the numbered dropdown sections (About → Confidentiality). Edit each Section Header for the customer-facing title.",
+			),
+			"blue",
+		);
+	}
 }
