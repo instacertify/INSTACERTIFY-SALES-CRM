@@ -20,22 +20,28 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ReportsModule } from './reports/reports.module';
 import { AdminModule } from './admin/admin.module';
 
+const redisEnabled = process.env.ENABLE_REDIS === 'true';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env'],
+      envFilePath: ['.env', '../../.env'],
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        connection: {
-          host: config.get<string>('REDIS_HOST', 'localhost'),
-          port: Number(config.get<string>('REDIS_PORT', '6379')),
-        },
-      }),
-    }),
+    ...(redisEnabled
+      ? [
+          BullModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+              connection: {
+                host: config.get<string>('REDIS_HOST', 'localhost'),
+                port: Number(config.get<string>('REDIS_PORT', '6379')),
+              },
+            }),
+          }),
+        ]
+      : []),
     PrismaModule,
     CommonModule,
     AuthModule,

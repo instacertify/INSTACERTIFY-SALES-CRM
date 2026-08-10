@@ -2,6 +2,8 @@
 
 Project-centric certification CRM for Instacertify.
 
+**Deploy target: Hostinger VPS with PM2 + Nginx — no Docker.**
+
 ## Architecture
 
 ```text
@@ -11,7 +13,7 @@ CRM (modular monolith)
 └── packages/database   Prisma + PostgreSQL schema
 ```
 
-**Not microservices.** One NestJS app, one PostgreSQL database, Redis for queues/cache.
+One NestJS app + one PostgreSQL database. Redis is **optional** (`ENABLE_REDIS=false` by default) so Hostinger stays simple.
 
 ### Stack
 
@@ -19,79 +21,104 @@ CRM (modular monolith)
 |---|---|
 | Frontend | Next.js + TypeScript + Tailwind |
 | Backend | NestJS modular monolith |
-| Database | PostgreSQL |
+| Database | PostgreSQL (apt on VPS) |
 | ORM | Prisma |
-| Auth | JWT (Auth.js-ready; Nest issues tokens) |
-| Cache / jobs | Redis + BullMQ |
-| Files | Local now; S3-compatible ready (`storageKey`) |
-| Deploy | Docker Compose + Nginx/Caddy + Cloudflare |
+| Auth | JWT |
+| Process manager | PM2 |
+| Reverse proxy | Nginx (+ Cloudflare DNS optional) |
+| Deploy | **Hostinger VPS — no Docker** |
 
 ### Domain flow
 
 ```text
 LEAD → CUSTOMER → OPPORTUNITY → QUOTATION → PROJECT
-  → SERVICE / LAB / TESTING / DOCUMENTS → CERTIFICATION → DELIVERY → PAYMENT
+  → TESTING / SAMPLES / DOCUMENTS → CERTIFICATION → DELIVERY → PAYMENT
 ```
 
-A customer (e.g. Midea Vietnam) can own many projects (BIS, WPC, EPR, Testing…).  
-Each project holds products, manufacturer, applicant, standards, testing, samples, queries, fees, tasks, and renewal.
+## Hostinger deployment (recommended)
 
-## Quick start (local)
+Use a **Hostinger VPS** (Ubuntu 22.04/24.04). Shared hosting is not suitable for NestJS + PostgreSQL.
 
-### 1. Postgres + Redis
+### 1) One-time server setup
 
 ```bash
-# Postgres (example local)
-# user/pass/db: instacertify / instacertify / instacertify
-
-redis-server --daemonize yes
+# SSH into your Hostinger VPS, then:
+sudo apt-get update
+git clone <your-repo-url> /var/www/instacertify-crm
+cd /var/www/instacertify-crm
+bash scripts/hostinger-setup.sh
 ```
 
-Or:
+This installs Node 22, PostgreSQL, Nginx, and PM2 (**not Docker**), creates the DB, and configures Nginx:
+
+- `https://your-domain/` → Next.js (`:3000`)
+- `https://your-domain/api/` → NestJS (`:4000`)
+
+### 2) Configure env
 
 ```bash
-docker compose up -d postgres redis
+cd /var/www/instacertify-crm
+cp .env.example .env
+nano .env
 ```
 
-### 2. Install & seed
+Set at least:
+
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `CORS_ORIGIN=https://your-domain`
+- `NEXT_PUBLIC_API_URL=https://your-domain/api/v1`
+- `ENABLE_REDIS=false`
+
+### 3) Deploy / update
 
 ```bash
+cd /var/www/instacertify-crm
+git pull
+bash scripts/hostinger-deploy.sh
+```
+
+### 4) SSL (Let's Encrypt)
+
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d crm.instacertify.in
+```
+
+### Useful PM2 commands
+
+```bash
+pm2 status
+pm2 logs
+pm2 restart all
+```
+
+## Local development (also no Docker)
+
+```bash
+# PostgreSQL running locally (apt / Hostinger remote DB)
 cp .env.example .env
 npm install
 npm run db:setup
-```
-
-### 3. Run API + Web
-
-```bash
 npm run dev:api   # http://localhost:4000/api/v1
 npm run dev:web   # http://localhost:3000
 ```
 
-### Logins
+### Seed logins
 
 | Role | Email | Password |
 |---|---|---|
 | Admin | `admin@instacertify.in` | `Admin@123` |
 | Sales | `sales@instacertify.in` | `Sales@123` |
 
-## API modules (`apps/api`)
+## API modules
 
-`auth` · `users/employees` · `leads` · `customers/contacts` · `opportunities` · `quotations` · `projects` (control tower) · `tasks` · `certification` · `testing` · `samples` · `documents` · `invoices/payments` · `notifications` · `reports` · `admin`
+`auth` · `users` · `leads` · `customers` · `opportunities` · `quotations` · `projects` · `tasks` · `certification` · `testing` · `samples` · `documents` · `invoices` · `notifications` · `reports` · `admin`
 
 Health: `GET /api/v1/admin/health`
 
-## Seed demo account
-
-**Midea Vietnam** with BIS / WPC / EPR projects, testing order, sample shipment, and certification record.
-
-## Docker
-
-```bash
-docker compose up --build
-```
-
 ## Notes
 
-- `instacertify_crm/` is a legacy ERPNext experiment — not the production path.
-- Prefer growing Nest modules inside this monolith before extracting services.
+- **Do not use Docker** for this project’s Hostinger path — PM2 + Nginx is enough for a 3–10 person team.
+- Redis/BullMQ can be enabled later with `ENABLE_REDIS=true` if you need background jobs.
+- Legacy `instacertify_crm/` ERPNext folder is not used for production.
