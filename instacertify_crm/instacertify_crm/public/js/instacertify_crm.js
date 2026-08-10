@@ -204,7 +204,7 @@ instacertify_crm.render_customer_lifecycle = function (data) {
 		.slice(0, 25)
 		.map((t) => {
 			const file = t.attachment
-				? ` <a href="${frappe.utils.escape_html(t.attachment)}" target="_blank">📎</a>`
+				? ` · <a href="${frappe.utils.escape_html(t.attachment)}" target="_blank">${__("File")}</a>`
 				: "";
 			const link = t.link
 				? `<a href="${frappe.utils.escape_html(t.link)}">${frappe.utils.escape_html(t.title || "")}</a>`

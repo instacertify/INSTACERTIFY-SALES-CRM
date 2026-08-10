@@ -50,11 +50,14 @@ def ensure_project_for_quote(quote_name: str):
 		)
 	if project_name:
 		project = frappe.get_doc("IC Customer Project", project_name)
+		updates = {}
 		if not project.primary_quote:
-			project.primary_quote = quote.name
-		if quote.service:
-			project.service = project.service or quote.service
-		project.save(ignore_permissions=True)
+			updates["primary_quote"] = quote.name
+		if quote.service and not project.service:
+			updates["service"] = quote.service
+		if updates:
+			project.db_set(updates, update_modified=False)
+			project.reload()
 		return project
 
 	title = f"{quote.company} — {quote.subject or quote.service or quote.name}"
