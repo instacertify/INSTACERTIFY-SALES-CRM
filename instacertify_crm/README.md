@@ -21,6 +21,8 @@ Verified against:
 - After accept: **select documents** and share upload link `/d/<token>`
 - Final report ready portal `/r/<token>`
 - **Customer lifecycle** — projects, delivery records, reports shared, customer data received, and project remarks
+- **Certification renewal reminders** — check 6 months / 1 year / custom date when marking service delivered
+- **Lead cost** — default ₹800 per lead (editable); IC Admin **Lead Cost Spend** report for total acquisition spend
 - Testing library — purchase price admin-only; customers only see selling price
 
 ## Install on an ERPNext 16 bench
@@ -85,8 +87,14 @@ Track everything delivered to / received from the customer across the engagement
 
 - On Lead / Quote: **Customer Lifecycle**, **Open / Create Project**, **Log Delivery Record**
 - On accepted Quote: **Mark Service Delivered** (creates delivery + sets project to Delivered)
+- When marking delivered, check/uncheck **Remind in 6 months**, **Remind in 1 year**, or set a **custom date** for certification renewal
+- Daily job notifies assignees for due renewals (`IC Renewal Reminder`)
 - Reports marked Ready and customer document uploads are logged automatically
-- Workspace shortcuts: **Customer Projects**, **Delivery Records**
+- Workspace shortcuts: **Customer Projects**, **Delivery Records**, **Renewal Reminders**, **Lead Cost Spend**
+
+### Lead cost
+
+Every **IC Lead** has **Lead Cost** (default **₹800**, overridable). Change the sitewide default in **IC Settings → Default Lead Cost**. IC Admins open **Lead Cost Spend** to see totals by source, assignee, status, or month.
 
 ## Requirements
 

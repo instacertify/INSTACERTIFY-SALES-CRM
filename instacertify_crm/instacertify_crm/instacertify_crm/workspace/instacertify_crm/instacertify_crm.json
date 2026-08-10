@@ -7,7 +7,7 @@
  "public": 1,
  "is_hidden": 0,
  "sequence_id": 20.0,
- "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Projects\",\"col\":3}},{\"id\":\"ic_deliveries\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Records\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_settings\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branding / Logo\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}}]",
+ "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Projects\",\"col\":3}},{\"id\":\"ic_deliveries\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Records\",\"col\":3}},{\"id\":\"ic_renewals\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Renewal Reminders\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_settings\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branding / Logo\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}},{\"id\":\"ic_cost\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lead Cost Spend\",\"col\":3}}]",
  "shortcuts": [
   {
    "label": "IC Leads",
@@ -37,6 +37,12 @@
   {
    "label": "Delivery Records",
    "link_to": "IC Delivery Record",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Renewal Reminders",
+   "link_to": "IC Renewal Reminder",
    "type": "DocType",
    "doc_view": "List"
   },
@@ -81,6 +87,12 @@
    "link_to": "IC Team Lead Workload",
    "type": "Report",
    "doc_view": "Report"
+  },
+  {
+   "label": "Lead Cost Spend",
+   "link_to": "IC Lead Cost Spend",
+   "type": "Report",
+   "doc_view": "Report"
   }
  ],
  "links": [
@@ -117,6 +129,12 @@
    "type": "Link"
   },
   {
+   "label": "IC Renewal Reminder",
+   "link_to": "IC Renewal Reminder",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
    "label": "Admin",
    "type": "Card Break"
   },
@@ -129,6 +147,13 @@
   {
    "label": "IC Team Lead Workload",
    "link_to": "IC Team Lead Workload",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "IC Lead Cost Spend",
+   "link_to": "IC Lead Cost Spend",
    "link_type": "Report",
    "type": "Link",
    "is_query_report": 1

@@ -49,10 +49,12 @@ class ICDeliveryRecord(Document):
 
 	def on_update(self):
 		_touch_project(self)
+		_schedule_renewals(self)
 
 	def after_insert(self):
 		_touch_project(self)
 		_append_project_remark(self)
+		_schedule_renewals(self)
 
 
 def _touch_project(doc):
@@ -82,3 +84,31 @@ def _append_project_remark(doc):
 	)
 	project.flags.ignore_validate_update_after_submit = True
 	project.save(ignore_permissions=True)
+
+
+def _schedule_renewals(doc):
+	if not (doc.remind_6_months or doc.remind_1_year or doc.custom_renewal_on):
+		return
+	assigned = None
+	if doc.lead:
+		assigned = frappe.db.get_value("IC Lead", doc.lead, "assigned_to")
+	from instacertify_crm.instacertify_crm.doctype.ic_renewal_reminder.ic_renewal_reminder import (
+		schedule_renewal_reminders,
+	)
+
+	schedule_renewal_reminders(
+		delivery=doc.name,
+		quote=doc.quote,
+		lead=doc.lead,
+		project=doc.project,
+		service=doc.service,
+		customer_name=doc.customer_name,
+		company=doc.company,
+		email=doc.email,
+		assigned_to=assigned or doc.delivered_by,
+		remind_6_months=doc.remind_6_months,
+		remind_1_year=doc.remind_1_year,
+		custom_renewal_on=doc.custom_renewal_on,
+		base_date=doc.delivered_on,
+		notes=doc.remarks,
+	)

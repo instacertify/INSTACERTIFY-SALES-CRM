@@ -239,8 +239,15 @@ def get_customer_lifecycle(
 
 
 @frappe.whitelist(methods=["POST"])
-def mark_service_delivered(quote: str, remarks: str | None = None, attachment: str | None = None):
-	"""Mark accepted quote service as delivered and log a delivery record."""
+def mark_service_delivered(
+	quote: str,
+	remarks: str | None = None,
+	attachment: str | None = None,
+	remind_6_months: int | bool = 0,
+	remind_1_year: int | bool = 1,
+	custom_renewal_on: str | None = None,
+):
+	"""Mark accepted quote service as delivered and optionally schedule renewal reminders."""
 	frappe.has_permission("IC Delivery Record", "create", throw=True)
 	quote_doc = frappe.get_doc("IC Quote", quote)
 	if quote_doc.status not in {"Accepted", "Delivered"}:
@@ -264,6 +271,9 @@ def mark_service_delivered(quote: str, remarks: str | None = None, attachment: s
 		attachment=attachment,
 		remarks=remarks,
 		status="Shared",
+		remind_6_months=remind_6_months,
+		remind_1_year=remind_1_year,
+		custom_renewal_on=custom_renewal_on,
 		dedupe_key={
 			"quote": quote_doc.name,
 			"delivery_type": "Quote Service Delivered",
@@ -274,7 +284,34 @@ def mark_service_delivered(quote: str, remarks: str | None = None, attachment: s
 		project.db_set("last_activity_on", now_datetime(), update_modified=False)
 	if quote_doc.status != "Delivered":
 		quote_doc.db_set("status", "Delivered", update_modified=True)
-	return {"delivery": record.name, "project": project.name}
+
+	renewals = frappe.get_all(
+		"IC Renewal Reminder",
+		filters={"delivery_record": record.name, "status": ["in", ["Scheduled", "Notified"]]},
+		pluck="name",
+	)
+	return {"delivery": record.name, "project": project.name, "renewals": renewals}
+
+
+@frappe.whitelist(methods=["GET"])
+def get_lead_cost_spend(
+	group_by: str = "Lead Source",
+	from_date: str | None = None,
+	to_date: str | None = None,
+):
+	"""Admin view: total lead acquisition cost spend."""
+	roles = set(frappe.get_roles())
+	if not roles.intersection({"IC Admin", "System Manager"}):
+		frappe.throw(_("Only IC Admin can view lead cost spend"), frappe.PermissionError)
+
+	from instacertify_crm.instacertify_crm.report.ic_lead_cost_spend.ic_lead_cost_spend import (
+		execute,
+	)
+
+	_columns, rows, _message, chart, summary = execute(
+		{"group_by": group_by or "Lead Source", "from_date": from_date, "to_date": to_date}
+	)
+	return {"rows": rows, "chart": chart, "summary": summary, "group_by": group_by}
 
 
 @frappe.whitelist(methods=["POST"])

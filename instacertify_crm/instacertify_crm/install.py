@@ -103,6 +103,7 @@ def after_install():
 def after_migrate():
 	ensure_roles()
 	seed_masters()
+	_backfill_lead_costs()
 	frappe.clear_cache()
 
 
@@ -166,6 +167,21 @@ def seed_masters():
 	_seed_quote_templates()
 
 
+def _backfill_lead_costs():
+	"""Ensure existing leads have the default acquisition cost (₹800)."""
+	if not frappe.db.exists("DocType", "IC Lead") or not frappe.db.has_column("IC Lead", "lead_cost"):
+		return
+	default_cost = frappe.db.get_single_value("IC Settings", "default_lead_cost") or 800
+	frappe.db.sql(
+		"""
+		UPDATE `tabIC Lead`
+		SET lead_cost = %(cost)s
+		WHERE lead_cost IS NULL
+		""",
+		{"cost": default_cost},
+	)
+
+
 def _seed_settings():
 	if not frappe.db.exists("DocType", "IC Settings"):
 		return
@@ -182,6 +198,7 @@ def _seed_settings():
 		"cin": "UP74999UP2022PTC170291",
 		"apply_logo_sitewide": 1,
 		"apply_letter_head": 1,
+		"default_lead_cost": 800,
 	}
 	for key, value in defaults.items():
 		if not settings.get(key):

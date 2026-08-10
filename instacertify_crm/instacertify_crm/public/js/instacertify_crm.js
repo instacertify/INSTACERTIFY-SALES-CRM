@@ -165,6 +165,7 @@ instacertify_crm.render_customer_lifecycle = function (data) {
 				[__("Delivered to customer"), totals.deliveries_to_customer || 0],
 				[__("Data from customer"), totals.data_from_customer || 0],
 				[__("Reports"), totals.reports || 0],
+				[__("Renewals"), totals.renewals || 0],
 				[__("Remarks"), totals.remarks || 0],
 			]
 				.map(
@@ -291,11 +292,36 @@ instacertify_crm.mark_service_delivered_dialog = function (quote) {
 				fieldtype: "HTML",
 				fieldname: "help",
 				options: `<p class="text-muted">${__(
-					"Logs a delivery record for this quote and updates the customer project lifecycle.",
+					"Logs delivery, updates the project, and optionally schedules certification renewal reminders.",
 				)}</p>`,
 			},
 			{ fieldname: "remarks", label: __("Delivery remarks"), fieldtype: "Small Text" },
 			{ fieldname: "attachment", label: __("Proof / deliverable file"), fieldtype: "Attach" },
+			{
+				fieldtype: "Section Break",
+				label: __("Certification renewal reminders"),
+				description: __(
+					"Check when you want to be reminded to renew this certification. Uncheck any you do not need.",
+				),
+			},
+			{
+				fieldname: "remind_6_months",
+				label: __("Remind in 6 months"),
+				fieldtype: "Check",
+				default: 0,
+			},
+			{
+				fieldname: "remind_1_year",
+				label: __("Remind in 1 year"),
+				fieldtype: "Check",
+				default: 1,
+			},
+			{
+				fieldname: "custom_renewal_on",
+				label: __("Custom reminder date"),
+				fieldtype: "Date",
+				description: __("Optional — e.g. a specific renewal due date."),
+			},
 		],
 		primary_action_label: __("Mark delivered"),
 		primary_action(values) {
@@ -305,11 +331,20 @@ instacertify_crm.mark_service_delivered_dialog = function (quote) {
 					quote: quote.name || quote,
 					remarks: values.remarks,
 					attachment: values.attachment,
+					remind_6_months: values.remind_6_months ? 1 : 0,
+					remind_1_year: values.remind_1_year ? 1 : 0,
+					custom_renewal_on: values.custom_renewal_on || null,
 				},
 				freeze: true,
 				callback(r) {
 					d.hide();
-					frappe.show_alert({ message: __("Service delivery logged"), indicator: "green" });
+					const renewals = (r.message && r.message.renewals) || [];
+					frappe.show_alert({
+						message: renewals.length
+							? __("Service delivered — {0} renewal reminder(s) scheduled", [renewals.length])
+							: __("Service delivery logged"),
+						indicator: "green",
+					});
 					if (r.message?.delivery) {
 						frappe.set_route("Form", "IC Delivery Record", r.message.delivery);
 					}
@@ -318,6 +353,67 @@ instacertify_crm.mark_service_delivered_dialog = function (quote) {
 		},
 	});
 	d.show();
+};
+
+instacertify_crm.show_lead_cost_spend = function () {
+	if (!instacertify_crm.is_admin()) {
+		frappe.msgprint(__("Only IC Admin can view lead cost spend"));
+		return;
+	}
+	frappe.call({
+		method: "instacertify_crm.api.get_lead_cost_spend",
+		args: { group_by: "Lead Source" },
+		freeze: true,
+		callback(r) {
+			const data = r.message || {};
+			const summary = (data.summary || [])
+				.map(
+					(s) =>
+						`<div style="min-width:140px"><div class="text-muted">${frappe.utils.escape_html(
+							s.label || "",
+						)}</div><div style="font-size:20px;font-weight:700">${
+							s.datatype === "Currency" ? format_currency(s.value) : s.value ?? 0
+						}</div></div>`,
+				)
+				.join("");
+			const rows = (data.rows || [])
+				.map(
+					(row) => `<tr>
+					<td>${frappe.utils.escape_html(row.group_label || "")}</td>
+					<td class="text-right">${row.lead_count || 0}</td>
+					<td class="text-right"><strong>${format_currency(row.total_cost)}</strong></td>
+					<td class="text-right">${format_currency(row.avg_cost)}</td>
+				</tr>`,
+				)
+				.join("");
+			const html = `
+				<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px">${summary}</div>
+				<table class="table table-bordered">
+					<thead><tr>
+						<th>${__("Group")}</th>
+						<th class="text-right">${__("Leads")}</th>
+						<th class="text-right">${__("Total Cost")}</th>
+						<th class="text-right">${__("Avg")}</th>
+					</tr></thead>
+					<tbody>${
+						rows ||
+						`<tr><td colspan="4" class="text-muted">${__("No leads found.")}</td></tr>`
+					}</tbody>
+				</table>`;
+			const d = new frappe.ui.Dialog({
+				title: __("Lead cost spend"),
+				size: "large",
+				fields: [{ fieldtype: "HTML", fieldname: "body" }],
+				primary_action_label: __("Open full report"),
+				primary_action() {
+					d.hide();
+					frappe.set_route("query-report", "IC Lead Cost Spend");
+				},
+			});
+			d.fields_dict.body.$wrapper.html(html);
+			d.show();
+		},
+	});
 };
 
 instacertify_crm.create_document_request_dialog = function (quote) {

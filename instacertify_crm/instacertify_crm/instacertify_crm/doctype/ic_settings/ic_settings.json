@@ -28,6 +28,8 @@
   "column_break_2",
   "address_line",
   "cin",
+  "section_costs",
+  "default_lead_cost",
   "section_help",
   "help_html"
  ],
@@ -138,6 +140,18 @@
    "default": "UP74999UP2022PTC170291"
   },
   {
+   "fieldname": "section_costs",
+   "label": "Lead Cost Defaults",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "default_lead_cost",
+   "label": "Default Lead Cost (INR)",
+   "fieldtype": "Currency",
+   "default": "800",
+   "description": "Applied to new leads when Lead Cost is blank. Admins track total spend in Lead Cost Spend report."
+  },
+  {
    "fieldname": "section_help",
    "fieldtype": "Section Break"
   },
@@ -145,7 +159,7 @@
    "fieldname": "help_html",
    "label": "How it works",
    "fieldtype": "HTML",
-   "options": "<p>Upload <b>Company Logo</b> (and optional <b>Letterhead Logo</b>). Saving applies branding to:</p><ul><li>Quote print letterhead</li><li>Public quote / document / report pages</li><li>Website Settings (if enabled)</li><li>Frappe Letter Head “Instacertify” (if enabled)</li></ul>"
+   "options": "<p>Upload <b>Company Logo</b> (and optional <b>Letterhead Logo</b>). Saving applies branding to:</p><ul><li>Quote print letterhead</li><li>Public quote / document / report pages</li><li>Website Settings (if enabled)</li><li>Frappe Letter Head “Instacertify” (if enabled)</li></ul><p>Set <b>Default Lead Cost</b> (₹800 by default). Edit per lead anytime; admins open <b>Lead Cost Spend</b> for totals.</p>"
   }
  ],
  "permissions": [

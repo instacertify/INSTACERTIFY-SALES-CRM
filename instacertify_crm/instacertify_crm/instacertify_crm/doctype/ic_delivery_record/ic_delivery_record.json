@@ -34,6 +34,10 @@
   "attachment",
   "linked_report",
   "linked_document_request",
+  "section_renewal",
+  "remind_6_months",
+  "remind_1_year",
+  "custom_renewal_on",
   "section_remarks",
   "remarks"
  ],
@@ -175,6 +179,30 @@
    "fieldtype": "Link",
    "options": "IC Document Request",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_renewal",
+   "label": "Certification Renewal Reminders",
+   "fieldtype": "Section Break",
+   "description": "Set when marking service delivered — remind for next certification / renewal cycle."
+  },
+  {
+   "fieldname": "remind_6_months",
+   "label": "Remind in 6 Months",
+   "fieldtype": "Check",
+   "default": "0"
+  },
+  {
+   "fieldname": "remind_1_year",
+   "label": "Remind in 1 Year",
+   "fieldtype": "Check",
+   "default": "1"
+  },
+  {
+   "fieldname": "custom_renewal_on",
+   "label": "Custom Reminder Date",
+   "fieldtype": "Date",
+   "description": "Optional extra date (in addition to 6 months / 1 year)."
   },
   {
    "fieldname": "section_remarks",

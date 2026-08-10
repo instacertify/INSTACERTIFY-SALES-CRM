@@ -26,12 +26,30 @@ def log_delivery(
 	status: str = "Logged",
 	delivered_on=None,
 	dedupe_key: dict | None = None,
+	remind_6_months: int | bool = 0,
+	remind_1_year: int | bool = 0,
+	custom_renewal_on=None,
 ):
 	"""Create an IC Delivery Record unless a matching one already exists."""
 	if dedupe_key:
 		existing = frappe.db.exists("IC Delivery Record", dedupe_key)
 		if existing:
-			return frappe.get_doc("IC Delivery Record", existing)
+			doc = frappe.get_doc("IC Delivery Record", existing)
+			# Allow updating renewal options when re-marking delivered
+			changed = False
+			for field, value in {
+				"remind_6_months": 1 if remind_6_months else 0,
+				"remind_1_year": 1 if remind_1_year else 0,
+				"custom_renewal_on": custom_renewal_on,
+				"remarks": remarks or doc.remarks,
+				"attachment": attachment or doc.attachment,
+			}.items():
+				if value is not None and doc.get(field) != value:
+					doc.set(field, value)
+					changed = True
+			if changed:
+				doc.save(ignore_permissions=True)
+			return doc
 
 	if quote and not project:
 		from instacertify_crm.instacertify_crm.doctype.ic_customer_project.ic_customer_project import (
@@ -58,6 +76,9 @@ def log_delivery(
 			"linked_document_request": linked_document_request,
 			"delivered_on": delivered_on or now_datetime(),
 			"delivered_by": frappe.session.user,
+			"remind_6_months": 1 if remind_6_months else 0,
+			"remind_1_year": 1 if remind_1_year else 0,
+			"custom_renewal_on": custom_renewal_on,
 		}
 	)
 	doc.insert(ignore_permissions=True)
@@ -388,6 +409,41 @@ def build_lifecycle(lead: str | None = None, project: str | None = None, email: 
 			}
 		)
 
+	renewal_filters = {}
+	if project:
+		renewal_filters["project"] = project
+	elif lead:
+		renewal_filters["lead"] = lead
+	renewals = (
+		frappe.get_all(
+			"IC Renewal Reminder",
+			filters=renewal_filters,
+			fields=[
+				"name",
+				"title",
+				"interval_label",
+				"remind_on",
+				"status",
+				"service",
+				"creation",
+			],
+			order_by="remind_on asc",
+			limit_page_length=50,
+		)
+		if renewal_filters and frappe.db.exists("DocType", "IC Renewal Reminder")
+		else []
+	)
+	for ren in renewals:
+		timeline.append(
+			{
+				"when": ren.remind_on or ren.creation,
+				"kind": f"Renewal · {ren.interval_label}",
+				"title": ren.title,
+				"detail": f"{ren.status}" + (f" · {ren.service}" if ren.service else ""),
+				"link": f"/app/ic-renewal-reminder/{ren.name}",
+			}
+		)
+
 	timeline = [t for t in timeline if t.get("when")]
 	timeline.sort(key=lambda t: get_datetime(t["when"]), reverse=True)
 
@@ -404,6 +460,7 @@ def build_lifecycle(lead: str | None = None, project: str | None = None, email: 
 		"reports": reports,
 		"document_requests": docreqs,
 		"remarks": remarks[:50],
+		"renewals": renewals,
 		"timeline": timeline[:100],
 		"totals": {
 			"quotes": len(quotes),
@@ -412,5 +469,6 @@ def build_lifecycle(lead: str | None = None, project: str | None = None, email: 
 			"data_from_customer": len([d for d in deliveries if d.direction == "From Customer"]),
 			"reports": len(reports),
 			"remarks": len(remarks),
+			"renewals": len(renewals),
 		},
 	}

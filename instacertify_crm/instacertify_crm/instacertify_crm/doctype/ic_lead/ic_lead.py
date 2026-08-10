@@ -3,12 +3,17 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt
 
 
 class ICLead(Document):
 	def validate(self):
 		if self.country == "India" and not self.state:
 			frappe.throw("State is required when Country is India")
+		if self.lead_cost is None or self.lead_cost == "":
+			default_cost = frappe.db.get_single_value("IC Settings", "default_lead_cost")
+			self.lead_cost = flt(default_cost) if default_cost not in (None, "") else 800
+		self.lead_cost = flt(self.lead_cost)
 
 	def on_update(self):
 		_sync_last_contact(self)

@@ -57,5 +57,6 @@ doc_events = {
 scheduler_events = {
 	"daily": [
 		"instacertify_crm.tasks.send_followup_reminders",
+		"instacertify_crm.tasks.send_renewal_reminders",
 	],
 }

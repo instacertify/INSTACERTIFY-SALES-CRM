@@ -53,6 +53,9 @@ frappe.ui.form.on("IC Lead", {
 				frm.add_custom_button(__("Team Workload"), () => {
 					frappe.set_route("query-report", "IC Team Lead Workload");
 				});
+				frm.add_custom_button(__("Lead Cost Spend"), () => {
+					frappe.set_route("query-report", "IC Lead Cost Spend");
+				});
 			}
 			load_history_section(frm);
 		}
@@ -63,7 +66,7 @@ frappe.ui.form.on("IC Lead", {
 });
 
 frappe.listview_settings["IC Lead"] = {
-	add_fields: ["assigned_to", "status", "follow_up_on"],
+	add_fields: ["assigned_to", "status", "follow_up_on", "lead_cost"],
 	hide_name_column: false,
 	onload(listview) {
 		if (frappe.user.has_role("IC Admin") || frappe.user.has_role("System Manager")) {
@@ -72,6 +75,9 @@ frappe.listview_settings["IC Lead"] = {
 			});
 			listview.page.add_inner_button(__("Workload Snapshot"), () => {
 				instacertify_crm.show_team_workload();
+			});
+			listview.page.add_inner_button(__("Lead Cost Spend"), () => {
+				instacertify_crm.show_lead_cost_spend();
 			});
 		}
 	},
