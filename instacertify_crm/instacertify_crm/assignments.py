@@ -30,16 +30,14 @@ def _notify_assignment(*, doctype: str, name: str, subject: str, message: str, a
 	targets.discard(frappe.session.user)
 
 	for user in targets:
-		if not user or user == "Administrator":
-			# Still notify Administrator if they are the assignee
-			if user != assignee:
-				continue
+		if not user or user == "Guest":
+			continue
 		try:
 			if not frappe.db.get_value("User", user, "enabled"):
 				continue
 			note = frappe.new_doc("Notification Log")
 			note.for_user = user
-			note.type = "Assignment"
+			note.type = "Alert"
 			note.document_type = doctype
 			note.document_name = name
 			note.subject = subject
@@ -53,24 +51,18 @@ def _notify_assignment(*, doctype: str, name: str, subject: str, message: str, a
 def assign_project(project: str, user: str | None = None):
 	"""Assign (or unassign) an IC Customer Project. Any IC user may assign; admin always can."""
 	_assert_can_assign()
-	if not frappe.has_permission("IC Customer Project", "write") and not is_ic_admin():
-		# Fallback: admin can always assign even if something blocks the user
-		if not is_ic_admin():
-			frappe.throw(
-				_("You cannot assign this project. Ask an IC Admin to assign it."),
-				frappe.PermissionError,
-			)
-
 	doc = frappe.get_doc("IC Customer Project", project)
-	# Admins bypass; sales ops need write — already checked above for non-admin
-	if not is_ic_admin():
-		doc.check_permission("write")
+	can_write = frappe.has_permission("IC Customer Project", "write", doc=doc)
+	if not can_write and not is_ic_admin():
+		frappe.throw(
+			_("You cannot assign this project. Ask an IC Admin to assign it."),
+			frappe.PermissionError,
+		)
 
 	old = doc.assigned_to
 	new = user or None
-	if new:
-		if not frappe.db.exists("User", new) or not frappe.db.get_value("User", new, "enabled"):
-			frappe.throw(_("Select an enabled user"))
+	if new and (not frappe.db.exists("User", new) or not frappe.db.get_value("User", new, "enabled")):
+		frappe.throw(_("Select an enabled user"))
 	doc.assigned_to = new
 	doc.last_activity_on = now_datetime()
 	doc.append(
@@ -86,10 +78,9 @@ def assign_project(project: str, user: str | None = None):
 			),
 		},
 	)
-	doc.save(ignore_permissions=is_ic_admin())
+	doc.save(ignore_permissions=not can_write)
 
-	# Keep linked lead in sync when possible
-	if doc.lead and frappe.has_permission("IC Lead", "write"):
+	if doc.lead:
 		try:
 			frappe.db.set_value("IC Lead", doc.lead, "assigned_to", new, update_modified=True)
 		except Exception:
@@ -117,20 +108,20 @@ def assign_lead(lead: str, user: str | None = None):
 	"""Assign an IC Lead. Any IC user may assign; admin always can."""
 	_assert_can_assign()
 	doc = frappe.get_doc("IC Lead", lead)
-	if not is_ic_admin():
-		doc.check_permission("write")
-	else:
-		# admin fallback
-		pass
+	can_write = frappe.has_permission("IC Lead", "write", doc=doc)
+	if not can_write and not is_ic_admin():
+		frappe.throw(
+			_("You cannot assign this lead. Ask an IC Admin to assign it."),
+			frappe.PermissionError,
+		)
 
 	old = doc.assigned_to
 	new = user or None
 	if new and (not frappe.db.exists("User", new) or not frappe.db.get_value("User", new, "enabled")):
 		frappe.throw(_("Select an enabled user"))
 	doc.assigned_to = new
-	doc.save(ignore_permissions=is_ic_admin())
+	doc.save(ignore_permissions=not can_write)
 
-	# Sync open project assignment
 	project = frappe.db.get_value(
 		"IC Customer Project",
 		{"lead": doc.name, "status": ["not in", ["Closed", "Lost"]]},
