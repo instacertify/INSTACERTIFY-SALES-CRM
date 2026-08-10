@@ -37,26 +37,16 @@ def _notify_admins_on_assignment_change(doc):
 	if old_assignee == new_assignee and old_status == new_status:
 		return
 
-	admins = set(
-		frappe.get_all(
-			"Has Role",
-			filters={
-				"role": ["in", ["IC Admin", "System Manager"]],
-				"parenttype": "User",
-			},
-			pluck="parent",
-		)
-	)
+	from frappe.utils.user import get_users_with_role
+
+	admins = set(get_users_with_role("IC Admin")) | set(get_users_with_role("System Manager"))
 	admins.discard("Administrator")
 	admins.discard("Guest")
 	admins.discard(frappe.session.user)
 	admins = {
 		user
 		for user in admins
-		if frappe.db.exists(
-			"User",
-			{"name": user, "enabled": 1, "user_type": "System User"},
-		)
+		if frappe.db.get_value("User", user, "enabled") and user != "Administrator"
 	}
 
 	if not admins:
