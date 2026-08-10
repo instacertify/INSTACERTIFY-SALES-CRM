@@ -456,10 +456,11 @@ Testing will be conducted as per the applicable standard requirements.</p>
 			"standards_header": "Applicable Standard",
 			"sample_requirements_header": "Sample Required",
 			"commercials_header": "Commercials",
+			"payment_terms_header": "Payment Terms",
 			"timeline_header": "Timeline",
 			"deliverables_header": "Deliverable",
 			"sample_handling_header": "Sample Handling and Disposal Policy",
-			"banking_header": "Banking Details",
+			"banking_header": "Our Banking Details",
 			"cancellation_header": "Cancellation and Refund Policy",
 			"cancellation_refund_html": CANCELLATION_HTML,
 			"force_majeure_header": "Force Majeure",
@@ -511,15 +512,22 @@ Additional samples may be requested by the BIS-recognized ISO/IEC 17025 accredit
 <li>18% GST shall be applicable extra as per prevailing government taxation norms</li>
 </ul>
 """,
+			"timeline_html": """
+<ul>
+<li><strong>Estimated Timeline:</strong> 5–7 working days after sample receipt and payment confirmation</li>
+<li>Timeline may vary depending on laboratory scheduling and sample condition</li>
+</ul>
+""",
 			"sample_handling_html": SAMPLE_HANDLING_HTML,
-			"about_header": "About",
+			"about_header": "About Service",
 			"standards_header": "Applicable Standard",
-			"sample_requirements_header": "Sample Required",
+			"sample_requirements_header": "Samples Required",
 			"commercials_header": "Commercials",
+			"payment_terms_header": "Payment Terms",
 			"timeline_header": "Timeline",
 			"deliverables_header": "Deliverable",
 			"sample_handling_header": "Sample Handling and Disposal Policy",
-			"banking_header": "Banking Details",
+			"banking_header": "Our Banking Details",
 			"cancellation_header": "Cancellation and Refund Policy",
 			"cancellation_refund_html": CANCELLATION_HTML,
 			"force_majeure_header": "Force Majeure",

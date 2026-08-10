@@ -15,19 +15,36 @@ class ICQuote(Document):
 		self.quote_number = self.quote_number or self.name
 		self.quote_type = self.quote_type or "Testing"
 		apply_default_headers(self)
-		if self.testing_items:
-			for row in self.testing_items:
-				units = flt(row.units) or 1
-				if flt(row.per_unit_charges):
-					row.selling_price = units * flt(row.per_unit_charges)
-			self.testing_price = sum(flt(row.selling_price) for row in self.testing_items)
-		self.total_revenue = (
-			flt(self.consulting_price) + flt(self.testing_price) + flt(self.other_commercials)
-		)
+		self._recalc_commercials()
 		if self.bank_detail and not self.bank_snapshot:
 			self.bank_snapshot = bank_detail_to_text(self.bank_detail)
 		if self.public_token:
 			self.public_url = get_url(f"/q/{self.public_token}")
+
+	def _recalc_commercials(self):
+		if self.quote_type == "Testing":
+			if self.testing_items:
+				for row in self.testing_items:
+					units = flt(row.units) or 1
+					if flt(row.per_unit_charges):
+						row.selling_price = units * flt(row.per_unit_charges)
+				self.testing_price = sum(flt(row.selling_price) for row in self.testing_items)
+			else:
+				self.testing_price = flt(self.testing_price)
+			self.consulting_price = flt(self.consulting_price)
+			self.government_fees_total = 0
+		else:
+			# Service: multi-row consulting, government fees, testing charges
+			self.consulting_price = sum(flt(row.amount) for row in self.consulting_items or [])
+			self.government_fees_total = sum(flt(row.amount) for row in self.government_fees or [])
+			self.testing_price = sum(flt(row.amount) for row in self.service_testing_charges or [])
+
+		self.total_revenue = (
+			flt(self.consulting_price)
+			+ flt(self.government_fees_total)
+			+ flt(self.testing_price)
+			+ flt(self.other_commercials)
+		)
 
 	def before_insert(self):
 		if not self.public_token:

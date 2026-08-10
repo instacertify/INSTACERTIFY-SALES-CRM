@@ -13,12 +13,14 @@
   table.ic th, table.ic td { border:1px solid #d7e2ea; padding:8px 10px; text-align:left; vertical-align:top; }
   table.ic th { background:#f3f7fa; color:#0A4A6C; }
   h3 { color:#0A4A6C; margin:18px 0 6px; font-size:14px; border-left:3px solid #EB7D2D; padding-left:8px; }
+  h4 { color:#0A4A6C; margin:12px 0 6px; font-size:12.5px; }
   .ic-section { margin-bottom:4px; }
   .ic-footer { margin-top:28px; border-top:1px solid #d7e2ea; padding-top:10px; color:#5F5E6B; font-size:11px; }
   pre.ic-bank { white-space:pre-wrap; font-family:inherit; background:#f8fbfd; border:1px solid #d7e2ea; border-radius:8px; padding:12px; }
 </style>
 {% set branding = frappe.get_attr("instacertify_crm.instacertify_crm.doctype.ic_settings.ic_settings.get_branding")() %}
 {% set logo = branding.letterhead_logo_url or branding.company_logo_url %}
+{% set is_service = doc.quote_type == 'Service' %}
 <div class="ic-print">
   <div class="ic-top">
     <div>
@@ -28,7 +30,7 @@
       <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
       <div class="ic-tag">{{ branding.tagline }}</div>
       <div class="ic-tag">{{ branding.legal_name }}</div>
-      <div class="ic-badge {% if doc.quote_type == 'Service' %}service{% endif %}">
+      <div class="ic-badge {% if is_service %}service{% endif %}">
         {{ doc.quote_type or "Testing" }} Quotation
       </div>
     </div>
@@ -56,7 +58,7 @@
   <p><strong>{{ doc.subject or doc.service }}</strong><br>{{ doc.description }}</p>
 
   {% if doc.about_html %}
-  <div class="ic-section"><h3>{{ doc.about_header or "About" }}</h3><div>{{ doc.about_html | safe }}</div></div>
+  <div class="ic-section"><h3>{{ doc.about_header or ("About Service" if is_service else "About") }}</h3><div>{{ doc.about_html | safe }}</div></div>
   {% endif %}
 
   {% if doc.standards_html %}
@@ -67,7 +69,11 @@
   <div class="ic-section"><h3>Accreditation</h3><div>{{ doc.accreditation_html | safe }}</div></div>
   {% endif %}
 
-  {% if doc.sample_requirements_html %}
+  {% if is_service and doc.timeline_html %}
+  <div class="ic-section"><h3>{{ doc.timeline_header or "Timeline" }}</h3><div>{{ doc.timeline_html | safe }}</div></div>
+  {% endif %}
+
+  {% if not is_service and doc.sample_requirements_html %}
   <div class="ic-section"><h3>{{ doc.sample_requirements_header or "Sample Required" }}</h3><div>{{ doc.sample_requirements_html | safe }}</div></div>
   {% endif %}
 
@@ -76,7 +82,7 @@
   {% endif %}
 
   <h3>{{ doc.commercials_header or "Commercials" }}</h3>
-  {% if doc.quote_type == 'Testing' and doc.testing_items %}
+  {% if not is_service and doc.testing_items %}
   <table class="ic">
     <tr>
       <th>S. No.</th>
@@ -102,14 +108,83 @@
     </tr>
   </table>
   <p class="ic-tag">Note: GST @ 18% shall be charged additionally on the above testing charges.</p>
+  {% elif is_service %}
+    {% if doc.consulting_items %}
+    <h4>Consulting</h4>
+    <table class="ic">
+      <tr><th>Type</th><th>Description</th><th>Amount (INR)</th></tr>
+      {% for row in doc.consulting_items %}
+      <tr>
+        <td>{{ row.consulting_type }}</td>
+        <td>{{ row.description or '' }}</td>
+        <td>{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+      </tr>
+      {% endfor %}
+      {% if doc.consulting_price %}
+      <tr><th colspan="2">Consulting total</th><th>{{ frappe.format(doc.consulting_price, {'fieldtype':'Currency'}) }}</th></tr>
+      {% endif %}
+    </table>
+    {% endif %}
+
+    {% if doc.government_fees %}
+    <h4>Government Fees</h4>
+    <table class="ic">
+      <tr><th>Fee Type</th><th>Description</th><th>Amount (INR)</th></tr>
+      {% for row in doc.government_fees %}
+      <tr>
+        <td>{{ row.fee_type }}</td>
+        <td>{{ row.description or '' }}</td>
+        <td>{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+      </tr>
+      {% endfor %}
+      {% if doc.government_fees_total %}
+      <tr><th colspan="2">Government fees total</th><th>{{ frappe.format(doc.government_fees_total, {'fieldtype':'Currency'}) }}</th></tr>
+      {% endif %}
+    </table>
+    {% endif %}
+
+    {% if doc.service_testing_charges %}
+    <h4>Testing Charges</h4>
+    <table class="ic">
+      <tr><th>Charge Type</th><th>Description</th><th>Amount (INR)</th></tr>
+      {% for row in doc.service_testing_charges %}
+      <tr>
+        <td>{{ row.charge_type }}</td>
+        <td>{{ row.description or '' }}</td>
+        <td>{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+      </tr>
+      {% endfor %}
+      {% if doc.testing_price %}
+      <tr><th colspan="2">Testing charges total</th><th>{{ frappe.format(doc.testing_price, {'fieldtype':'Currency'}) }}</th></tr>
+      {% endif %}
+    </table>
+    {% endif %}
+
+    <table class="ic">
+      <tr><th>Particulars</th><th>Charges (INR)</th></tr>
+      {% if doc.consulting_price %}
+      <tr><td>Consulting</td><td>{{ frappe.format(doc.consulting_price, {'fieldtype':'Currency'}) }}</td></tr>
+      {% endif %}
+      {% if doc.government_fees_total %}
+      <tr><td>Government Fees</td><td>{{ frappe.format(doc.government_fees_total, {'fieldtype':'Currency'}) }}</td></tr>
+      {% endif %}
+      {% if doc.testing_price %}
+      <tr><td>Testing Charges</td><td>{{ frappe.format(doc.testing_price, {'fieldtype':'Currency'}) }}</td></tr>
+      {% endif %}
+      {% if doc.other_commercials %}
+      <tr><td>Other commercials{% if doc.other_commercials_note %} — {{ doc.other_commercials_note }}{% endif %}</td>
+          <td>{{ frappe.format(doc.other_commercials, {'fieldtype':'Currency'}) }}</td></tr>
+      {% endif %}
+      <tr><th>Total</th><th>{{ frappe.format(doc.total_revenue, {'fieldtype':'Currency'}) }}</th></tr>
+    </table>
+    <p class="ic-tag">Note: GST shall be applicable extra as per prevailing government regulations.</p>
   {% else %}
   <table class="ic">
     <tr><th>Particulars</th><th>Charges (INR)</th></tr>
     {% if doc.consulting_price %}
     <tr><td>Commercial consulting</td><td>{{ frappe.format(doc.consulting_price, {'fieldtype':'Currency'}) }}</td></tr>
     {% endif %}
-    <tr><td>{{ 'Service charges' if doc.quote_type == 'Service' else 'Testing charges' }}</td>
-        <td>{{ frappe.format(doc.testing_price, {'fieldtype':'Currency'}) }}</td></tr>
+    <tr><td>Testing charges</td><td>{{ frappe.format(doc.testing_price, {'fieldtype':'Currency'}) }}</td></tr>
     {% if doc.other_commercials %}
     <tr><td>Other commercials{% if doc.other_commercials_note %} — {{ doc.other_commercials_note }}{% endif %}</td>
         <td>{{ frappe.format(doc.other_commercials, {'fieldtype':'Currency'}) }}</td></tr>
@@ -118,10 +193,21 @@
   </table>
   <p class="ic-tag">Note: GST shall be applicable extra as per prevailing government regulations.</p>
   {% endif %}
+
   {% if doc.payment_terms_html %}
-  <div class="ic-section">{{ doc.payment_terms_html | safe }}</div>
+  <div class="ic-section"><h3>{{ doc.payment_terms_header or "Payment Terms" }}</h3><div>{{ doc.payment_terms_html | safe }}</div></div>
   {% endif %}
 
+  {% if is_service %}
+  <h3>{{ doc.banking_header or "Our Banking Details" }}</h3>
+  <pre class="ic-bank">{{ doc.bank_snapshot }}</pre>
+  {% if doc.sample_requirements_html %}
+  <div class="ic-section"><h3>{{ doc.sample_requirements_header or "Samples Required" }}</h3><div>{{ doc.sample_requirements_html | safe }}</div></div>
+  {% endif %}
+  {% if doc.sample_handling_html %}
+  <div class="ic-section"><h3>{{ doc.sample_handling_header or "Sample Handling and Disposal Policy" }}</h3><div>{{ doc.sample_handling_html | safe }}</div></div>
+  {% endif %}
+  {% else %}
   {% if doc.timeline_html %}
   <div class="ic-section"><h3>{{ doc.timeline_header or "Timeline" }}</h3><div>{{ doc.timeline_html | safe }}</div></div>
   {% endif %}
@@ -131,9 +217,9 @@
   {% if doc.sample_handling_html %}
   <div class="ic-section"><h3>{{ doc.sample_handling_header or "Sample Handling and Disposal Policy" }}</h3><div>{{ doc.sample_handling_html | safe }}</div></div>
   {% endif %}
-
   <h3>{{ doc.banking_header or "Banking Details" }}</h3>
   <pre class="ic-bank">{{ doc.bank_snapshot }}</pre>
+  {% endif %}
 
   {% if doc.cancellation_refund_html %}
   <div class="ic-section"><h3>{{ doc.cancellation_header or "Cancellation and Refund Policy" }}</h3><div>{{ doc.cancellation_refund_html | safe }}</div></div>

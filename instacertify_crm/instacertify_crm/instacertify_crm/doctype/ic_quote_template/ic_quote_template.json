@@ -27,24 +27,23 @@
   "standards_header",
   "standards_html",
   "accreditation_html",
-  "section_sample_req",
-  "sample_requirements_header",
-  "sample_requirements_html",
-  "section_commercials",
-  "commercials_header",
-  "payment_terms_html",
   "section_timeline",
   "timeline_header",
   "timeline_html",
-  "section_deliverables",
-  "deliverables_header",
-  "deliverables_html",
-  "section_sample_handling",
-  "sample_handling_header",
-  "sample_handling_html",
+  "section_commercials",
+  "commercials_header",
+  "section_payment",
+  "payment_terms_header",
+  "payment_terms_html",
   "section_bank",
   "banking_header",
   "bank_detail",
+  "section_sample_req",
+  "sample_requirements_header",
+  "sample_requirements_html",
+  "section_sample_handling",
+  "sample_handling_header",
+  "sample_handling_html",
   "section_cancellation",
   "cancellation_header",
   "cancellation_refund_html",
@@ -54,6 +53,9 @@
   "section_confidentiality",
   "confidentiality_header",
   "confidentiality_html",
+  "section_deliverables",
+  "deliverables_header",
+  "deliverables_html",
   "section_extra",
   "policies_html",
   "body_html"
@@ -165,42 +167,8 @@
    "depends_on": "eval:doc.quote_type=='Service'"
   },
   {
-   "fieldname": "section_sample_req",
-   "label": "3. Sample Required",
-   "fieldtype": "Section Break",
-   "collapsible": 1
-  },
-  {
-   "fieldname": "sample_requirements_header",
-   "label": "Section Header",
-   "fieldtype": "Data",
-   "default": "Sample Required"
-  },
-  {
-   "fieldname": "sample_requirements_html",
-   "label": "Sample Required Content",
-   "fieldtype": "Text Editor"
-  },
-  {
-   "fieldname": "section_commercials",
-   "label": "4. Commercials",
-   "fieldtype": "Section Break",
-   "collapsible": 1
-  },
-  {
-   "fieldname": "commercials_header",
-   "label": "Section Header",
-   "fieldtype": "Data",
-   "default": "Commercials"
-  },
-  {
-   "fieldname": "payment_terms_html",
-   "label": "Payment Terms",
-   "fieldtype": "Text Editor"
-  },
-  {
    "fieldname": "section_timeline",
-   "label": "5. Timeline",
+   "label": "3. Timeline",
    "fieldtype": "Section Break",
    "collapsible": 1
   },
@@ -216,25 +184,72 @@
    "fieldtype": "Text Editor"
   },
   {
-   "fieldname": "section_deliverables",
-   "label": "6. Deliverable",
+   "fieldname": "section_commercials",
+   "label": "4. Commercials",
    "fieldtype": "Section Break",
    "collapsible": 1
   },
   {
-   "fieldname": "deliverables_header",
+   "fieldname": "commercials_header",
    "label": "Section Header",
    "fieldtype": "Data",
-   "default": "Deliverable"
+   "default": "Commercials"
   },
   {
-   "fieldname": "deliverables_html",
-   "label": "Deliverable Content",
+   "fieldname": "section_payment",
+   "label": "5. Payment Terms",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "payment_terms_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Payment Terms"
+  },
+  {
+   "fieldname": "payment_terms_html",
+   "label": "Payment Terms Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_bank",
+   "label": "6. Our Banking Details",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "banking_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Our Banking Details"
+  },
+  {
+   "fieldname": "bank_detail",
+   "label": "Bank Detail",
+   "fieldtype": "Link",
+   "options": "IC Bank Detail"
+  },
+  {
+   "fieldname": "section_sample_req",
+   "label": "7. Samples Required",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "sample_requirements_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Samples Required"
+  },
+  {
+   "fieldname": "sample_requirements_html",
+   "label": "Samples Required Content",
    "fieldtype": "Text Editor"
   },
   {
    "fieldname": "section_sample_handling",
-   "label": "7. Sample Handling and Disposal Policy",
+   "label": "8. Sample Handling and Disposal Policy",
    "fieldtype": "Section Break",
    "collapsible": 1
   },
@@ -248,24 +263,6 @@
    "fieldname": "sample_handling_html",
    "label": "Sample Handling Content",
    "fieldtype": "Text Editor"
-  },
-  {
-   "fieldname": "section_bank",
-   "label": "8. Banking Details",
-   "fieldtype": "Section Break",
-   "collapsible": 1
-  },
-  {
-   "fieldname": "banking_header",
-   "label": "Section Header",
-   "fieldtype": "Data",
-   "default": "Banking Details"
-  },
-  {
-   "fieldname": "bank_detail",
-   "label": "Bank Detail",
-   "fieldtype": "Link",
-   "options": "IC Bank Detail"
   },
   {
    "fieldname": "section_cancellation",
@@ -316,6 +313,23 @@
   {
    "fieldname": "confidentiality_html",
    "label": "Confidentiality Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_deliverables",
+   "label": "Deliverable (optional)",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "deliverables_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Deliverable"
+  },
+  {
+   "fieldname": "deliverables_html",
+   "label": "Deliverable Content",
    "fieldtype": "Text Editor"
   },
   {
