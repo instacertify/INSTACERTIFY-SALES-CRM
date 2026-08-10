@@ -19,6 +19,11 @@ export class CustomersController {
     return this.customersService.list({ status, search });
   }
 
+  @Get(':id/journey')
+  journey(@Param('id') id: string) {
+    return this.customersService.journey(id);
+  }
+
   @Get(':id')
   get(@Param('id') id: string) {
     return this.customersService.get(id);

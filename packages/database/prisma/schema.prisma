@@ -36,6 +36,9 @@ model User {
   notifications        Notification[]
   documentsUploaded    Document[]          @relation("DocumentUploader")
   invoicesCreated      Invoice[]           @relation("InvoiceCreator")
+  workLibraryEntries   WorkLibraryEntry[]  @relation("WorkLibraryAuthor")
+  documentRequests     DocumentRequest[]   @relation("DocRequestCreator")
+  testRequestsCreated  TestRequestForm[]   @relation("TestRequestCreator")
 }
 
 model EmployeeProfile {
@@ -77,13 +80,16 @@ model Customer {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  contacts      Contact[]
-  leads         Lead[]
-  opportunities Opportunity[]
-  quotations    Quotation[]
-  projects      Project[]
-  invoices      Invoice[]
-  documents     Document[]
+  contacts          Contact[]
+  leads             Lead[]
+  opportunities     Opportunity[]
+  quotations        Quotation[]
+  projects          Project[]
+  invoices          Invoice[]
+  documents         Document[]
+  documentRequests  DocumentRequest[]
+  testRequestForms  TestRequestForm[]
+  workLibrary       WorkLibraryEntry[]
 }
 
 model Contact {
@@ -194,6 +200,8 @@ model Quotation {
   revisionMessage      String?
   sharedAt             DateTime?
   acceptedAt           DateTime?
+  testingOptedAt       DateTime?
+  revisionCount        Int       @default(0)
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -206,8 +214,12 @@ model Quotation {
   createdById    String
   createdBy      User          @relation("QuotationCreator", fields: [createdById], references: [id])
 
-  projects Project[]
-  invoices Invoice[]
+  projects           Project[]
+  invoices           Invoice[]
+  lineItems          QuotationLineItem[]
+  events             QuotationEvent[]
+  documentRequests   DocumentRequest[]
+  testRequestForms   TestRequestForm[]
 
   @@index([status])
   @@index([customerId])
@@ -273,6 +285,9 @@ model Project {
   certifications     CertificationRecord[]
   invoices           Invoice[]
   authorityQueries   AuthorityQuery[]
+  documentRequests   DocumentRequest[]
+  testRequestForms   TestRequestForm[]
+  workLibrary        WorkLibraryEntry[]
 
   @@index([status])
   @@index([customerId])
@@ -405,19 +420,51 @@ model AuthorityQuery {
 // ─── Testing, labs, samples ───────────────────────────────────────
 
 model PartnerLab {
-  id        String   @id @default(cuid())
-  name      String
-  country   String?
-  email     String?
-  phone     String?
-  nabl      Boolean  @default(false)
-  active    Boolean  @default(true)
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  country       String?
+  city          String?
+  email         String?
+  phone         String?
+  nabl          Boolean  @default(false)
+  /// Searchable lab accreditation / test scope text
+  scope         String   @default("")
+  accreditation String?
+  active        Boolean  @default(true)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
+  catalogItems    TestingCatalogItem[]
   testingOrders   TestingOrder[]
   sampleShipments SampleShipment[]
+}
+
+/// Master catalog for selling testing — purchase vs sell price + lab scope
+model TestingCatalogItem {
+  id            String   @id @default(cuid())
+  name          String
+  category      String   @default("GENERAL") // EMI | SAFETY | CHEMICAL | RF | ENVIRONMENTAL | OTHER
+  scope         String   @default("") // searchable scope keywords / standards
+  standardCode  String?
+  purchasePrice Float    @default(0) // lab cost (internal)
+  salesPrice    Float    @default(0) // price employee should sell at
+  currency      String   @default("INR")
+  turnaroundDays Int     @default(15)
+  active        Boolean  @default(true)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  partnerLabId String?
+  partnerLab   PartnerLab? @relation(fields: [partnerLabId], references: [id])
+
+  lineItems      QuotationLineItem[]
+  testingOrders  TestingOrder[]
+
+  @@index([name])
+  @@index([category])
+  @@index([partnerLabId])
 }
 
 model TestingOrder {
@@ -438,6 +485,9 @@ model TestingOrder {
   project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   partnerLabId String?
   partnerLab   PartnerLab? @relation(fields: [partnerLabId], references: [id])
+  catalogItemId String?
+  catalogItem   TestingCatalogItem? @relation(fields: [catalogItemId], references: [id])
+  testRequestForm TestRequestForm?
 
   @@index([projectId])
   @@index([status])
@@ -570,4 +620,183 @@ model Notification {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, read])
+}
+
+// ─── Sales packaging: quote lines + journey events ────────────────
+
+model QuotationLineItem {
+  id            String   @id @default(cuid())
+  kind          String   @default("CONSULTING") // CONSULTING | TESTING | GOVERNMENT | OTHER
+  title         String
+  description   String?
+  quantity      Int      @default(1)
+  unitPrice     Float    @default(0) // sell price shown to customer
+  purchasePrice Float    @default(0) // internal cost (testing)
+  amount        Float    @default(0)
+  createdAt     DateTime @default(now())
+
+  quotationId   String
+  quotation     Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  catalogItemId String?
+  catalogItem   TestingCatalogItem? @relation(fields: [catalogItemId], references: [id])
+
+  @@index([quotationId])
+}
+
+model QuotationEvent {
+  id        String   @id @default(cuid())
+  event     String
+  // CREATED | SHARED | REVISION_REQUESTED | REVISED | TESTING_OPTED | ACCEPTED | REJECTED
+  note      String?
+  metaJson  String   @default("{}")
+  createdAt DateTime @default(now())
+
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  @@index([quotationId])
+  @@index([event])
+}
+
+/// Certification consulting / bundled service offerings
+model ServiceOffering {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  serviceType String   @default("CONSULTING") // CONSULTING | TESTING | BUNDLE
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  checklistItems   ChecklistTemplateItem[]
+  documentRequests DocumentRequest[]
+}
+
+model ChecklistTemplateItem {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  required    Boolean @default(true)
+  sequence    Int     @default(10)
+
+  serviceOfferingId String
+  serviceOffering   ServiceOffering @relation(fields: [serviceOfferingId], references: [id], onDelete: Cascade)
+
+  @@index([serviceOfferingId])
+}
+
+/// Portal document checklist shared with customer
+model DocumentRequest {
+  id            String   @id @default(cuid())
+  publicToken   String   @unique
+  status        String   @default("SHARED") // SHARED | PARTIAL | COMPLETE | CLOSED
+  title         String
+  teamRemark    String?
+  customerNote  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  serviceOfferingId String?
+  serviceOffering   ServiceOffering? @relation(fields: [serviceOfferingId], references: [id])
+  customerId        String?
+  customer          Customer? @relation(fields: [customerId], references: [id])
+  projectId         String?
+  project           Project? @relation(fields: [projectId], references: [id])
+  quotationId       String?
+  quotation         Quotation? @relation(fields: [quotationId], references: [id])
+  createdById       String?
+  createdBy         User? @relation("DocRequestCreator", fields: [createdById], references: [id])
+
+  items DocumentRequestItem[]
+
+  @@index([customerId])
+  @@index([projectId])
+  @@index([status])
+}
+
+model DocumentRequestItem {
+  id           String    @id @default(cuid())
+  name         String
+  description  String?
+  required     Boolean   @default(true)
+  status       String    @default("PENDING") // PENDING | UPLOADED | VERIFIED | REJECTED
+  customerNote String?
+  fileName     String?
+  storedName   String?
+  uploadedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  requestId String
+  request   DocumentRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+/// Customer-filled test request — employee downloads & shares with lab
+model TestRequestForm {
+  id              String    @id @default(cuid())
+  publicToken     String    @unique
+  status          String    @default("SHARED") // SHARED | SUBMITTED | DOWNLOADED | SENT_TO_LAB
+  productName     String?
+  modelNumber     String?
+  brand           String?
+  manufacturer    String?
+  sampleQuantity  String?
+  standards       String?
+  testScope       String?
+  contactName     String?
+  contactEmail    String?
+  contactPhone    String?
+  additionalNotes String?
+  /// Full form payload as JSON for extensibility
+  formJson        String    @default("{}")
+  submittedAt     DateTime?
+  downloadedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  projectId     String?
+  project       Project? @relation(fields: [projectId], references: [id])
+  quotationId   String?
+  quotation     Quotation? @relation(fields: [quotationId], references: [id])
+  testingOrderId String?  @unique
+  testingOrder  TestingOrder? @relation(fields: [testingOrderId], references: [id])
+  createdById   String?
+  createdBy     User? @relation("TestRequestCreator", fields: [createdById], references: [id])
+
+  @@index([customerId])
+  @@index([projectId])
+  @@index([status])
+}
+
+/// Interactive work library — map work done for a client
+model WorkLibraryEntry {
+  id          String   @id @default(cuid())
+  title       String
+  category    String   @default("GENERAL")
+  // QUOTE | DOCUMENT | TESTING | APPLICATION | CERTIFICATION | PAYMENT | COMMUNICATION | OTHER
+  summary     String
+  status      String   @default("DONE") // PLANNED | IN_PROGRESS | DONE | BLOCKED
+  effortHours Float    @default(0)
+  valueAmount Float    @default(0)
+  happenedAt  DateTime @default(now())
+  linkUrl     String?
+  tags        String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  createdById String?
+  createdBy   User? @relation("WorkLibraryAuthor", fields: [createdById], references: [id])
+
+  @@index([customerId])
+  @@index([projectId])
+  @@index([category])
+  @@index([happenedAt])
 }

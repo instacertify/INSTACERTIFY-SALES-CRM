@@ -87,6 +87,49 @@ export class QuotationsController {
     return this.quotationsService.update(id, body);
   }
 
+  @Patch(':id/share')
+  share(@Param('id') id: string) {
+    return this.quotationsService.share(id);
+  }
+
+  @Patch(':id/revision')
+  revision(
+    @Param('id') id: string,
+    @Body() body: { message?: string },
+  ) {
+    return this.quotationsService.requestRevision(
+      id,
+      body.message || 'Customer requested revision',
+    );
+  }
+
+  @Patch(':id/revised')
+  revised(@Param('id') id: string, @Body() body: { note?: string }) {
+    return this.quotationsService.markRevised(id, body.note);
+  }
+
+  @Patch(':id/testing-opted')
+  testingOpted(@Param('id') id: string, @Body() body: { note?: string }) {
+    return this.quotationsService.optTesting(id, body.note);
+  }
+
+  @Post(':id/line-items')
+  addLine(
+    @Param('id') id: string,
+    @Body()
+    body: {
+      kind?: string;
+      title: string;
+      description?: string;
+      quantity?: number;
+      unitPrice?: number;
+      purchasePrice?: number;
+      catalogItemId?: string;
+    },
+  ) {
+    return this.quotationsService.addLineItem(id, body);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.quotationsService.remove(id);

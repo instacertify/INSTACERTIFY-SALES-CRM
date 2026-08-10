@@ -19,6 +19,9 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ReportsModule } from './reports/reports.module';
 import { AdminModule } from './admin/admin.module';
+import { CatalogModule } from './catalog/catalog.module';
+import { PortalsModule } from './portals/portals.module';
+import { WorkLibraryModule } from './work-library/work-library.module';
 
 const redisEnabled = process.env.ENABLE_REDIS === 'true';
 
@@ -60,6 +63,9 @@ const redisEnabled = process.env.ENABLE_REDIS === 'true';
     NotificationsModule,
     ReportsModule,
     AdminModule,
+    CatalogModule,
+    PortalsModule,
+    WorkLibraryModule,
   ],
 })
 export class AppModule {}

@@ -28,6 +28,8 @@ export class QuotationsService {
         customer: true,
         createdBy: { select: { id: true, name: true, email: true } },
         opportunity: true,
+        lineItems: true,
+        _count: { select: { events: true } },
       },
     });
   }
@@ -42,10 +44,36 @@ export class QuotationsService {
         createdBy: { select: { id: true, name: true, email: true } },
         projects: true,
         invoices: true,
+        lineItems: {
+          include: {
+            catalogItem: {
+              include: { partnerLab: { select: { id: true, name: true } } },
+            },
+          },
+        },
+        events: { orderBy: { createdAt: 'asc' } },
+        documentRequests: { select: { id: true, status: true, publicToken: true } },
+        testRequestForms: { select: { id: true, status: true, publicToken: true } },
       },
     });
     if (!quotation) throw new NotFoundException('Quotation not found');
     return quotation;
+  }
+
+  private async addEvent(
+    quotationId: string,
+    event: string,
+    note?: string,
+    meta?: Record<string, unknown>,
+  ) {
+    return this.prisma.quotationEvent.create({
+      data: {
+        quotationId,
+        event,
+        note,
+        metaJson: JSON.stringify(meta || {}),
+      },
+    });
   }
 
   async create(
@@ -105,6 +133,9 @@ export class QuotationsService {
         customer: true,
         createdBy: { select: { id: true, name: true, email: true } },
       },
+    }).then(async (quote) => {
+      await this.addEvent(quote.id, 'CREATED', 'Quotation created');
+      return quote;
     });
   }
 
@@ -132,8 +163,8 @@ export class QuotationsService {
       revisionMessage?: string | null;
     },
   ) {
-    await this.get(id);
-    return this.prisma.quotation.update({
+    const existing = await this.get(id);
+    const updated = await this.prisma.quotation.update({
       where: { id },
       data: {
         status: body.status,
@@ -157,10 +188,133 @@ export class QuotationsService {
         bankSnapshot: body.bankSnapshot,
         customerRemark: body.customerRemark,
         revisionMessage: body.revisionMessage,
-        sharedAt: body.status === 'SHARED' ? new Date() : undefined,
-        acceptedAt: body.status === 'ACCEPTED' ? new Date() : undefined,
+        sharedAt:
+          body.status === 'SHARED' ? new Date() : undefined,
+        acceptedAt:
+          body.status === 'ACCEPTED' ? new Date() : undefined,
+        revisionCount:
+          body.status === 'REVISION_REQUESTED'
+            ? existing.revisionCount + 1
+            : undefined,
       },
     });
+    if (body.status && body.status !== existing.status) {
+      await this.addEvent(
+        id,
+        body.status,
+        body.revisionMessage || `Status → ${body.status}`,
+      );
+    }
+    return updated;
+  }
+
+  async share(id: string) {
+    await this.get(id);
+    const updated = await this.prisma.quotation.update({
+      where: { id },
+      data: { status: 'SHARED', sharedAt: new Date() },
+    });
+    await this.addEvent(id, 'SHARED', 'Quote shared with customer');
+    return updated;
+  }
+
+  async requestRevision(id: string, message: string) {
+    await this.get(id);
+    const updated = await this.prisma.quotation.update({
+      where: { id },
+      data: {
+        status: 'REVISION_REQUESTED',
+        revisionMessage: message,
+        revisionCount: { increment: 1 },
+      },
+    });
+    await this.addEvent(id, 'REVISION_REQUESTED', message);
+    return updated;
+  }
+
+  async markRevised(id: string, note?: string) {
+    await this.get(id);
+    const updated = await this.prisma.quotation.update({
+      where: { id },
+      data: { status: 'SHARED', revisionMessage: null },
+    });
+    await this.addEvent(id, 'REVISED', note || 'Revised quote re-shared');
+    return updated;
+  }
+
+  async optTesting(id: string, note?: string) {
+    await this.get(id);
+    const updated = await this.prisma.quotation.update({
+      where: { id },
+      data: { testingOptedAt: new Date() },
+    });
+    await this.addEvent(id, 'TESTING_OPTED', note || 'Customer opted testing services');
+    return updated;
+  }
+
+  async addLineItem(
+    id: string,
+    body: {
+      kind?: string;
+      title: string;
+      description?: string;
+      quantity?: number;
+      unitPrice?: number;
+      purchasePrice?: number;
+      catalogItemId?: string;
+    },
+  ) {
+    await this.get(id);
+    let unitPrice = body.unitPrice ?? 0;
+    let purchasePrice = body.purchasePrice ?? 0;
+    let title = body.title;
+    let kind = body.kind || 'CONSULTING';
+
+    if (body.catalogItemId) {
+      const catalog = await this.prisma.testingCatalogItem.findUnique({
+        where: { id: body.catalogItemId },
+      });
+      if (catalog) {
+        unitPrice = body.unitPrice ?? catalog.salesPrice;
+        purchasePrice = body.purchasePrice ?? catalog.purchasePrice;
+        title = body.title || catalog.name;
+        kind = 'TESTING';
+      }
+    }
+
+    const quantity = body.quantity ?? 1;
+    const amount = unitPrice * quantity;
+    const item = await this.prisma.quotationLineItem.create({
+      data: {
+        quotationId: id,
+        kind,
+        title,
+        description: body.description,
+        quantity,
+        unitPrice,
+        purchasePrice,
+        amount,
+        catalogItemId: body.catalogItemId,
+      },
+      include: { catalogItem: true },
+    });
+
+    // Roll up testing/consulting totals on quote header
+    const lines = await this.prisma.quotationLineItem.findMany({
+      where: { quotationId: id },
+    });
+    const testingPrice = lines
+      .filter((l) => l.kind === 'TESTING')
+      .reduce((s, l) => s + l.amount, 0);
+    const consultingPrice = lines
+      .filter((l) => l.kind === 'CONSULTING')
+      .reduce((s, l) => s + l.amount, 0);
+    await this.prisma.quotation.update({
+      where: { id },
+      data: { testingPrice, consultingPrice },
+    });
+
+    return item;
   }
 
   async remove(id: string) {

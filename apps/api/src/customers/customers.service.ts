@@ -21,7 +21,9 @@ export class CustomersService {
       orderBy: { updatedAt: 'desc' },
       include: {
         contacts: true,
-        _count: { select: { projects: true, opportunities: true } },
+        _count: {
+          select: { projects: true, contacts: true, quotations: true },
+        },
       },
     });
   }
@@ -34,15 +36,135 @@ export class CustomersService {
         projects: {
           orderBy: { updatedAt: 'desc' },
           take: 20,
+          include: {
+            testingOrders: true,
+            commercialOwner: { select: { id: true, name: true } },
+          },
         },
         opportunities: true,
-        quotations: true,
+        quotations: {
+          orderBy: { updatedAt: 'desc' },
+          include: {
+            lineItems: true,
+            events: { orderBy: { createdAt: 'asc' } },
+            createdBy: { select: { id: true, name: true } },
+          },
+        },
         invoices: true,
         documents: true,
+        documentRequests: {
+          orderBy: { createdAt: 'desc' },
+          include: { items: true, serviceOffering: true },
+        },
+        testRequestForms: { orderBy: { createdAt: 'desc' } },
+        workLibrary: {
+          orderBy: { happenedAt: 'desc' },
+          take: 30,
+          include: { createdBy: { select: { id: true, name: true } } },
+        },
       },
     });
     if (!customer) throw new NotFoundException('Customer not found');
     return customer;
+  }
+
+  /** Customer journey: shared → revised → testing opted */
+  async journey(id: string) {
+    await this.get(id);
+    const quotations = await this.prisma.quotation.findMany({
+      where: { customerId: id },
+      orderBy: { createdAt: 'asc' },
+      include: {
+        events: { orderBy: { createdAt: 'asc' } },
+        lineItems: { where: { kind: 'TESTING' } },
+        createdBy: { select: { name: true } },
+      },
+    });
+
+    const timeline = quotations.flatMap((q) => {
+      const createdEvent = q.events.find((e) => e.event === 'CREATED');
+      const steps = [
+        {
+          at: createdEvent?.createdAt || q.createdAt,
+          type: 'QUOTE_CREATED',
+          quoteNumber: q.quoteNumber,
+          quotationId: q.id,
+          detail: q.serviceName,
+        },
+      ];
+      if (q.sharedAt) {
+        steps.push({
+          at: q.sharedAt,
+          type: 'QUOTE_SHARED',
+          quoteNumber: q.quoteNumber,
+          quotationId: q.id,
+          detail: 'Shared with customer',
+        });
+      }
+      for (const ev of q.events.filter((e) =>
+        ['REVISION_REQUESTED', 'REVISED'].includes(e.event),
+      )) {
+        steps.push({
+          at: ev.createdAt,
+          type: ev.event,
+          quoteNumber: q.quoteNumber,
+          quotationId: q.id,
+          detail: ev.note || ev.event,
+        });
+      }
+      if (q.testingOptedAt) {
+        steps.push({
+          at: q.testingOptedAt,
+          type: 'TESTING_OPTED',
+          quoteNumber: q.quoteNumber,
+          quotationId: q.id,
+          detail:
+            q.lineItems.map((l) => l.title).join(', ') ||
+            'Testing services selected',
+        });
+      }
+      if (q.acceptedAt) {
+        steps.push({
+          at: q.acceptedAt,
+          type: 'QUOTE_ACCEPTED',
+          quoteNumber: q.quoteNumber,
+          quotationId: q.id,
+          detail: 'Accepted',
+        });
+      }
+      return steps;
+    });
+
+    timeline.sort((a, b) => {
+      const dt = a.at.getTime() - b.at.getTime();
+      if (dt !== 0) return dt;
+      const order = [
+        'QUOTE_CREATED',
+        'QUOTE_SHARED',
+        'REVISION_REQUESTED',
+        'REVISED',
+        'TESTING_OPTED',
+        'QUOTE_ACCEPTED',
+      ];
+      return order.indexOf(a.type) - order.indexOf(b.type);
+    });
+
+    return {
+      customerId: id,
+      quotations: quotations.map((q) => ({
+        id: q.id,
+        quoteNumber: q.quoteNumber,
+        status: q.status,
+        serviceName: q.serviceName,
+        sharedAt: q.sharedAt,
+        revisionCount: q.revisionCount,
+        testingOptedAt: q.testingOptedAt,
+        acceptedAt: q.acceptedAt,
+        testingLines: q.lineItems,
+        owner: q.createdBy?.name,
+      })),
+      timeline,
+    };
   }
 
   create(body: {

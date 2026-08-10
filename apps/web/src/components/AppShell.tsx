@@ -9,7 +9,9 @@ const NAV = [
   { href: "/customers", label: "Customers" },
   { href: "/leads", label: "Leads" },
   { href: "/quotations", label: "Sales" },
+  { href: "/testing", label: "Testing catalog" },
   { href: "/projects", label: "Projects" },
+  { href: "/work-library", label: "Work library" },
   { href: "/tasks", label: "Tasks" },
 ];
 
@@ -32,7 +34,7 @@ export function AppShell({
               Instacertify
             </p>
             <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-brand-grey">
-              Project CRM
+              Cert + Testing CRM
             </p>
           </div>
           <nav className="flex flex-1 flex-col gap-1">

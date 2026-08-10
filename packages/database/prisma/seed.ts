@@ -66,15 +66,122 @@ async function main() {
 
   const lab = await prisma.partnerLab.upsert({
     where: { id: "seed-lab-nabl-a" },
-    update: { active: true },
+    update: {
+      active: true,
+      scope: "EMI/EMC, Safety (IEC 62368), RF, Environmental",
+      city: "Gurugram",
+      nabl: true,
+    },
     create: {
       id: "seed-lab-nabl-a",
       name: "NABL Partner Lab A",
       country: "India",
+      city: "Gurugram",
       nabl: true,
       email: "lab@example.com",
+      scope: "EMI/EMC, Safety (IEC 62368), RF, Environmental",
+      accreditation: "NABL ISO/IEC 17025",
     },
   });
+
+  const labB = await prisma.partnerLab.upsert({
+    where: { id: "seed-lab-nabl-b" },
+    update: { active: true, scope: "Chemical, RoHS, Heavy metals, Plastic" },
+    create: {
+      id: "seed-lab-nabl-b",
+      name: "NABL Chemical Lab B",
+      country: "India",
+      city: "Pune",
+      nabl: true,
+      scope: "Chemical, RoHS, Heavy metals, Plastic composition",
+      accreditation: "NABL ISO/IEC 17025",
+    },
+  });
+
+  const catalogSeed = [
+    {
+      id: "seed-test-emi",
+      name: "EMI/EMC — IT Equipment",
+      category: "EMI",
+      scope: "CISPR 32 / IEC 61000 — radiated & conducted emissions",
+      standardCode: "CISPR 32",
+      purchasePrice: 22000,
+      salesPrice: 42000,
+      partnerLabId: lab.id,
+    },
+    {
+      id: "seed-test-safety",
+      name: "Safety — IEC 62368-1",
+      category: "SAFETY",
+      scope: "Audio/video & IT product safety",
+      standardCode: "IEC 62368-1",
+      purchasePrice: 18000,
+      salesPrice: 38000,
+      partnerLabId: lab.id,
+    },
+    {
+      id: "seed-test-rohs",
+      name: "RoHS Chemical Screening",
+      category: "CHEMICAL",
+      scope: "RoHS 10 substances — plastics & electronics",
+      standardCode: "RoHS",
+      purchasePrice: 4500,
+      salesPrice: 9500,
+      partnerLabId: labB.id,
+    },
+  ];
+
+  for (const item of catalogSeed) {
+    await prisma.testingCatalogItem.upsert({
+      where: { id: item.id },
+      update: {
+        purchasePrice: item.purchasePrice,
+        salesPrice: item.salesPrice,
+        scope: item.scope,
+        active: true,
+      },
+      create: item,
+    });
+  }
+
+  const bisService = await prisma.serviceOffering.upsert({
+    where: { name: "BIS Certification" },
+    update: { active: true, serviceType: "BUNDLE" },
+    create: {
+      name: "BIS Certification",
+      serviceType: "BUNDLE",
+      description:
+        "End-to-end BIS consulting bundled with testing coordination",
+      checklistItems: {
+        create: [
+          { name: "Company incorporation certificate", sequence: 10 },
+          { name: "GST certificate", sequence: 20 },
+          { name: "Authorized signatory ID & PAN", sequence: 30 },
+          { name: "Product technical specifications", sequence: 40 },
+          { name: "Manufacturing process flow", sequence: 50 },
+        ],
+      },
+    },
+  });
+
+  const testingOnly = await prisma.serviceOffering.upsert({
+    where: { name: "Laboratory Testing" },
+    update: { active: true, serviceType: "TESTING" },
+    create: {
+      name: "Laboratory Testing",
+      serviceType: "TESTING",
+      description: "Standalone testing sales with lab coordination",
+      checklistItems: {
+        create: [
+          { name: "Sample declaration", sequence: 10 },
+          { name: "Product datasheet", sequence: 20 },
+          { name: "Bill of materials (if chemical)", sequence: 30 },
+        ],
+      },
+    },
+  });
+  void bisService;
+  void testingOnly;
 
   const source = await prisma.leadSource.findFirst({
     where: { name: "IndiaMART" },
@@ -374,6 +481,210 @@ async function main() {
           authority: "BIS",
           status: "APPLIED",
           renewalDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+        },
+      });
+    }
+  }
+
+  // Enrich quotation journey + testing lines + work library
+  const quote = await prisma.quotation.findUnique({
+    where: { quoteNumber: "ICQ-2026-00001" },
+  });
+  if (quote) {
+    await prisma.quotation.update({
+      where: { id: quote.id },
+      data: {
+        status: "ACCEPTED",
+        sharedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10),
+        testingOptedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6),
+        acceptedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
+        revisionCount: 1,
+        testingPrice: 42000 + 38000,
+        consultingPrice: 120000,
+      },
+    });
+
+    const lineCount = await prisma.quotationLineItem.count({
+      where: { quotationId: quote.id },
+    });
+    if (lineCount === 0) {
+      await prisma.quotationLineItem.createMany({
+        data: [
+          {
+            quotationId: quote.id,
+            kind: "CONSULTING",
+            title: "BIS consulting package",
+            quantity: 1,
+            unitPrice: 120000,
+            amount: 120000,
+          },
+          {
+            quotationId: quote.id,
+            kind: "TESTING",
+            title: "EMI/EMC — IT Equipment",
+            catalogItemId: "seed-test-emi",
+            quantity: 1,
+            unitPrice: 42000,
+            purchasePrice: 22000,
+            amount: 42000,
+          },
+          {
+            quotationId: quote.id,
+            kind: "TESTING",
+            title: "Safety — IEC 62368-1",
+            catalogItemId: "seed-test-safety",
+            quantity: 1,
+            unitPrice: 38000,
+            purchasePrice: 18000,
+            amount: 38000,
+          },
+        ],
+      });
+    }
+
+    const eventCount = await prisma.quotationEvent.count({
+      where: { quotationId: quote.id },
+    });
+    if (eventCount === 0) {
+      const base = Date.now() - 1000 * 60 * 60 * 24 * 12;
+      await prisma.quotationEvent.createMany({
+        data: [
+          {
+            quotationId: quote.id,
+            event: "CREATED",
+            note: "Quote drafted",
+            createdAt: new Date(base),
+          },
+          {
+            quotationId: quote.id,
+            event: "SHARED",
+            note: "Shared with customer",
+            createdAt: new Date(base + 1000 * 60 * 60 * 24 * 2),
+          },
+          {
+            quotationId: quote.id,
+            event: "REVISION_REQUESTED",
+            note: "Customer asked to add safety testing",
+            createdAt: new Date(base + 1000 * 60 * 60 * 24 * 4),
+          },
+          {
+            quotationId: quote.id,
+            event: "REVISED",
+            note: "Added IEC 62368 line",
+            createdAt: new Date(base + 1000 * 60 * 60 * 24 * 5),
+          },
+          {
+            quotationId: quote.id,
+            event: "TESTING_OPTED",
+            note: "EMI + Safety testing selected",
+            createdAt: new Date(base + 1000 * 60 * 60 * 24 * 6),
+          },
+          {
+            quotationId: quote.id,
+            event: "ACCEPTED",
+            note: "Customer accepted",
+            createdAt: new Date(base + 1000 * 60 * 60 * 24 * 7),
+          },
+        ],
+      });
+    }
+
+    const workCount = await prisma.workLibraryEntry.count({
+      where: { customerId: customer.id },
+    });
+    if (workCount === 0) {
+      await prisma.workLibraryEntry.createMany({
+        data: [
+          {
+            customerId: customer.id,
+            projectId: bis?.id,
+            title: "Shared BIS commercial proposal",
+            category: "QUOTE",
+            summary: "Shared ICQ-2026-00001 covering consulting + testing.",
+            valueAmount: 200000,
+            createdById: sales.id,
+            tags: "bis,quote",
+          },
+          {
+            customerId: customer.id,
+            projectId: bis?.id,
+            title: "EMI sample coordination",
+            category: "TESTING",
+            summary: "Aligned sample dispatch with NABL Partner Lab A.",
+            effortHours: 3,
+            valueAmount: 42000,
+            createdById: admin.id,
+            tags: "emi,lab",
+          },
+          {
+            customerId: customer.id,
+            projectId: bis?.id,
+            title: "Collected company dossier",
+            category: "DOCUMENT",
+            summary: "Incorporation, GST and signatory docs verified.",
+            effortHours: 2,
+            createdById: sales.id,
+            tags: "documents",
+          },
+        ],
+      });
+    }
+
+    const docReq = await prisma.documentRequest.findFirst({
+      where: { customerId: customer.id },
+    });
+    if (!docReq) {
+      await prisma.documentRequest.create({
+        data: {
+          publicToken: "seed-doc-checklist-midea",
+          title: "BIS document checklist",
+          status: "PARTIAL",
+          customerId: customer.id,
+          projectId: bis?.id,
+          quotationId: quote.id,
+          serviceOfferingId: bisService.id,
+          createdById: sales.id,
+          items: {
+            create: [
+              {
+                name: "Company incorporation certificate",
+                status: "UPLOADED",
+                fileName: "incorporation.pdf",
+                storedName: "incorporation.pdf",
+                uploadedAt: new Date(),
+              },
+              { name: "GST certificate", status: "PENDING" },
+              { name: "Authorized signatory ID & PAN", status: "PENDING" },
+            ],
+          },
+        },
+      });
+    }
+
+    const tr = await prisma.testRequestForm.findFirst({
+      where: { customerId: customer.id },
+    });
+    if (!tr) {
+      await prisma.testRequestForm.create({
+        data: {
+          publicToken: "seed-test-request-midea",
+          status: "SUBMITTED",
+          customerId: customer.id,
+          projectId: bis?.id,
+          quotationId: quote.id,
+          productName: "Outdoor AC Unit",
+          modelNumber: "MUE-36CRN1",
+          brand: "Midea",
+          manufacturer: "Midea Manufacturing Vietnam",
+          sampleQuantity: "2 units",
+          standards: "CISPR 32, IEC 62368-1",
+          testScope: "EMI/EMC + Safety",
+          contactName: "Nguyen An",
+          contactEmail: "ops@midea-vietnam.example",
+          contactPhone: "+84-900000001",
+          submittedAt: new Date(),
+          createdById: sales.id,
+          formJson: JSON.stringify({ productName: "Outdoor AC Unit" }),
         },
       });
     }
