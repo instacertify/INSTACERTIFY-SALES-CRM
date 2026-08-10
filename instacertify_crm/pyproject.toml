@@ -1,0 +1,21 @@
+[project]
+name = "instacertify_crm"
+authors = [
+    { name = "Instacertify Labs Pvt Ltd", email = "admin@instacertify.in"}
+]
+description = "Instacertify Sales & Operations CRM for ERPNext 16"
+requires-python = ">=3.14"
+readme = "README.md"
+dynamic = ["version"]
+
+[dependencies]
+# Uses Frappe / ERPNext from the bench environment
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.dev-dependencies]
+
+[tool.flit.module]
+name = "instacertify_crm"

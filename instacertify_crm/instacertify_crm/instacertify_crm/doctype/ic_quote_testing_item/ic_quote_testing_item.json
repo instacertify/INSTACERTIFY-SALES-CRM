@@ -1,0 +1,48 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote Testing Item",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 1,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "testing_service",
+  "test_name",
+  "lab_name",
+  "selling_price"
+ ],
+ "permissions": [],
+ "fields": [
+  {
+   "fieldname": "testing_service",
+   "label": "Testing Service",
+   "fieldtype": "Link",
+   "options": "IC Testing Service",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "test_name",
+   "label": "Test Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "lab_name",
+   "label": "Lab Name",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "selling_price",
+   "label": "Selling Price",
+   "fieldtype": "Currency",
+   "reqd": 1,
+   "in_list_view": 1
+  }
+ ]
+}

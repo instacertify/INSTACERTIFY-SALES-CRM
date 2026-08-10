@@ -1,0 +1,69 @@
+<style>
+  .ic-print { font-family: Manrope, Helvetica, Arial, sans-serif; color: #12233a; }
+  .ic-top { display:flex; justify-content:space-between; gap:16px; border-bottom:4px solid #0A4A6C; padding-bottom:12px; margin-bottom:18px; }
+  .ic-brand { font-size:26px; font-weight:800; }
+  .ic-brand .a { color:#0A4A6C; } .ic-brand .b { color:#EB7D2D; }
+  .ic-tag { color:#5F5E6B; font-size:12px; }
+  table.ic { width:100%; border-collapse:collapse; margin-top:8px; }
+  table.ic th, table.ic td { border:1px solid #d7e2ea; padding:8px 10px; text-align:left; }
+  table.ic th { background:#f3f7fa; }
+  h3 { color:#0A4A6C; margin:16px 0 6px; }
+</style>
+<div class="ic-print">
+  <div class="ic-top">
+    <div>
+      <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
+      <div class="ic-tag">certifications made simple</div>
+      <div class="ic-tag">Instacertify Labs Pvt Ltd</div>
+    </div>
+    <div style="text-align:right">
+      <div><strong>{{ doc.quote_number or doc.name }}</strong></div>
+      <div>Status: {{ doc.status }}</div>
+      <div>Valid till: {{ frappe.format(doc.validity_date, {'fieldtype':'Date'}) }}</div>
+      {% set public_url = doc.public_url or ("/q/" ~ doc.public_token) %}
+      <div style="margin-top:8px">
+        <img width="120" height="120" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={{ public_url | urlencode }}" />
+        <div class="ic-tag">Scan with Google Lens</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Prepared for</h3>
+  <p>
+    <strong>{{ doc.customer_name }}</strong><br>
+    {{ doc.company }}<br>
+    {{ doc.email }} · {{ doc.phone }}<br>
+    {{ doc.country }}{% if doc.state %}, {{ doc.state }}{% endif %}
+  </p>
+
+  <h3>Service</h3>
+  <p><strong>{{ doc.service }}</strong><br>{{ doc.description }}</p>
+  {% if doc.body_html %}<div>{{ doc.body_html | safe }}</div>{% endif %}
+
+  <h3>Commercials</h3>
+  <table class="ic">
+    <tr><th>Particulars</th><th>Amount</th></tr>
+    <tr><td>Commercial consulting</td><td>{{ frappe.format(doc.consulting_price, {'fieldtype':'Currency'}) }}</td></tr>
+    <tr><td>Testing</td><td>{{ frappe.format(doc.testing_price, {'fieldtype':'Currency'}) }}</td></tr>
+    <tr><td>Other commercials{% if doc.other_commercials_note %} — {{ doc.other_commercials_note }}{% endif %}</td>
+        <td>{{ frappe.format(doc.other_commercials, {'fieldtype':'Currency'}) }}</td></tr>
+    <tr><th>Total revenue</th><th>{{ frappe.format(doc.total_revenue, {'fieldtype':'Currency'}) }}</th></tr>
+  </table>
+
+  {% if doc.testing_items %}
+  <h3>Testing breakup (selling price)</h3>
+  <table class="ic">
+    <tr><th>Test</th><th>Lab</th><th>Selling price</th></tr>
+    {% for row in doc.testing_items %}
+    <tr>
+      <td>{{ row.test_name }}</td>
+      <td>{{ row.lab_name }}</td>
+      <td>{{ frappe.format(row.selling_price, {'fieldtype':'Currency'}) }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <h3>Banking details</h3>
+  <pre style="white-space:pre-wrap; font-family:inherit">{{ doc.bank_snapshot }}</pre>
+</div>

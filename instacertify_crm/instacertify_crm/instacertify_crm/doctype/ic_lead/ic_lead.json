@@ -1,0 +1,219 @@
+{
+ "doctype": "DocType",
+ "name": "IC Lead",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "naming_series",
+  "customer_name",
+  "company",
+  "company_size",
+  "column_break_1",
+  "email",
+  "phone",
+  "lead_source",
+  "section_location",
+  "country",
+  "column_break_2",
+  "state",
+  "section_ops",
+  "status",
+  "follow_up_on",
+  "column_break_3",
+  "last_contact_on",
+  "assigned_to",
+  "section_notes",
+  "notes",
+  "logs"
+ ],
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "customer_name",
+ "search_fields": "customer_name,company,email,phone,status",
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "label": "Series",
+   "fieldtype": "Select",
+   "options": "IC-LEAD-.YYYY.-",
+   "default": "IC-LEAD-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "label": "Customer Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company_size",
+   "label": "Company Size",
+   "fieldtype": "Select",
+   "options": "\nMICRO\nSMALL\nMEDIUM\nLARGE",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "label": "Email",
+   "fieldtype": "Data",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "label": "Phone Number",
+   "fieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "lead_source",
+   "label": "Lead Source",
+   "fieldtype": "Link",
+   "options": "IC Lead Source",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_location",
+   "label": "Location",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "country",
+   "label": "Country",
+   "fieldtype": "Link",
+   "options": "Country",
+   "reqd": 1,
+   "default": "India"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state",
+   "label": "State",
+   "fieldtype": "Data",
+   "description": "Required when Country is India. Use Indian state name."
+  },
+  {
+   "fieldname": "section_ops",
+   "label": "Operations",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "NEW\nCONTACTED\nFOLLOW_UP\nQUOTE_SENT\nWON\nLOST",
+   "default": "NEW",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "follow_up_on",
+   "label": "Follow Up Reminder",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_contact_on",
+   "label": "Last Contact",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "assigned_to",
+   "label": "Assigned To",
+   "fieldtype": "Link",
+   "options": "User"
+  },
+  {
+   "fieldname": "section_notes",
+   "label": "Notes & Logs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notes",
+   "label": "Notes",
+   "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "logs",
+   "label": "Conversation Logs",
+   "fieldtype": "Table",
+   "options": "IC Lead Log"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}
