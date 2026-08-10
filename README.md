@@ -1,58 +1,97 @@
-# Instacertify Sales CRM (Next.js)
+# Instacertify CRM — Modular Monolith
 
-Complete sales & operations CRM for **Instacertify Labs**, built with **Next.js**, **Tailwind CSS**, **Prisma**, and **NextAuth**.
+Project-centric certification CRM for Instacertify.
 
-## Stack
+## Architecture
 
-- Next.js (App Router) + React
-- Tailwind CSS for UI
-- Prisma + SQLite (swap `DATABASE_URL` for Postgres in production)
-- NextAuth credentials login
-
-## Features
-
-- **Dashboard** — pipeline stats, 14-day activity chart, project control overview
-- **Customers** — company profiles, lifetime value, linked leads/projects/quotes
-- **Leads** — sources, ownership, expected value, status pipeline (`NEW` → `WON`/`LOST`)
-- **Sales / Quotes** — letterhead quotes, public accept/revise links, QR
-- **Projects** — control tower with commercial + delivery owners, waiting-for, remarks
-- **Tasks** — TODO / IN_PROGRESS / WAITING / COMPLETED with waiting-for parties
-- **Documents, Testing, Reports, Templates, Admin**
-
-## Quick start
-
-```bash
-npm install
-cp .env.example .env   # if present, or set DATABASE_URL + NEXTAUTH_SECRET
-npm run db:setup       # prisma db push + seed
-npm run dev
+```text
+CRM (modular monolith)
+├── apps/web     Next.js + TypeScript + Tailwind (UI)
+├── apps/api     NestJS + TypeScript (business logic)
+└── packages/database   Prisma + PostgreSQL schema
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+**Not microservices.** One NestJS app, one PostgreSQL database, Redis for queues/cache.
 
-### Seed logins
+### Stack
 
-| Role  | Email                   | Password   |
-|-------|-------------------------|------------|
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js + TypeScript + Tailwind |
+| Backend | NestJS modular monolith |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Auth | JWT (Auth.js-ready; Nest issues tokens) |
+| Cache / jobs | Redis + BullMQ |
+| Files | Local now; S3-compatible ready (`storageKey`) |
+| Deploy | Docker Compose + Nginx/Caddy + Cloudflare |
+
+### Domain flow
+
+```text
+LEAD → CUSTOMER → OPPORTUNITY → QUOTATION → PROJECT
+  → SERVICE / LAB / TESTING / DOCUMENTS → CERTIFICATION → DELIVERY → PAYMENT
+```
+
+A customer (e.g. Midea Vietnam) can own many projects (BIS, WPC, EPR, Testing…).  
+Each project holds products, manufacturer, applicant, standards, testing, samples, queries, fees, tasks, and renewal.
+
+## Quick start (local)
+
+### 1. Postgres + Redis
+
+```bash
+# Postgres (example local)
+# user/pass/db: instacertify / instacertify / instacertify
+
+redis-server --daemonize yes
+```
+
+Or:
+
+```bash
+docker compose up -d postgres redis
+```
+
+### 2. Install & seed
+
+```bash
+cp .env.example .env
+npm install
+npm run db:setup
+```
+
+### 3. Run API + Web
+
+```bash
+npm run dev:api   # http://localhost:4000/api/v1
+npm run dev:web   # http://localhost:3000
+```
+
+### Logins
+
+| Role | Email | Password |
+|---|---|---|
 | Admin | `admin@instacertify.in` | `Admin@123` |
 | Sales | `sales@instacertify.in` | `Sales@123` |
 
-## Scripts
+## API modules (`apps/api`)
+
+`auth` · `users/employees` · `leads` · `customers/contacts` · `opportunities` · `quotations` · `projects` (control tower) · `tasks` · `certification` · `testing` · `samples` · `documents` · `invoices/payments` · `notifications` · `reports` · `admin`
+
+Health: `GET /api/v1/admin/health`
+
+## Seed demo account
+
+**Midea Vietnam** with BIS / WPC / EPR projects, testing order, sample shipment, and certification record.
+
+## Docker
 
 ```bash
-npm run dev        # development
-npm run build      # production build
-npm run start      # production server
-npm run db:push    # sync schema
-npm run db:seed    # seed users/services/sample CRM data
+docker compose up --build
 ```
 
-## Customer portals
+## Notes
 
-- `/q/<token>` — quote accept / revise / print  
-- `/d/<token>` — document uploads  
-- `/r/<token>` — report ready download  
-
-## Note on `instacertify_crm/`
-
-The `instacertify_crm/` folder is a legacy ERPNext experiment and is **not** the production path. Use this Next.js app.
+- `instacertify_crm/` is a legacy ERPNext experiment — not the production path.
+- Prefer growing Nest modules inside this monolith before extracting services.
