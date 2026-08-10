@@ -1,32 +1,50 @@
 # INSTACERTIFY-SALES-CRM
 
-Instacertify sales & operations CRM.
+Instacertify sales & operations CRM built on **ERPNext 16**.
 
-## Production target: ERPNext 16
+## Production: official ERPNext framework
 
-The installable Frappe app lives in [`instacertify_crm/`](./instacertify_crm/).
+This project installs as a Frappe custom app on top of:
 
-It is designed for an **existing ERPNext version-16** site (your sample EPR Plastic quote was already generated from Frappe print formats).
-
-```bash
-cd /path/to/frappe-bench
-bench get-app ./path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
-bench --site <site> install-app instacertify_crm
-bench --site <site> migrate
-bench build --app instacertify_crm
+```text
+https://github.com/frappe/erpnext.git  (branch: version-16)
 ```
 
-See [`instacertify_crm/README.md`](./instacertify_crm/README.md) for roles, public quote/document/report links, and feature details.
+Verified locally with **Frappe 16.30.0** + **ERPNext 16.31.1**.
 
-### Roles
-- **IC Admin** — full data + export
-- **IC Sales Ops** — full data, no export; purchase price hidden
+### Quick install
 
-### Customer portals (on your ERPNext site)
-- `/q/<token>` — quote accept / revise / print
-- `/d/<token>` — document checklist upload
-- `/r/<token>` — report ready download
+```bash
+# From a machine with Python 3.14+, Node 24+, MariaDB, Redis
+./scripts/setup_erpnext16_bench.sh
+```
 
-## Optional: Next.js prototype
+Or manually:
 
-The repository root also contains an earlier **Next.js** prototype of the same flows for demos without a bench. Prefer the ERPNext 16 app for production on `instacertify.in`.
+```bash
+bench init --frappe-branch version-16 frappe-bench
+cd frappe-bench
+bench get-app erpnext --branch version-16 https://github.com/frappe/erpnext.git
+bench new-site instacertify.local --admin-password 'Admin@123' --set-default
+bench --site instacertify.local install-app erpnext
+
+bench get-app /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
+bench --site instacertify.local install-app instacertify_crm
+bench --site instacertify.local migrate
+bench serve --port 8000
+```
+
+App docs: [`instacertify_crm/README.md`](./instacertify_crm/README.md)
+
+### Login
+- Desk: `Administrator` / password you set at site creation
+- Assign roles: `IC Admin` or `IC Sales Ops`
+
+### Customer portals
+- `/q/<token>` quote accept/revise/print  
+- `/d/<token>` document uploads  
+- `/r/<token>` report ready download  
+
+## Optional Next.js prototype
+
+The repo root still contains an earlier standalone Next.js prototype. Prefer the ERPNext app for production on `instacertify.in`.

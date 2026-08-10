@@ -1,66 +1,76 @@
-# Instacertify CRM (ERPNext 16)
+# Instacertify CRM — ERPNext 16 custom app
 
-Custom Frappe app for **ERPNext / Frappe version-16** that implements the Instacertify sales & operations CRM:
+Built on the official **[ERPNext](https://github.com/frappe/erpnext.git)** framework (`version-16`).
 
-- Leads (sources, company size, India state, follow-ups, conversation logs)
-- Roles: **IC Admin** (Excel/export) and **IC Sales Ops** (no export)
-- Quotes with Instacertify letterhead print format + public `/q/<token>` link (QR / Google Lens)
-- Customer Accept / Revise on the public quote page
-- Quote templates (bank master editable by admin only)
-- Document checklist share + customer upload (`/d/<token>`)
-- Final report upload + customer “report ready” link (`/r/<token>`)
-- Testing price library — **purchase price admin-only**; customers/quotes only use **selling price**
+Verified against:
 
-Your existing EPR Plastic quote PDF was generated from Frappe print formats — this app continues on that stack instead of a separate Next.js CRM.
+| App | Version | Branch / Source |
+|-----|---------|-----------------|
+| Frappe | 16.30.0 | `version-16` |
+| ERPNext | 16.31.1 | `https://github.com/frappe/erpnext.git` @ `version-16` |
+| Instacertify CRM | 0.0.1 | this folder |
 
-## Requirements
+## What you get
 
-- ERPNext **version-16** bench (Frappe v16)
-- Python / Node versions required by your v16 bench
-- App dependency: `erpnext`
+- **Leads** with sources (Consultant, Google Ads, Phone Call, IndiaMART, Referral), company size, India state
+- Roles **IC Admin** (export) and **IC Sales Ops** (no export)
+- **Quotes** with Instacertify letterhead print format + public `/q/<token>` (QR / Google Lens)
+- Customer **Accept / Revise**
+- Quote templates (bank master admin-only)
+- Document checklist portal `/d/<token>`
+- Final report ready portal `/r/<token>`
+- Testing library — purchase price admin-only; customers only see selling price
 
-## Install on an existing ERPNext 16 site
-
-From your bench directory:
+## Install on an ERPNext 16 bench
 
 ```bash
-# Option A: from this repository (app lives in /instacertify_crm)
-cd /path/to/frappe-bench
-bench get-app /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
-# or if this folder is published as its own git remote:
-# bench get-app instacertify_crm https://github.com/instacertify/INSTACERTIFY-SALES-CRM --branch cursor/erpnext16-crm-b698
+# 1) Create bench with Frappe v16 + official ERPNext
+bench init --frappe-branch version-16 frappe-bench
+cd frappe-bench
+bench get-app erpnext --branch version-16 https://github.com/frappe/erpnext.git
+bench new-site instacertify.local --admin-password 'Admin@123' --set-default
+bench --site instacertify.local install-app erpnext
 
-bench --site your-site.local install-app instacertify_crm
-bench --site your-site.local migrate
+# 2) Install this custom app
+bench get-app /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
+# or: ln -s /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm apps/instacertify_crm
+#     ./env/bin/pip install -e apps/instacertify_crm
+bench --site instacertify.local install-app instacertify_crm
+bench --site instacertify.local migrate
 bench build --app instacertify_crm
-bench clear-cache
+bench serve --port 8000
 ```
 
-Assign users the roles:
+Helper script from the repo root:
+
+```bash
+./scripts/setup_erpnext16_bench.sh
+```
+
+## Roles
+
+Assign to users after install:
 
 | Role | Access |
 |------|--------|
-| `IC Admin` | All CRM data + export/Excel |
-| `IC Sales Ops` | All CRM data, no export; no purchase price |
+| `IC Admin` | All CRM data + export |
+| `IC Sales Ops` | All CRM data, no export; purchase price hidden |
 
-Open **Instacertify CRM** from the desk apps / workspace.
+Open the **Instacertify CRM** workspace from Desk.
 
-## Customer links
+## Customer portals
 
 | Flow | URL |
 |------|-----|
-| Quote (accept / revise / print) | `https://your-site/q/<public_token>` |
-| Document checklist upload | `https://your-site/d/<public_token>` |
-| Report ready download | `https://your-site/r/<public_token>` |
+| Quote | `https://your-site/q/<public_token>` |
+| Documents | `https://your-site/d/<public_token>` |
+| Report ready | `https://your-site/r/<public_token>` |
 
-On an **IC Quote**, use **Share / Reshare Quote** to mark it Shared and expose the public link. After **Accepted**, create **IC Document Request** and/or **IC Report**.
+On **IC Quote** use **Share / Reshare Quote**. After **Accepted**, create **IC Document Request** and/or **IC Report**.
 
-## Print format
+## Requirements
 
-Standard print format: **IC Quote Letterhead** (Jinja) on DocType `IC Quote`.
-
-## Notes
-
-- Seed data (lead sources, services/document library, default bank, sample testing rows) is created in `after_install` / `after_migrate`.
-- This cloud agent environment cannot run a full ERPNext 16 bench (MariaDB/Redis + v16 Python/Node). Develop/test on your Instacertify ERPNext 16 server with the commands above.
-- A prior Next.js prototype remains in the repo root for reference; **ERPNext 16 is the intended production framework**.
+- Python **≥ 3.14** (ERPNext 16)
+- Node **24+**
+- MariaDB + Redis
+- `frappe-bench`
