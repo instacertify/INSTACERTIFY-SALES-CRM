@@ -124,6 +124,8 @@ def ensure_roles():
 
 def seed_masters():
 	_seed_settings()
+	_seed_labs()
+	_backfill_testing_lab_links()
 	for source in LEAD_SOURCES:
 		if not frappe.db.exists("IC Lead Source", source):
 			frappe.get_doc(
@@ -233,10 +235,113 @@ def _seed_bank():
 		frappe.get_doc({"doctype": "IC Bank Detail", **values}).insert(ignore_permissions=True)
 
 
+def _seed_labs():
+	"""Lab Library profiles — contacts, location, scope, certificate slots."""
+	if not frappe.db.exists("DocType", "IC Lab"):
+		return
+	labs = [
+		{
+			"lab_name": "ISO/IEC 17025 Partner Lab",
+			"accreditation_body": "NABL / ISO/IEC 17025",
+			"accreditation_number": "TC-XXXX",
+			"address_line": "Industrial testing campus",
+			"city": "Noida",
+			"state": "Uttar Pradesh",
+			"country": "India",
+			"pincode": "201301",
+			"scope": "<p>EMC, safety and ingress protection testing for AV / ICT equipment under ISO/IEC 17025.</p>",
+			"contacts": [
+				{
+					"contact_person": "Lab Coordinator",
+					"designation": "Technical Contact",
+					"email": "lab@example.com",
+					"phone": "+91 9999118039",
+					"is_primary": 1,
+				}
+			],
+		},
+		{
+			"lab_name": "BIS-recognized ISO/IEC 17025 Lab",
+			"accreditation_body": "NABL + BIS recognized",
+			"accreditation_number": "BIS-XXXX",
+			"address_line": "BIS-recognized partner facility",
+			"city": "Gurugram",
+			"state": "Haryana",
+			"country": "India",
+			"pincode": "122001",
+			"scope": "<p>IP / environmental and product safety tests for BIS CRS / ISI pathways.</p>",
+			"contacts": [
+				{
+					"contact_person": "BIS Lab Desk",
+					"designation": "Account Manager",
+					"email": "bis-lab@example.com",
+					"phone": "+91 9999118039",
+					"is_primary": 1,
+				}
+			],
+		},
+	]
+	for row in labs:
+		if frappe.db.exists("IC Lab", row["lab_name"]):
+			continue
+		frappe.get_doc({"doctype": "IC Lab", "active": 1, **row}).insert(ignore_permissions=True)
+
+
+def _backfill_testing_lab_links():
+	"""Link existing testing catalog rows to Lab Library by lab name."""
+	if not frappe.db.exists("DocType", "IC Lab") or not frappe.db.has_column(
+		"IC Testing Service", "lab"
+	):
+		return
+	rows = frappe.get_all(
+		"IC Testing Service",
+		filters={"lab": ["in", ["", None]]},
+		fields=["name", "lab_name"],
+	)
+	# Also pick rows where lab is null via SQL for safety
+	null_labs = frappe.db.sql(
+		"""
+		SELECT name, lab_name FROM `tabIC Testing Service`
+		WHERE IFNULL(lab, '') = ''
+		""",
+		as_dict=True,
+	)
+	seen = {r.name for r in rows}
+	for r in null_labs:
+		if r.name not in seen:
+			rows.append(r)
+	for row in rows:
+		lab_name = row.lab_name
+		if not lab_name:
+			continue
+		if not frappe.db.exists("IC Lab", lab_name):
+			frappe.get_doc(
+				{
+					"doctype": "IC Lab",
+					"lab_name": lab_name,
+					"active": 1,
+					"accreditation_body": "ISO/IEC 17025",
+					"address_line": "To be updated",
+					"city": "To be updated",
+					"country": "India",
+					"scope": f"<p>Scope pending for {frappe.utils.escape_html(lab_name)}</p>",
+					"contacts": [
+						{
+							"contact_person": "To be updated",
+							"is_primary": 1,
+						}
+					],
+				}
+			).insert(ignore_permissions=True)
+		frappe.db.set_value("IC Testing Service", row.name, "lab", lab_name, update_modified=False)
+
+
 def _seed_testing_services():
+	_seed_labs()
 	testing_seed = [
 		{
 			"test_name": "Surge Immunity Test",
+			"lab": "ISO/IEC 17025 Partner Lab",
 			"lab_name": "ISO/IEC 17025 Partner Lab",
 			"purchase_price": 12000,
 			"selling_price": 20000,
@@ -244,6 +349,7 @@ def _seed_testing_services():
 		},
 		{
 			"test_name": "Voltage Dips, Short Interruptions & Voltage Variations",
+			"lab": "ISO/IEC 17025 Partner Lab",
 			"lab_name": "ISO/IEC 17025 Partner Lab",
 			"purchase_price": 12000,
 			"selling_price": 20000,
@@ -251,6 +357,7 @@ def _seed_testing_services():
 		},
 		{
 			"test_name": "Ingress Protection Test",
+			"lab": "ISO/IEC 17025 Partner Lab",
 			"lab_name": "ISO/IEC 17025 Partner Lab",
 			"purchase_price": 3500,
 			"selling_price": 6000,
@@ -258,6 +365,7 @@ def _seed_testing_services():
 		},
 		{
 			"test_name": "Safety Requirements for AV/ICT Equipment",
+			"lab": "ISO/IEC 17025 Partner Lab",
 			"lab_name": "ISO/IEC 17025 Partner Lab",
 			"purchase_price": 25000,
 			"selling_price": 40000,
@@ -265,6 +373,7 @@ def _seed_testing_services():
 		},
 		{
 			"test_name": "IP69 Ingress Protection Testing",
+			"lab": "BIS-recognized ISO/IEC 17025 Lab",
 			"lab_name": "BIS-recognized ISO/IEC 17025 Lab",
 			"purchase_price": 5500,
 			"selling_price": 9000,

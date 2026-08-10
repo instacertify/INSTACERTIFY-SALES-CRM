@@ -11,17 +11,22 @@
  "sort_order": "DESC",
  "field_order": [
   "test_name",
+  "lab",
   "lab_name",
   "selling_price",
   "column_break_1",
   "purchase_price",
   "active",
+  "section_lab_info",
+  "lab_city",
+  "lab_contact",
+  "lab_phone",
   "section_desc",
   "description"
  ],
  "autoname": "format:TEST-{####}",
  "title_field": "test_name",
- "search_fields": "test_name,lab_name",
+ "search_fields": "test_name,lab_name,lab",
  "fields": [
   {
    "fieldname": "test_name",
@@ -31,11 +36,22 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "lab",
+   "label": "Lab (Library)",
+   "fieldtype": "Link",
+   "options": "IC Lab",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Pick from Lab Library — contacts, location, scope and certificates live on the lab."
+  },
+  {
    "fieldname": "lab_name",
    "label": "Lab Name",
    "fieldtype": "Data",
-   "reqd": 1,
-   "in_list_view": 1
+   "read_only": 1,
+   "in_list_view": 1,
+   "fetch_from": "lab.lab_name"
   },
   {
    "fieldname": "selling_price",
@@ -61,6 +77,33 @@
    "label": "Active",
    "fieldtype": "Check",
    "default": "1"
+  },
+  {
+   "fieldname": "section_lab_info",
+   "label": "Lab Snapshot",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "lab_city",
+   "label": "Lab City",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "fetch_from": "lab.city"
+  },
+  {
+   "fieldname": "lab_contact",
+   "label": "Lab Contact",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "fetch_from": "lab.primary_contact"
+  },
+  {
+   "fieldname": "lab_phone",
+   "label": "Lab Phone",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "fetch_from": "lab.primary_phone"
   },
   {
    "fieldname": "section_desc",

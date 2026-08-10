@@ -23,6 +23,7 @@ Verified against:
 - **Customer lifecycle** — projects, delivery records, reports shared, customer data received, and project remarks
 - **Certification renewal reminders** — check 6 months / 1 year / custom date when marking service delivered
 - **Lead cost** — default ₹800 per lead (editable); IC Admin **Lead Cost Spend** report for total acquisition spend
+- **Lab Library** — lab contacts, location, accreditation scope, certificate uploads; linked from Testing Library
 - Testing library — purchase price admin-only; customers only see selling price
 
 ## Install on an ERPNext 16 bench
@@ -99,6 +100,17 @@ Track everything delivered to / received from the customer across the engagement
 ### Lead cost
 
 Every **IC Lead** has **Lead Cost** (default **₹800**, overridable). Change the sitewide default in **IC Settings → Default Lead Cost**. IC Admins open **Lead Cost Spend** to see totals by source, assignee, status, or month.
+
+### Lab Library
+
+Use workspace **Lab Library** (`IC Lab`) to store partner labs:
+
+- Contact persons (primary + more)
+- Location (address, city, state, country)
+- Scope of accreditation
+- Upload **Accreditation Certificate** and optional annexure
+
+**Testing Library** tests must link to a lab from this library.
 
 ## Requirements
 
