@@ -16,6 +16,7 @@ export default async function DashboardPage() {
     quotes,
     notifications,
     docUploads,
+    readyReports,
   ] = await Promise.all([
     prisma.lead.count(),
     prisma.lead.findMany({
@@ -40,6 +41,12 @@ export default async function DashboardPage() {
       where: { status: { in: ["UPLOADED", "FINAL"] } },
       include: { quote: true, service: true },
       orderBy: { updatedAt: "desc" },
+      take: 6,
+    }),
+    prisma.report.findMany({
+      where: { status: "READY" },
+      include: { quote: true },
+      orderBy: { sharedAt: "desc" },
       take: 6,
     }),
   ]);
@@ -179,6 +186,31 @@ export default async function DashboardPage() {
               ) : null}
             </tbody>
           </table>
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="row" style={{ justifyContent: "space-between" }}>
+          <h2>Reports ready for customers</h2>
+          <Link href="/reports" className="btn ghost small">
+            All reports
+          </Link>
+        </div>
+        <div className="stack" style={{ marginTop: 12 }}>
+          {readyReports.map((report) => (
+            <div key={report.id} className="notice ok">
+              <Link href={`/quotes/${report.quoteId}`}>
+                <strong>{report.title}</strong> · {report.quote.quoteNumber}
+              </Link>
+              <div className="muted">
+                {report.quote.company} · shared{" "}
+                {format(report.sharedAt, "dd MMM yyyy")}
+              </div>
+            </div>
+          ))}
+          {!readyReports.length ? (
+            <p className="muted">No reports shared yet.</p>
+          ) : null}
         </div>
       </Panel>
     </div>

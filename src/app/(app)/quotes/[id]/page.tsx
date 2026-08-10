@@ -3,7 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { PageHeader, Panel, Badge, statusTone } from "@/components/ui";
 import { QuoteLetterhead } from "@/components/QuoteLetterhead";
 import { QuoteActions } from "@/components/QuoteActions";
-import { parseCustomerTestingItems, quotePublicUrl } from "@/lib/quotes";
+import { ReportUpload } from "@/components/ReportUpload";
+import {
+  parseCustomerTestingItems,
+  quotePublicUrl,
+  reportPublicUrl,
+} from "@/lib/quotes";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -17,6 +22,7 @@ export default async function QuoteDetailPage({ params }: Props) {
           include: { service: true, uploads: true },
           orderBy: { createdAt: "desc" },
         },
+        reports: { orderBy: { sharedAt: "desc" } },
       },
     }),
     prisma.bankDetail.findMany({
@@ -63,6 +69,26 @@ export default async function QuoteDetailPage({ params }: Props) {
           banks={banks}
           services={services}
         />
+      </Panel>
+
+      <Panel>
+        <h2>Final report for customer</h2>
+        <div style={{ marginTop: 12 }}>
+          <ReportUpload
+            quoteId={quote.id}
+            quoteNumber={quote.quoteNumber}
+            canUpload={quote.status === "ACCEPTED"}
+            initialReports={quote.reports.map((r) => ({
+              id: r.id,
+              title: r.title,
+              status: r.status,
+              publicUrl: reportPublicUrl(r.publicToken),
+              originalName: r.originalName,
+              sharedAt: r.sharedAt.toISOString(),
+              message: r.message,
+            }))}
+          />
+        </div>
       </Panel>
 
       {quote.documentRequests.length ? (

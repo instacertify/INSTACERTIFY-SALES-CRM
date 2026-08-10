@@ -59,6 +59,10 @@ export function documentPublicUrl(token: string) {
   return `${appBaseUrl()}/d/${token}`;
 }
 
+export function reportPublicUrl(token: string) {
+  return `${appBaseUrl()}/r/${token}`;
+}
+
 /** Customer-safe testing lines: selling price only — never purchase price. */
 export type CustomerTestingItem = {
   name: string;

@@ -5,7 +5,7 @@ import { PageHeader, Panel, Badge, statusTone } from "@/components/ui";
 
 export default async function OperationsPage() {
   const now = new Date();
-  const [leads, accepted, revisions, docs] = await Promise.all([
+  const [leads, accepted, revisions, docs, reports] = await Promise.all([
     prisma.lead.findMany({
       where: {
         status: { in: ["NEW", "CONTACTED", "FOLLOW_UP", "QUOTE_SENT"] },
@@ -26,6 +26,12 @@ export default async function OperationsPage() {
       where: { status: { in: ["UPLOADED", "FINAL", "NEEDS_MORE"] } },
       include: { quote: true, service: true },
       orderBy: { updatedAt: "desc" },
+    }),
+    prisma.report.findMany({
+      where: { status: "READY" },
+      include: { quote: true },
+      orderBy: { sharedAt: "desc" },
+      take: 12,
     }),
   ]);
 
@@ -158,6 +164,25 @@ export default async function OperationsPage() {
               ) : null}
             </tbody>
           </table>
+        </div>
+      </Panel>
+
+      <Panel>
+        <h2>Reports ready / shared with customers</h2>
+        <div className="stack" style={{ marginTop: 12 }}>
+          {reports.map((report) => (
+            <div key={report.id} className="notice ok">
+              <Link href={`/quotes/${report.quoteId}`}>
+                <strong>{report.title}</strong> · {report.quote.quoteNumber}
+              </Link>
+              <div className="muted">
+                {report.quote.company} · {format(report.sharedAt, "dd MMM yyyy HH:mm")}
+              </div>
+            </div>
+          ))}
+          {!reports.length ? (
+            <p className="muted">No customer reports shared yet.</p>
+          ) : null}
         </div>
       </Panel>
     </div>

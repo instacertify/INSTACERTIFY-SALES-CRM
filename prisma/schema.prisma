@@ -22,6 +22,7 @@ model User {
   templatesCreated  QuoteTemplate[]
   notifications     Notification[]
   documentRequests  DocumentRequest[]  @relation("DocRequestCreator")
+  reportsUploaded   Report[]           @relation("ReportUploader")
 }
 
 model LeadSource {
@@ -177,6 +178,27 @@ model Quote {
   createdBy   User   @relation("QuoteCreator", fields: [createdById], references: [id])
 
   documentRequests DocumentRequest[]
+  reports          Report[]
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  publicToken  String   @unique
+  title        String
+  message      String? // note shown to customer when report is ready
+  originalName String
+  storedName   String
+  mimeType     String?
+  size         Int      @default(0)
+  status       String   @default("READY") // READY | REVOKED
+  sharedAt     DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  quoteId     String
+  quote       Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  uploadedById String
+  uploadedBy  User  @relation("ReportUploader", fields: [uploadedById], references: [id])
 }
 
 model DocumentRequest {

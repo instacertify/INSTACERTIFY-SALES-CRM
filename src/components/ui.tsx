@@ -83,8 +83,8 @@ export function Badge({
 
 export function statusTone(status: string): "neutral" | "teal" | "orange" | "green" | "red" {
   const s = status.toUpperCase();
-  if (["WON", "ACCEPTED", "FINAL"].includes(s)) return "green";
-  if (["LOST", "NEEDS_MORE"].includes(s)) return "red";
+  if (["WON", "ACCEPTED", "FINAL", "READY"].includes(s)) return "green";
+  if (["LOST", "NEEDS_MORE", "REVOKED"].includes(s)) return "red";
   if (["FOLLOW_UP", "REVISION_REQUESTED", "SHARED", "QUOTE_SENT"].includes(s))
     return "orange";
   if (["NEW", "DRAFT", "CONTACTED"].includes(s)) return "teal";
