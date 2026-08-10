@@ -407,7 +407,7 @@ def build_lifecycle(lead: str | None = None, project: str | None = None, email: 
 		"timeline": timeline[:100],
 		"totals": {
 			"quotes": len(quotes),
-			"accepted_quotes": len([q for q in quotes if q.status == "Accepted"]),
+			"accepted_quotes": len([q for q in quotes if q.status in {"Accepted", "Delivered"}]),
 			"deliveries_to_customer": len([d for d in deliveries if d.direction == "To Customer"]),
 			"data_from_customer": len([d for d in deliveries if d.direction == "From Customer"]),
 			"reports": len(reports),
