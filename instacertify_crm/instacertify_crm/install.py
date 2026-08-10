@@ -293,23 +293,13 @@ def _backfill_testing_lab_links():
 		"IC Testing Service", "lab"
 	):
 		return
-	rows = frappe.get_all(
-		"IC Testing Service",
-		filters={"lab": ["in", ["", None]]},
-		fields=["name", "lab_name"],
-	)
-	# Also pick rows where lab is null via SQL for safety
-	null_labs = frappe.db.sql(
+	rows = frappe.db.sql(
 		"""
 		SELECT name, lab_name FROM `tabIC Testing Service`
 		WHERE IFNULL(lab, '') = ''
 		""",
 		as_dict=True,
 	)
-	seen = {r.name for r in rows}
-	for r in null_labs:
-		if r.name not in seen:
-			rows.append(r)
 	for row in rows:
 		lab_name = row.lab_name
 		if not lab_name:
@@ -324,7 +314,7 @@ def _backfill_testing_lab_links():
 					"address_line": "To be updated",
 					"city": "To be updated",
 					"country": "India",
-					"scope": f"<p>Scope pending for {frappe.utils.escape_html(lab_name)}</p>",
+					"scope": f"<p>Scope pending for {frappe.safe_decode(lab_name)}</p>",
 					"contacts": [
 						{
 							"contact_person": "To be updated",
