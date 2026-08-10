@@ -42,9 +42,6 @@ doc_events = {
 	"IC Quote": {
 		"on_update": "instacertify_crm.instacertify_crm.doctype.ic_quote.ic_quote.on_update",
 	},
-	"IC Lead": {
-		"on_update": "instacertify_crm.instacertify_crm.doctype.ic_lead.ic_lead.on_update",
-	},
 }
 
 scheduler_events = {

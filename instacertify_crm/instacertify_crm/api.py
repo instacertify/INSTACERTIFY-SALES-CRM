@@ -184,6 +184,23 @@ def create_document_request(quote: str, documents=None, questionnaire: str | Non
 
 
 @frappe.whitelist(methods=["GET"])
+def get_team_workload(group_by: str = "Assigned To", active_only: int = 1):
+	"""Admin view: how many leads each team member is working on."""
+	roles = set(frappe.get_roles())
+	if not roles.intersection({"IC Admin", "System Manager"}):
+		frappe.throw(_("Only IC Admin can view team workload"), frappe.PermissionError)
+
+	from instacertify_crm.instacertify_crm.report.ic_team_lead_workload.ic_team_lead_workload import (
+		execute,
+	)
+
+	_columns, rows, _message, chart, summary = execute(
+		{"group_by": group_by or "Assigned To", "active_only": active_only}
+	)
+	return {"rows": rows, "chart": chart, "summary": summary, "group_by": group_by}
+
+
+@frappe.whitelist(methods=["GET"])
 def get_customer_history(lead: str | None = None, email: str | None = None, company: str | None = None):
 	"""Past quotes, testing/services delivered, document packs and reports for a customer."""
 	frappe.has_permission("IC Quote", "read", throw=True)

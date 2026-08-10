@@ -6,6 +6,81 @@ instacertify_crm.copy_text = async function (text) {
 	frappe.show_alert({ message: __("Copied"), indicator: "green" });
 };
 
+instacertify_crm.is_admin = function () {
+	return frappe.user.has_role("IC Admin") || frappe.user.has_role("System Manager");
+};
+
+instacertify_crm.show_team_workload = function () {
+	if (!instacertify_crm.is_admin()) {
+		frappe.msgprint(__("Only IC Admin can view team workload"));
+		return;
+	}
+	frappe.call({
+		method: "instacertify_crm.api.get_team_workload",
+		args: { group_by: "Assigned To", active_only: 1 },
+		freeze: true,
+		callback(r) {
+			const data = r.message || {};
+			const rows = data.rows || [];
+			const summary = data.summary || [];
+			const summaryHtml = summary
+				.map(
+					(s) =>
+						`<div style="min-width:120px"><div class="text-muted">${frappe.utils.escape_html(
+							s.label || "",
+						)}</div><div style="font-size:20px;font-weight:700">${s.value ?? 0}</div></div>`,
+				)
+				.join("");
+			const tableRows = rows.length
+				? rows
+						.map(
+							(row) => `<tr>
+					<td>${frappe.utils.escape_html(row.full_name || row.user || __("Unassigned"))}</td>
+					<td class="text-right"><strong>${row.active_leads || 0}</strong></td>
+					<td class="text-right">${row.new || 0}</td>
+					<td class="text-right">${row.contacted || 0}</td>
+					<td class="text-right">${row.follow_up || 0}</td>
+					<td class="text-right">${row.quote_sent || 0}</td>
+					<td class="text-right">${row.open_followups || 0}</td>
+				</tr>`,
+						)
+						.join("")
+				: `<tr><td colspan="7" class="text-muted">${__("No active leads found.")}</td></tr>`;
+			const html = `
+				<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px">${summaryHtml}</div>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>${__("Team Member")}</th>
+							<th class="text-right">${__("Active")}</th>
+							<th class="text-right">${__("New")}</th>
+							<th class="text-right">${__("Contacted")}</th>
+							<th class="text-right">${__("Follow Up")}</th>
+							<th class="text-right">${__("Quote Sent")}</th>
+							<th class="text-right">${__("Follow-ups set")}</th>
+						</tr>
+					</thead>
+					<tbody>${tableRows}</tbody>
+				</table>
+				<p class="text-muted">${__(
+					"Admins also get alerts when leads are reassigned or change status.",
+				)}</p>`;
+			const d = new frappe.ui.Dialog({
+				title: __("Team lead workload"),
+				size: "extra-large",
+				fields: [{ fieldtype: "HTML", fieldname: "body" }],
+				primary_action_label: __("Open full report"),
+				primary_action() {
+					d.hide();
+					frappe.set_route("query-report", "IC Team Lead Workload");
+				},
+			});
+			d.fields_dict.body.$wrapper.html(html);
+			d.show();
+		},
+	});
+};
+
 instacertify_crm.render_customer_history = function (data) {
 	const quotes = data.quotes || [];
 	if (!quotes.length) {

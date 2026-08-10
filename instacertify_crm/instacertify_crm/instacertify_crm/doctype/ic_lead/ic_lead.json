@@ -147,7 +147,10 @@
    "fieldname": "assigned_to",
    "label": "Assigned To",
    "fieldtype": "Link",
-   "options": "User"
+   "options": "User",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Team member working this lead. Admins track counts per assignee in Team Workload."
   },
   {
    "fieldname": "section_notes",

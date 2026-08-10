@@ -54,10 +54,10 @@ Assign to users after install:
 
 | Role | Access |
 |------|--------|
-| `IC Admin` | All CRM data + export |
+| `IC Admin` | All CRM data + export; **Team Workload** report + assignment alerts |
 | `IC Sales Ops` | All CRM data, no export; purchase price hidden |
 
-Open the **Instacertify CRM** workspace from Desk.
+Open the **Instacertify CRM** workspace from Desk. Admins can open **Team Workload** to see how many active leads each team member is working on (by Assigned To / Owner, with status breakup and chart).
 
 ## Customer portals
 
