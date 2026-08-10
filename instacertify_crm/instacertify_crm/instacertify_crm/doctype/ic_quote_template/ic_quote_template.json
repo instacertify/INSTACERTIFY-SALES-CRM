@@ -11,21 +11,33 @@
  "sort_order": "DESC",
  "field_order": [
   "template_name",
+  "quote_type",
   "service",
-  "validity_days",
+  "subject",
   "column_break_1",
+  "validity_days",
   "consulting_price",
   "testing_price",
   "other_commercials",
-  "section_body",
-  "body_html",
   "other_commercials_note",
+  "section_body",
+  "about_html",
+  "standards_html",
+  "accreditation_html",
+  "sample_requirements_html",
+  "deliverables_html",
+  "timeline_html",
+  "payment_terms_html",
+  "sample_handling_html",
+  "policies_html",
+  "body_html",
   "section_bank",
   "bank_detail"
  ],
  "autoname": "field:template_name",
  "naming_rule": "By fieldname",
  "title_field": "template_name",
+ "search_fields": "template_name,quote_type,service,subject",
  "fields": [
   {
    "fieldname": "template_name",
@@ -35,20 +47,35 @@
    "unique": 1
   },
   {
+   "fieldname": "quote_type",
+   "label": "Quote Type",
+   "fieldtype": "Select",
+   "options": "Testing\nService",
+   "default": "Testing",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
    "fieldname": "service",
-   "label": "Service",
+   "label": "Default Service",
    "fieldtype": "Link",
    "options": "IC Service"
+  },
+  {
+   "fieldname": "subject",
+   "label": "Subject",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "validity_days",
    "label": "Validity Days",
    "fieldtype": "Int",
    "default": "30"
-  },
-  {
-   "fieldname": "column_break_1",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "consulting_price",
@@ -69,19 +96,66 @@
    "default": "0"
   },
   {
-   "fieldname": "section_body",
-   "label": "Letter Body",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "body_html",
-   "label": "Body HTML",
-   "fieldtype": "Text Editor"
-  },
-  {
    "fieldname": "other_commercials_note",
    "label": "Other Commercials Note",
    "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_body",
+   "label": "Letter Sections",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "about_html",
+   "label": "About",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "standards_html",
+   "label": "Applicable Standards",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "accreditation_html",
+   "label": "Accreditation",
+   "fieldtype": "Text Editor",
+   "depends_on": "eval:doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "sample_requirements_html",
+   "label": "Sample Requirements",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "deliverables_html",
+   "label": "Deliverables",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "timeline_html",
+   "label": "Timeline",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "payment_terms_html",
+   "label": "Payment Terms",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "sample_handling_html",
+   "label": "Sample Handling & Disposal",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "policies_html",
+   "label": "Policies (Cancellation / Force Majeure / Confidentiality)",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Extra Letter Body",
+   "fieldtype": "Text Editor",
+   "description": "Optional free-form content appended after the structured sections."
   },
   {
    "fieldname": "section_bank",
@@ -131,7 +205,7 @@
   {
    "role": "IC Sales Ops",
    "read": 1,
-   "write": 1,
+   "write": 0,
    "create": 1,
    "delete": 0,
    "submit": 0,
@@ -144,5 +218,5 @@
    "print": 1,
    "email": 1
   }
- ]
+]
 }

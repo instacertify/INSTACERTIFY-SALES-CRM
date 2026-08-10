@@ -40,15 +40,30 @@ after_migrate = "instacertify_crm.install.after_migrate"
 
 doc_events = {
 	"IC Quote": {
-		"on_update": "instacertify_crm.instacertify_crm.doctype.ic_quote.ic_quote.on_update",
+		"on_update": [
+			"instacertify_crm.instacertify_crm.doctype.ic_quote.ic_quote.on_update",
+			"instacertify_crm.lifecycle.on_quote_update",
+		],
 	},
-	"IC Lead": {
-		"on_update": "instacertify_crm.instacertify_crm.doctype.ic_lead.ic_lead.on_update",
+	"IC Report": {
+		"on_update": "instacertify_crm.lifecycle.on_report_update",
+		"after_insert": "instacertify_crm.lifecycle.on_report_update",
 	},
+	"IC Document Request": {
+		"on_update": "instacertify_crm.lifecycle.on_document_request_update",
+	},
+	"IC Customer Project": {
+		"on_update": "instacertify_crm.assignments.on_project_update",
+	},
+}
+
+has_permission = {
+	"IC Quote Template": "instacertify_crm.permissions.quote_template_has_permission",
 }
 
 scheduler_events = {
 	"daily": [
 		"instacertify_crm.tasks.send_followup_reminders",
+		"instacertify_crm.tasks.send_renewal_reminders",
 	],
 }

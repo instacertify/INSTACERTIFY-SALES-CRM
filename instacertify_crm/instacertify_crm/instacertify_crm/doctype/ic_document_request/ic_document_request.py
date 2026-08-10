@@ -20,3 +20,5 @@ class ICDocumentRequest(Document):
 		quote_status = frappe.db.get_value("IC Quote", self.quote, "status")
 		if quote_status != "Accepted" and self.is_new():
 			frappe.throw("Document checklist can be shared only after quote is Accepted")
+		if not self.requested_documents:
+			frappe.throw("Select at least one document for the customer to upload")

@@ -25,6 +25,7 @@
   "section_ops",
   "status",
   "follow_up_on",
+  "lead_cost",
   "column_break_3",
   "last_contact_on",
   "assigned_to",
@@ -135,6 +136,15 @@
    "fieldtype": "Datetime"
   },
   {
+   "fieldname": "lead_cost",
+   "label": "Lead Cost",
+   "fieldtype": "Currency",
+   "default": "800",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Acquisition cost for this lead (default ₹800). Editable per lead; admins see total spend in Lead Cost Spend."
+  },
+  {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
   },
@@ -147,7 +157,10 @@
    "fieldname": "assigned_to",
    "label": "Assigned To",
    "fieldtype": "Link",
-   "options": "User"
+   "options": "User",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Team member working this lead. Admins track counts per assignee in Team Workload."
   },
   {
    "fieldname": "section_notes",

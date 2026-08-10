@@ -11,9 +11,12 @@
  "sort_order": "DESC",
  "field_order": [
   "testing_service",
+  "applicable_standard",
   "test_name",
-  "lab_name",
-  "selling_price"
+  "units",
+  "per_unit_charges",
+  "selling_price",
+  "lab_name"
  ],
  "permissions": [],
  "fields": [
@@ -25,24 +28,42 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "test_name",
-   "label": "Test Name",
+   "fieldname": "applicable_standard",
+   "label": "Applicable Standard",
    "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "test_name",
+   "label": "Testing",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "units",
+   "label": "Units",
+   "fieldtype": "Float",
+   "default": "1",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "per_unit_charges",
+   "label": "Per Unit Charges",
+   "fieldtype": "Currency",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "selling_price",
+   "label": "Total Charges",
+   "fieldtype": "Currency",
    "reqd": 1,
    "in_list_view": 1
   },
   {
    "fieldname": "lab_name",
    "label": "Lab Name",
-   "fieldtype": "Data",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "selling_price",
-   "label": "Selling Price",
-   "fieldtype": "Currency",
-   "reqd": 1,
-   "in_list_view": 1
+   "fieldtype": "Data"
   }
  ]
 }

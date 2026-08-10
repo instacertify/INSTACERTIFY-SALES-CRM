@@ -14,11 +14,16 @@ Verified against:
 
 - **Leads** with sources (Consultant, Google Ads, Phone Call, IndiaMART, Referral), company size, India state
 - Roles **IC Admin** (export) and **IC Sales Ops** (no export)
-- **Quotes** with Instacertify letterhead print format + public `/q/<token>` (QR / Google Lens)
+- **Quotes** with Testing / Service templates, Instacertify letterhead + public `/q/<token>` (QR to open online quote)
 - Customer **Accept / Revise**
-- Quote templates (bank master admin-only)
-- Document checklist portal `/d/<token>`
+- Quote templates learned from Instacertify Testing & Service letter formats
+- Customer **past history** on lead/quote (services, testing, reports)
+- After accept: **select documents** and share upload link `/d/<token>`
 - Final report ready portal `/r/<token>`
+- **Customer lifecycle** — projects, delivery records, reports shared, customer data received, and project remarks
+- **Certification renewal reminders** — check 6 months / 1 year / custom date when marking service delivered
+- **Lead cost** — default ₹800 per lead (editable); IC Admin **Lead Cost Spend** report for total acquisition spend
+- **Lab Library** — lab contacts, location, accreditation scope, certificate uploads; linked from Testing Library
 - Testing library — purchase price admin-only; customers only see selling price
 
 ## Install on an ERPNext 16 bench
@@ -53,10 +58,16 @@ Assign to users after install:
 
 | Role | Access |
 |------|--------|
-| `IC Admin` | All CRM data + export |
-| `IC Sales Ops` | All CRM data, no export; purchase price hidden |
+| `IC Admin` | All CRM data + export; **Team Workload** / **Lead Cost Spend**; edit quote templates; always reassign |
+| `IC Sales Ops` | CRM data (no export); can **assign** leads/projects; can **create** quote templates (admin-only edit) |
 
-Open the **Instacertify CRM** workspace from Desk.
+**Assignment:** On Lead / Project use **Assign** — any IC user can assign to a teammate; if blocked, an IC Admin can always assign.
+
+**Quote templates:** Anyone (IC Sales Ops / Admin) can create; **only IC Admin** can edit after save.
+
+Open the **Instacertify CRM** workspace from Desk. Admins can open **Team Workload** to see how many active leads each team member is working on (by Assigned To / Owner, with status breakup and chart).
+
+Upload logos in **Branding / Logo** (`IC Settings`) — company logo, optional letterhead logo, favicon. Saving syncs quote letterhead, customer portals, Website Settings, and the Instacertify Letter Head.
 
 ## Customer portals
 
@@ -66,7 +77,40 @@ Open the **Instacertify CRM** workspace from Desk.
 | Documents | `https://your-site/d/<public_token>` |
 | Report ready | `https://your-site/r/<public_token>` |
 
-On **IC Quote** use **Share / Reshare Quote**. After **Accepted**, create **IC Document Request** and/or **IC Report**.
+On **IC Quote** choose **Quote For = Testing or Service**, apply a template, then **Share / Reshare Quote**.
+After **Accepted**, use **Select Documents & Share** to pick the checklist and send the customer upload link.
+Use **Customer History** on Lead/Quote to see past testing, services and reports.
+
+### Customer lifecycle
+
+Track everything delivered to / received from the customer across the engagement:
+
+| Record | Purpose |
+|--------|---------|
+| **IC Customer Project** | One project per open engagement — scope, lifecycle status, remarks timeline |
+| **IC Delivery Record** | Log service delivered, quote service delivered, reports shared, certificates, or customer data received (with attachment) |
+
+- On Lead / Quote: **Customer Lifecycle**, **Open / Create Project**, **Log Delivery Record**
+- On accepted Quote: **Mark Service Delivered** (creates delivery + sets project to Delivered)
+- When marking delivered, check/uncheck **Remind in 6 months**, **Remind in 1 year**, or set a **custom date** for certification renewal
+- Daily job notifies assignees for due renewals (`IC Renewal Reminder`)
+- Reports marked Ready and customer document uploads are logged automatically
+- Workspace shortcuts: **Customer Projects**, **Delivery Records**, **Renewal Reminders**, **Lead Cost Spend**
+
+### Lead cost
+
+Every **IC Lead** has **Lead Cost** (default **₹800**, overridable). Change the sitewide default in **IC Settings → Default Lead Cost**. IC Admins open **Lead Cost Spend** to see totals by source, assignee, status, or month.
+
+### Lab Library
+
+Use workspace **Lab Library** (`IC Lab`) to store partner labs:
+
+- Contact persons (primary + more)
+- Location (address, city, state, country)
+- Scope of accreditation
+- Upload **Accreditation Certificate** and optional annexure
+
+**Testing Library** tests must link to a lab from this library.
 
 ## Requirements
 
