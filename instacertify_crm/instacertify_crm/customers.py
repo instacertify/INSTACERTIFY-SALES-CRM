@@ -47,8 +47,7 @@ def upsert_customer_from_party(
 			doc.primary_lead = lead
 			changed = True
 		doc.refresh_metrics(save=False)
-		if changed or True:
-			doc.save(ignore_permissions=True)
+		doc.save(ignore_permissions=True)
 		return doc
 
 	doc = frappe.get_doc(
