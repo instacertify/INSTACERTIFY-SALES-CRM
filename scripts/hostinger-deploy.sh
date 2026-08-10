@@ -25,13 +25,10 @@ npm run db:setup
 echo "==> Build API + Web"
 # Bake public API URL into Next build
 export NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL:-https://${DOMAIN:-crm.instacertify.in}/api/v1}"
+# Ensure API can read root .env when started via PM2
+cp -f .env apps/api/.env
+cp -f .env packages/database/.env
 npm run build
-
-# Next binary for PM2 (workspace hoist)
-if [[ ! -f apps/web/node_modules/next/dist/bin/next ]]; then
-  mkdir -p apps/web/node_modules
-  ln -sfn ../../node_modules/next apps/web/node_modules/next 2>/dev/null || true
-fi
 
 echo "==> Restart PM2 apps"
 if command -v pm2 >/dev/null 2>&1; then
