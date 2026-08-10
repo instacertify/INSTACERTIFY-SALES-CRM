@@ -21,6 +21,7 @@
   table.ic-price th, table.ic-price td { border:1px solid #d7e2ea; padding:10px 12px; text-align:left; vertical-align:top; }
   table.ic-price th { background:#f3f7fa; color:#0A4A6C; }
   h3 { color:#0A4A6C; margin:0 0 8px; border-left:3px solid #EB7D2D; padding-left:8px; }
+  h4 { color:#0A4A6C; margin:14px 0 8px; font-size:14px; }
   .ic-qr img { border:1px solid #d7e2ea; border-radius:10px; padding:6px; background:#fff; }
   .ic-logo { display:block; max-height:64px; max-width:220px; width:auto; height:auto; object-fit:contain; margin-bottom:8px; }
   pre.bank { white-space:pre-wrap; font-family:inherit; background:#f8fbfd; border:1px solid #d7e2ea; border-radius:12px; padding:14px; }
@@ -31,6 +32,7 @@
 {% if not quote %}
   <div class="ic-quote"><div class="ic-body"><p>Quote not found or not shared yet.</p></div></div>
 {% else %}
+{% set is_service = quote.quote_type == 'Service' %}
 <article class="ic-quote">
   <header class="ic-top">
     <div>
@@ -40,7 +42,7 @@
       <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
       <div class="ic-tag">{{ branding.tagline if branding else 'certifications made simple' }}</div>
       <div class="ic-tag">{{ branding.legal_name if branding else 'Instacertify Labs Pvt Ltd' }}</div>
-      <div class="ic-badge {% if quote.quote_type == 'Service' %}service{% endif %}">
+      <div class="ic-badge {% if is_service %}service{% endif %}">
         {{ quote.quote_type or 'Testing' }} Quotation
       </div>
     </div>
@@ -66,14 +68,29 @@
       <h3>Subject</h3>
       <p><strong>{{ quote.subject or quote.service }}</strong><br>{{ quote.description }}</p>
     </section>
-    {% if quote.about_html %}<section><h3>About</h3><div>{{ quote.about_html | safe }}</div></section>{% endif %}
-    {% if quote.standards_html %}<section><h3>Applicable Standards</h3><div>{{ quote.standards_html | safe }}</div></section>{% endif %}
-    {% if quote.accreditation_html %}<section><h3>Accreditation</h3><div>{{ quote.accreditation_html | safe }}</div></section>{% endif %}
-    {% if quote.sample_requirements_html %}<section><h3>Sample Requirements</h3><div>{{ quote.sample_requirements_html | safe }}</div></section>{% endif %}
+
+    {% if quote.about_html %}
+    <section><h3>{{ quote.about_header or ('About Service' if is_service else 'About') }}</h3><div>{{ quote.about_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.standards_html %}
+    <section><h3>{{ quote.standards_header or 'Applicable Standard' }}</h3><div>{{ quote.standards_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.accreditation_html %}
+    <section><h3>Accreditation</h3><div>{{ quote.accreditation_html | safe }}</div></section>
+    {% endif %}
+
+    {% if is_service and quote.timeline_html %}
+    <section><h3>{{ quote.timeline_header or 'Timeline' }}</h3><div>{{ quote.timeline_html | safe }}</div></section>
+    {% endif %}
+
+    {% if not is_service and quote.sample_requirements_html %}
+    <section><h3>{{ quote.sample_requirements_header or 'Sample Required' }}</h3><div>{{ quote.sample_requirements_html | safe }}</div></section>
+    {% endif %}
     {% if quote.body_html %}<section>{{ quote.body_html | safe }}</section>{% endif %}
+
     <section>
-      <h3>Commercials</h3>
-      {% if quote.quote_type == 'Testing' and quote.testing_items %}
+      <h3>{{ quote.commercials_header or 'Commercials' }}</h3>
+      {% if not is_service and quote.testing_items %}
       <table class="ic-price">
         <tr>
           <th>S. No.</th><th>Applicable Standard</th><th>Testing</th>
@@ -92,12 +109,75 @@
         <tr><th colspan="5">Total</th><th>{{ frappe.format(quote.total_revenue, {'fieldtype':'Currency'}) }}</th></tr>
       </table>
       <p class="ic-tag">GST @ 18% shall be charged additionally on the above testing charges.</p>
+      {% elif is_service %}
+        {% if quote.consulting_items %}
+        <h4>Consulting</h4>
+        <table class="ic-price">
+          <tr><th>Type</th><th>Description</th><th>Amount</th></tr>
+          {% for row in quote.consulting_items %}
+          <tr>
+            <td>{{ row.type }}</td>
+            <td>{{ row.description or '' }}</td>
+            <td>{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+          </tr>
+          {% endfor %}
+          {% if quote.consulting_price %}
+          <tr><th colspan="2">Consulting total</th><th>{{ frappe.format(quote.consulting_price, {'fieldtype':'Currency'}) }}</th></tr>
+          {% endif %}
+        </table>
+        {% endif %}
+
+        {% if quote.government_fees %}
+        <h4>Government Fees</h4>
+        <table class="ic-price">
+          <tr><th>Fee Type</th><th>Description</th><th>Amount</th></tr>
+          {% for row in quote.government_fees %}
+          <tr>
+            <td>{{ row.type }}</td>
+            <td>{{ row.description or '' }}</td>
+            <td>{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+          </tr>
+          {% endfor %}
+          {% if quote.government_fees_total %}
+          <tr><th colspan="2">Government fees total</th><th>{{ frappe.format(quote.government_fees_total, {'fieldtype':'Currency'}) }}</th></tr>
+          {% endif %}
+        </table>
+        {% endif %}
+
+        {% if quote.service_testing_charges %}
+        <h4>Testing Charges</h4>
+        <table class="ic-price">
+          <tr><th>Charge Type</th><th>Description</th><th>Amount</th></tr>
+          {% for row in quote.service_testing_charges %}
+          <tr>
+            <td>{{ row.type }}</td>
+            <td>{{ row.description or '' }}</td>
+            <td>{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+          </tr>
+          {% endfor %}
+          {% if quote.testing_price %}
+          <tr><th colspan="2">Testing charges total</th><th>{{ frappe.format(quote.testing_price, {'fieldtype':'Currency'}) }}</th></tr>
+          {% endif %}
+        </table>
+        {% endif %}
+
+        <table class="ic-price" style="margin-top:12px">
+          <tr><th>Particulars</th><th>Amount</th></tr>
+          {% if quote.consulting_price %}<tr><td>Consulting</td><td>{{ frappe.format(quote.consulting_price, {'fieldtype':'Currency'}) }}</td></tr>{% endif %}
+          {% if quote.government_fees_total %}<tr><td>Government Fees</td><td>{{ frappe.format(quote.government_fees_total, {'fieldtype':'Currency'}) }}</td></tr>{% endif %}
+          {% if quote.testing_price %}<tr><td>Testing Charges</td><td>{{ frappe.format(quote.testing_price, {'fieldtype':'Currency'}) }}</td></tr>{% endif %}
+          {% if quote.other_commercials %}
+          <tr><td>Other commercials{% if quote.other_commercials_note %} — {{ quote.other_commercials_note }}{% endif %}</td>
+              <td>{{ frappe.format(quote.other_commercials, {'fieldtype':'Currency'}) }}</td></tr>
+          {% endif %}
+          <tr><th>Total</th><th>{{ frappe.format(quote.total_revenue, {'fieldtype':'Currency'}) }}</th></tr>
+        </table>
+        <p class="ic-tag">GST shall be applicable extra as per prevailing government regulations.</p>
       {% else %}
       <table class="ic-price">
         <tr><th>Particulars</th><th>Amount</th></tr>
         {% if quote.consulting_price %}<tr><td>Commercial consulting</td><td>{{ frappe.format(quote.consulting_price, {'fieldtype':'Currency'}) }}</td></tr>{% endif %}
-        <tr><td>{{ 'Service charges' if quote.quote_type == 'Service' else 'Testing charges' }}</td>
-            <td>{{ frappe.format(quote.testing_price, {'fieldtype':'Currency'}) }}</td></tr>
+        <tr><td>Testing charges</td><td>{{ frappe.format(quote.testing_price, {'fieldtype':'Currency'}) }}</td></tr>
         {% if quote.other_commercials %}
         <tr><td>Other commercials{% if quote.other_commercials_note %} — {{ quote.other_commercials_note }}{% endif %}</td>
             <td>{{ frappe.format(quote.other_commercials, {'fieldtype':'Currency'}) }}</td></tr>
@@ -106,15 +186,53 @@
       </table>
       {% endif %}
     </section>
-    {% if quote.deliverables_html %}<section><h3>Deliverables</h3><div>{{ quote.deliverables_html | safe }}</div></section>{% endif %}
-    {% if quote.timeline_html %}<section><h3>Timeline</h3><div>{{ quote.timeline_html | safe }}</div></section>{% endif %}
-    {% if quote.payment_terms_html %}<section><h3>Payment Terms</h3><div>{{ quote.payment_terms_html | safe }}</div></section>{% endif %}
-    {% if quote.sample_handling_html %}<section><h3>Sample Handling & Disposal</h3><div>{{ quote.sample_handling_html | safe }}</div></section>{% endif %}
+
+    {% if quote.payment_terms_html %}
     <section>
-      <h3>Bank Details for Payment</h3>
+      <h3>{{ quote.payment_terms_header or 'Payment Terms' }}</h3>
+      <div>{{ quote.payment_terms_html | safe }}</div>
+    </section>
+    {% endif %}
+
+    {% if is_service %}
+    <section>
+      <h3>{{ quote.banking_header or 'Our Banking Details' }}</h3>
       <pre class="bank">{{ quote.bank_snapshot }}</pre>
     </section>
-    {% if quote.policies_html %}<section><h3>Policies</h3><div>{{ quote.policies_html | safe }}</div></section>{% endif %}
+    {% if quote.sample_requirements_html %}
+    <section><h3>{{ quote.sample_requirements_header or 'Samples Required' }}</h3><div>{{ quote.sample_requirements_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.sample_handling_html %}
+    <section><h3>{{ quote.sample_handling_header or 'Sample Handling and Disposal Policy' }}</h3><div>{{ quote.sample_handling_html | safe }}</div></section>
+    {% endif %}
+    {% else %}
+    {% if quote.timeline_html %}
+    <section><h3>{{ quote.timeline_header or 'Timeline' }}</h3><div>{{ quote.timeline_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.deliverables_html %}
+    <section><h3>{{ quote.deliverables_header or 'Deliverable' }}</h3><div>{{ quote.deliverables_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.sample_handling_html %}
+    <section><h3>{{ quote.sample_handling_header or 'Sample Handling and Disposal Policy' }}</h3><div>{{ quote.sample_handling_html | safe }}</div></section>
+    {% endif %}
+    <section>
+      <h3>{{ quote.banking_header or 'Banking Details' }}</h3>
+      <pre class="bank">{{ quote.bank_snapshot }}</pre>
+    </section>
+    {% endif %}
+
+    {% if quote.cancellation_refund_html %}
+    <section><h3>{{ quote.cancellation_header or 'Cancellation and Refund Policy' }}</h3><div>{{ quote.cancellation_refund_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.force_majeure_html %}
+    <section><h3>{{ quote.force_majeure_header or 'Force Majeure' }}</h3><div>{{ quote.force_majeure_html | safe }}</div></section>
+    {% endif %}
+    {% if quote.confidentiality_html %}
+    <section><h3>{{ quote.confidentiality_header or 'Confidentiality and Data Protection' }}</h3><div>{{ quote.confidentiality_html | safe }}</div></section>
+    {% endif %}
+    {% if not quote.cancellation_refund_html and not quote.force_majeure_html and not quote.confidentiality_html and quote.policies_html %}
+    <section><h3>Policies</h3><div>{{ quote.policies_html | safe }}</div></section>
+    {% endif %}
   </div>
   <div class="ic-actions">
     <button class="ic-btn ghost" onclick="window.print()">Print / Download PDF</button>

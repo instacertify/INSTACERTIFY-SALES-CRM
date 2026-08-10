@@ -25,7 +25,19 @@ def _customer_testing_items(rows):
 	]
 
 
+def _amount_rows(rows, type_field: str):
+	return [
+		{
+			"type": getattr(row, type_field, None),
+			"description": getattr(row, "description", None),
+			"amount": flt(row.amount),
+		}
+		for row in rows or []
+	]
+
+
 def _quote_payload(doc):
+	about_default = "About Service" if (doc.quote_type or "") == "Service" else "About"
 	return {
 		"name": doc.name,
 		"quote_number": doc.quote_number or doc.name,
@@ -40,24 +52,48 @@ def _quote_payload(doc):
 		"state": doc.state,
 		"service": doc.service,
 		"description": doc.description,
+		"about_header": doc.about_header or about_default,
 		"about_html": doc.about_html,
+		"standards_header": doc.standards_header or "Applicable Standard",
 		"standards_html": doc.standards_html,
 		"accreditation_html": doc.accreditation_html,
+		"sample_requirements_header": doc.sample_requirements_header
+		or ("Samples Required" if (doc.quote_type or "") == "Service" else "Sample Required"),
 		"sample_requirements_html": doc.sample_requirements_html,
+		"commercials_header": doc.commercials_header or "Commercials",
+		"deliverables_header": doc.deliverables_header or "Deliverable",
 		"deliverables_html": doc.deliverables_html,
+		"timeline_header": doc.timeline_header or "Timeline",
 		"timeline_html": doc.timeline_html,
+		"payment_terms_header": doc.payment_terms_header or "Payment Terms",
 		"payment_terms_html": doc.payment_terms_html,
+		"sample_handling_header": doc.sample_handling_header
+		or "Sample Handling and Disposal Policy",
 		"sample_handling_html": doc.sample_handling_html,
+		"banking_header": doc.banking_header or "Our Banking Details",
+		"cancellation_header": doc.cancellation_header or "Cancellation and Refund Policy",
+		"cancellation_refund_html": doc.cancellation_refund_html,
+		"force_majeure_header": doc.force_majeure_header or "Force Majeure",
+		"force_majeure_html": doc.force_majeure_html,
+		"confidentiality_header": doc.confidentiality_header
+		or "Confidentiality and Data Protection",
+		"confidentiality_html": doc.confidentiality_html,
 		"policies_html": doc.policies_html,
 		"body_html": doc.body_html,
 		"validity_date": doc.validity_date,
 		"consulting_price": doc.consulting_price,
+		"government_fees_total": getattr(doc, "government_fees_total", 0),
 		"testing_price": doc.testing_price,
 		"other_commercials": doc.other_commercials,
 		"other_commercials_note": doc.other_commercials_note,
 		"total_revenue": doc.total_revenue,
 		"bank_snapshot": doc.bank_snapshot,
 		"testing_items": _customer_testing_items(doc.testing_items),
+		"consulting_items": _amount_rows(doc.get("consulting_items"), "consulting_type"),
+		"government_fees": _amount_rows(doc.get("government_fees"), "fee_type"),
+		"service_testing_charges": _amount_rows(
+			doc.get("service_testing_charges"), "charge_type"
+		),
 		"customer_remark": doc.customer_remark,
 		"revision_message": doc.revision_message,
 		"public_url": get_url(f"/q/{doc.public_token}"),
