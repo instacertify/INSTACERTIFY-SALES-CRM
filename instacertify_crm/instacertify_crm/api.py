@@ -274,6 +274,22 @@ def get_customer_lifecycle(
 	return build_lifecycle(lead=lead, project=project, email=email)
 
 
+@frappe.whitelist(methods=["GET"])
+def get_project_control_tower(project: str):
+	"""Single project Control Tower payload for desk UI."""
+	from instacertify_crm.control_tower import build_control_tower
+
+	return build_control_tower(project)
+
+
+@frappe.whitelist(methods=["GET"])
+def get_today_dashboard():
+	"""Morning homepage metrics."""
+	from instacertify_crm.control_tower import build_today_dashboard
+
+	return build_today_dashboard()
+
+
 @frappe.whitelist(methods=["POST"])
 def mark_service_delivered(
 	quote: str,
@@ -315,9 +331,10 @@ def mark_service_delivered(
 			"delivery_type": "Quote Service Delivered",
 		},
 	)
-	if project.status not in {"Closed", "Lost"}:
-		project.db_set("status", "Delivered", update_modified=True)
+	if project.status not in {"Closed", "Lost", "Completed"}:
+		project.db_set("status", "Completed", update_modified=True)
 		project.db_set("last_activity_on", now_datetime(), update_modified=False)
+		project.db_set("waiting_for", None, update_modified=False)
 	if quote_doc.status != "Delivered":
 		quote_doc.db_set("status", "Delivered", update_modified=True)
 

@@ -7,11 +7,11 @@
  "istable": 0,
  "editable_grid": 1,
  "track_changes": 1,
- "sort_field": "modified",
- "sort_order": "DESC",
  "autoname": "format:PRJ-{YYYY}-{#####}",
  "title_field": "project_title",
- "search_fields": "project_title,customer_name,company,status,service,lead",
+ "search_fields": "project_title,customer_name,company,status,service,lead,commercial_owner,delivery_owner",
+ "sort_field": "modified",
+ "sort_order": "DESC",
  "field_order": [
   "project_title",
   "status",
@@ -19,8 +19,19 @@
   "column_break_1",
   "lead",
   "primary_quote",
+  "project_value",
+  "start_date",
+  "expected_completion",
+  "section_owners",
+  "commercial_owner",
+  "delivery_owner",
+  "column_break_owners",
   "assigned_to",
   "last_activity_on",
+  "section_waiting",
+  "waiting_for",
+  "waiting_expected_on",
+  "waiting_note",
   "section_customer",
   "customer_name",
   "company",
@@ -44,13 +55,14 @@
   },
   {
    "fieldname": "status",
-   "label": "Lifecycle Status",
+   "label": "Project Status",
    "fieldtype": "Select",
-   "options": "Open\nQuoted\nAccepted\nDocuments Pending\nIn Delivery\nDelivered\nClosed\nLost",
-   "default": "Open",
+   "options": "Not Started\nQuoted\nAccepted\nDocuments Pending\nDocuments Complete\nTesting\nApplication/Certification\nAuthority/Lab Pending\nClient Action Required\nCompleted\nClosed\nLost",
+   "default": "Not Started",
    "reqd": 1,
    "in_list_view": 1,
-   "in_standard_filter": 1
+   "in_standard_filter": 1,
+   "description": "Service-specific workflows can skip stages. Use Waiting For when blocked externally."
   },
   {
    "fieldname": "service",
@@ -78,19 +90,87 @@
    "options": "IC Quote"
   },
   {
-   "fieldname": "assigned_to",
-   "label": "Assigned To",
+   "fieldname": "project_value",
+   "label": "Project Value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "description": "Usually copied from the accepted quotation total."
+  },
+  {
+   "fieldname": "start_date",
+   "label": "Start Date",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "expected_completion",
+   "label": "Expected Completion",
+   "fieldtype": "Date",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_owners",
+   "label": "Ownership",
+   "fieldtype": "Section Break",
+   "description": "Commercial Owner sold the work. Delivery Owner executes it. They may be the same person."
+  },
+  {
+   "fieldname": "commercial_owner",
+   "label": "Commercial Owner",
    "fieldtype": "Link",
    "options": "User",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "description": "Any team member can assign this project to others. IC Admin can always reassign."
+   "description": "Who brought / sold the business"
+  },
+  {
+   "fieldname": "delivery_owner",
+   "label": "Delivery Owner",
+   "fieldtype": "Link",
+   "options": "User",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Who is responsible for executing delivery"
+  },
+  {
+   "fieldname": "column_break_owners",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "assigned_to",
+   "label": "Assigned To (legacy)",
+   "fieldtype": "Link",
+   "options": "User",
+   "in_standard_filter": 1,
+   "description": "Kept in sync with Delivery Owner for older reports and assignments."
   },
   {
    "fieldname": "last_activity_on",
    "label": "Last Activity",
    "fieldtype": "Datetime",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_waiting",
+   "label": "Waiting / Blockers",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "waiting_for",
+   "label": "Waiting For",
+   "fieldtype": "Select",
+   "options": "\nClient\nLab\nGovernment\nPayment\nSample\nInternal\nOther",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "waiting_expected_on",
+   "label": "Waiting Expected Date",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "waiting_note",
+   "label": "Waiting Note",
+   "fieldtype": "Small Text"
   },
   {
    "fieldname": "section_customer",
@@ -151,13 +231,13 @@
   },
   {
    "fieldname": "section_remarks",
-   "label": "Project Remarks Timeline",
+   "label": "Communication Timeline",
    "fieldtype": "Section Break",
-   "description": "Track remarks across quote, documents, delivery and reports."
+   "description": "Record important client / lab / government updates. This is the shared project timeline."
   },
   {
    "fieldname": "remarks",
-   "label": "Remarks",
+   "label": "Timeline",
    "fieldtype": "Table",
    "options": "IC Project Remark"
   }

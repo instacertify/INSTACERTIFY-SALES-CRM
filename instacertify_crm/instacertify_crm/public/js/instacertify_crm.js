@@ -213,6 +213,102 @@ instacertify_crm.show_customer_history = function (args) {
 	});
 };
 
+instacertify_crm.render_control_tower = function (data) {
+	const p = data.project || {};
+	const counts = data.task_counts || {};
+	const money = (v) =>
+		frappe.format(v || 0, { fieldtype: "Currency", options: "currency" });
+	const ownerRow = `
+		<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:10px 0 16px">
+			<div><div class="text-muted">${__("Status")}</div><div style="font-weight:700">${frappe.utils.escape_html(
+				p.status || "",
+			)}</div></div>
+			<div><div class="text-muted">${__("Commercial Owner")}</div><div style="font-weight:700">${frappe.utils.escape_html(
+				p.commercial_owner_name || p.commercial_owner || "—",
+			)}</div></div>
+			<div><div class="text-muted">${__("Delivery Owner")}</div><div style="font-weight:700">${frappe.utils.escape_html(
+				p.delivery_owner_name || p.delivery_owner || "—",
+			)}</div></div>
+			<div><div class="text-muted">${__("Value")}</div><div style="font-weight:700">${money(
+				p.project_value,
+			)}</div></div>
+			<div><div class="text-muted">${__("Expected")}</div><div style="font-weight:700">${
+				p.expected_completion ? frappe.datetime.str_to_user(p.expected_completion) : "—"
+			}</div></div>
+			<div><div class="text-muted">${__("Waiting For")}</div><div style="font-weight:700;color:${
+				p.waiting_for ? "var(--orange-600, #c35a00)" : "inherit"
+			}">${frappe.utils.escape_html(p.waiting_for || "—")}${
+				p.waiting_expected_on
+					? ` <span class="text-muted">(${frappe.datetime.str_to_user(p.waiting_expected_on)})</span>`
+					: ""
+			}</div></div>
+		</div>`;
+
+	const taskList = (data.tasks || [])
+		.map((t) => {
+			const mark =
+				t.status === "Completed" ? "✓" : t.status === "In Progress" || t.status === "Waiting" ? "→" : "○";
+			const wait =
+				t.status === "Waiting" && t.waiting_for
+					? ` <span class="indicator-pill orange">${frappe.utils.escape_html(t.waiting_for)}</span>`
+					: "";
+			const due = t.due_date
+				? ` <span class="text-muted">· ${frappe.datetime.str_to_user(t.due_date)}</span>`
+				: "";
+			return `<div style="padding:4px 0;border-bottom:1px solid var(--border-color)">
+				${mark} <a href="/app/ic-project-task/${encodeURIComponent(t.name)}">${frappe.utils.escape_html(
+					t.task_title,
+				)}</a>
+				<span class="text-muted">· ${frappe.utils.escape_html(t.status)}</span>${wait}${due}
+			</div>`;
+		})
+		.join("");
+
+	const timeline = (data.timeline || [])
+		.slice(0, 12)
+		.map(
+			(t) => `<div style="padding:4px 0;border-left:3px solid var(--border-color);padding-left:10px;margin:4px 0">
+			<div class="text-muted" style="font-size:12px">${frappe.datetime.str_to_user(t.when) || ""} · ${frappe.utils.escape_html(
+				t.stage || "",
+			)}</div>
+			<div>${frappe.utils.escape_html(t.text || "")}</div>
+		</div>`,
+		)
+		.join("");
+
+	const docs = (data.documents || []).length;
+	return `<div>
+		<div style="font-size:16px;font-weight:800;margin-bottom:4px">${frappe.utils.escape_html(
+			p.name || "",
+		)} · ${frappe.utils.escape_html(p.company || "")}</div>
+		<div class="text-muted" style="margin-bottom:8px">${frappe.utils.escape_html(p.service || "")} · ${frappe.utils.escape_html(
+			p.customer_name || "",
+		)}</div>
+		${ownerRow}
+		<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:18px">
+			<div>
+				<strong>${__("Tasks")}</strong>
+				<span class="text-muted">
+					(${counts.completed || 0}/${counts.total || 0} ${__("done")}${
+						counts.waiting ? ` · ${counts.waiting} ${__("waiting")}` : ""
+					}${counts.overdue ? ` · ${counts.overdue} ${__("overdue")}` : ""})
+				</span>
+				<div style="margin-top:8px">${
+					taskList || `<div class="text-muted">${__("No tasks yet. Use Add Task.")}</div>`
+				}</div>
+			</div>
+			<div>
+				<strong>${__("Documents")}</strong>
+				<div class="text-muted" style="margin:6px 0 12px">${docs} ${__("request(s)")}</div>
+				<strong>${__("Timeline")}</strong>
+				<div style="margin-top:6px">${
+					timeline || `<div class="text-muted">${__("No communications logged yet.")}</div>`
+				}</div>
+			</div>
+		</div>
+	</div>`;
+};
+
 instacertify_crm.render_customer_lifecycle = function (data) {
 	const totals = data.totals || {};
 	const summary = `

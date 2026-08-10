@@ -1,0 +1,10 @@
+{
+ "doctype": "Report",
+ "name": "IC Sales Delivery Ratio",
+ "report_name": "IC Sales Delivery Ratio",
+ "ref_doctype": "IC Customer Project",
+ "report_type": "Script Report",
+ "module": "Instacertify CRM",
+ "is_standard": "Yes",
+ "add_total_row": 1
+}

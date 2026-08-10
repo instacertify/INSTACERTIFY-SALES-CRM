@@ -27,7 +27,7 @@ frappe.query_reports["IC Lead Cost Spend"] = {
 			fieldname: "status",
 			label: __("Status"),
 			fieldtype: "Select",
-			options: ["", "NEW", "CONTACTED", "FOLLOW_UP", "QUOTE_SENT", "WON", "LOST"],
+			options: ["", "NEW", "CONTACTED", "QUALIFIED", "QUOTATION", "NEGOTIATION", "WON", "LOST"],
 		},
 		{
 			fieldname: "lead_source",

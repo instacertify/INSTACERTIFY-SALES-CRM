@@ -11,7 +11,7 @@ def send_followup_reminders():
 		"IC Lead",
 		filters={
 			"follow_up_on": ["<=", add_days(now_datetime(), 1)],
-			"status": ["in", ["NEW", "CONTACTED", "FOLLOW_UP", "QUOTE_SENT"]],
+			"status": ["in", ["NEW", "CONTACTED", "QUALIFIED", "QUOTATION", "NEGOTIATION"]],
 		},
 		fields=["name", "customer_name", "company", "follow_up_on", "owner", "assigned_to"],
 	)

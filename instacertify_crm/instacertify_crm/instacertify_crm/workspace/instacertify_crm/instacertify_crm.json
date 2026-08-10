@@ -7,60 +7,35 @@
  "public": 1,
  "is_hidden": 0,
  "sequence_id": 20.0,
- "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Leads\",\"col\":3}},{\"id\":\"ic_ops\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Operations Leads\",\"col\":3}},{\"id\":\"ic_quotes\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Projects\",\"col\":3}},{\"id\":\"ic_deliveries\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delivery Records\",\"col\":3}},{\"id\":\"ic_renewals\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Renewal Reminders\",\"col\":3}},{\"id\":\"ic_reports\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"IC Reports\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Document Requests\",\"col\":3}},{\"id\":\"ic_labs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Library\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_templates\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quote Templates\",\"col\":3}},{\"id\":\"ic_bank\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Details\",\"col\":3}},{\"id\":\"ic_settings\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branding / Logo\",\"col\":3}},{\"id\":\"ic_team\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Team Workload\",\"col\":3}},{\"id\":\"ic_cost\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lead Cost Spend\",\"col\":3}}]",
+ "content": "[{\"id\":\"ic_hdr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Instacertify CRM</span>\",\"col\":12}},{\"id\":\"ic_today\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Dashboard\",\"col\":3}},{\"id\":\"ic_leads\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ic_sales\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales / Quotes\",\"col\":3}},{\"id\":\"ic_projects\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Projects\",\"col\":3}},{\"id\":\"ic_tasks\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tasks\",\"col\":3}},{\"id\":\"ic_testing\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Testing Library\",\"col\":3}},{\"id\":\"ic_labs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Library\",\"col\":3}},{\"id\":\"ic_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Documents\",\"col\":3}},{\"id\":\"ic_ratio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales-Delivery Ratio\",\"col\":3}},{\"id\":\"ic_admin\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Admin Settings\",\"col\":3}}]",
  "shortcuts": [
   {
-   "label": "IC Leads",
+   "label": "Today Dashboard",
+   "link_to": "IC Today Dashboard",
+   "type": "Report",
+   "doc_view": "Report"
+  },
+  {
+   "label": "Leads",
    "link_to": "IC Lead",
    "type": "DocType",
    "doc_view": "List"
   },
   {
-   "label": "Operations Leads",
-   "link_to": "IC Lead",
-   "type": "DocType",
-   "doc_view": "List",
-   "filters": "[[\"IC Lead\",\"status\",\"in\",[\"NEW\",\"CONTACTED\",\"FOLLOW_UP\",\"QUOTE_SENT\"]]]"
-  },
-  {
-   "label": "IC Quotes",
+   "label": "Sales / Quotes",
    "link_to": "IC Quote",
    "type": "DocType",
    "doc_view": "List"
   },
   {
-   "label": "Customer Projects",
+   "label": "Projects",
    "link_to": "IC Customer Project",
    "type": "DocType",
    "doc_view": "List"
   },
   {
-   "label": "Delivery Records",
-   "link_to": "IC Delivery Record",
-   "type": "DocType",
-   "doc_view": "List"
-  },
-  {
-   "label": "Renewal Reminders",
-   "link_to": "IC Renewal Reminder",
-   "type": "DocType",
-   "doc_view": "List"
-  },
-  {
-   "label": "IC Reports",
-   "link_to": "IC Report",
-   "type": "DocType",
-   "doc_view": "List"
-  },
-  {
-   "label": "Document Requests",
-   "link_to": "IC Document Request",
-   "type": "DocType",
-   "doc_view": "List"
-  },
-  {
-   "label": "Lab Library",
-   "link_to": "IC Lab",
+   "label": "Tasks",
+   "link_to": "IC Project Task",
    "type": "DocType",
    "doc_view": "List"
   },
@@ -71,104 +46,162 @@
    "doc_view": "List"
   },
   {
-   "label": "Quote Templates",
-   "link_to": "IC Quote Template",
+   "label": "Lab Library",
+   "link_to": "IC Lab",
    "type": "DocType",
    "doc_view": "List"
   },
   {
-   "label": "Bank Details",
-   "link_to": "IC Bank Detail",
+   "label": "Documents",
+   "link_to": "IC Document Request",
    "type": "DocType",
    "doc_view": "List"
   },
   {
-   "label": "Branding / Logo",
+   "label": "Sales-Delivery Ratio",
+   "link_to": "IC Sales Delivery Ratio",
+   "type": "Report",
+   "doc_view": "Report"
+  },
+  {
+   "label": "Admin Settings",
    "link_to": "IC Settings",
    "type": "DocType",
    "doc_view": "List"
-  },
-  {
-   "label": "Team Workload",
-   "link_to": "IC Team Lead Workload",
-   "type": "Report",
-   "doc_view": "Report"
-  },
-  {
-   "label": "Lead Cost Spend",
-   "link_to": "IC Lead Cost Spend",
-   "type": "Report",
-   "doc_view": "Report"
   }
  ],
  "links": [
   {
-   "label": "Masters",
+   "label": "Main",
    "type": "Card Break"
   },
   {
-   "label": "IC Lead Source",
-   "link_to": "IC Lead Source",
+   "label": "Leads",
+   "link_to": "IC Lead",
    "link_type": "DocType",
    "type": "Link"
   },
   {
-   "label": "IC Service",
-   "link_to": "IC Service",
+   "label": "Quotes / Sales",
+   "link_to": "IC Quote",
    "link_type": "DocType",
    "type": "Link"
   },
   {
-   "label": "IC Lab (Lab Library)",
-   "link_to": "IC Lab",
-   "link_type": "DocType",
-   "type": "Link"
-  },
-  {
-   "label": "Customer lifecycle",
-   "type": "Card Break"
-  },
-  {
-   "label": "IC Customer Project",
+   "label": "Projects",
    "link_to": "IC Customer Project",
    "link_type": "DocType",
    "type": "Link"
   },
   {
-   "label": "IC Delivery Record",
+   "label": "Tasks",
+   "link_to": "IC Project Task",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Delivery & Follow-up",
+   "type": "Card Break"
+  },
+  {
+   "label": "Delivery Records",
    "link_to": "IC Delivery Record",
    "link_type": "DocType",
    "type": "Link"
   },
   {
-   "label": "IC Renewal Reminder",
+   "label": "Document Requests",
+   "link_to": "IC Document Request",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Reports Shared",
+   "link_to": "IC Report",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Renewal Reminders",
    "link_to": "IC Renewal Reminder",
    "link_type": "DocType",
    "type": "Link"
+  },
+  {
+   "label": "Testing & Labs",
+   "type": "Card Break"
+  },
+  {
+   "label": "Lab Library",
+   "link_to": "IC Lab",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Testing Library",
+   "link_to": "IC Testing Service",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Reports",
+   "type": "Card Break"
+  },
+  {
+   "label": "Today Dashboard",
+   "link_to": "IC Today Dashboard",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Sales-Delivery Ratio",
+   "link_to": "IC Sales Delivery Ratio",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Team Workload",
+   "link_to": "IC Team Lead Workload",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
+  },
+  {
+   "label": "Lead Cost Spend",
+   "link_to": "IC Lead Cost Spend",
+   "link_type": "Report",
+   "type": "Link",
+   "is_query_report": 1
   },
   {
    "label": "Admin",
    "type": "Card Break"
   },
   {
-   "label": "IC Settings (Logo / Letterhead)",
+   "label": "IC Settings",
    "link_to": "IC Settings",
    "link_type": "DocType",
    "type": "Link"
   },
   {
-   "label": "IC Team Lead Workload",
-   "link_to": "IC Team Lead Workload",
-   "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
+   "label": "Quote Templates",
+   "link_to": "IC Quote Template",
+   "link_type": "DocType",
+   "type": "Link"
   },
   {
-   "label": "IC Lead Cost Spend",
-   "link_to": "IC Lead Cost Spend",
-   "link_type": "Report",
-   "type": "Link",
-   "is_query_report": 1
+   "label": "Bank Details",
+   "link_to": "IC Bank Detail",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Services",
+   "link_to": "IC Service",
+   "link_type": "DocType",
+   "type": "Link"
   }
  ]
 }

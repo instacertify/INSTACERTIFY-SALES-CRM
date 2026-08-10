@@ -15,6 +15,7 @@ frappe.ui.form.on("IC Lead", {
 						phone: frm.doc.phone,
 						country: frm.doc.country,
 						state: frm.doc.state,
+						service: frm.doc.service,
 						quote_type: "Testing",
 					});
 				})

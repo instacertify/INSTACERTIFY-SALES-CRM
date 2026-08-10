@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import frappe
-from frappe.utils import get_datetime, now_datetime
+from frappe.utils import flt, get_datetime, now_datetime
 
 
 def log_delivery(
@@ -106,10 +106,16 @@ def on_quote_update(doc, method=None):
 	desired = status_map.get(doc.status)
 	if (
 		desired
-		and project.status not in {"Delivered", "Closed", "Lost"}
+		and project.status not in {"Completed", "Closed", "Lost"}
 		and _status_rank(desired) >= _status_rank(project.status)
 	):
 		project.status = desired
+	if doc.status == "Accepted" and flt(doc.total_revenue):
+		project.project_value = doc.total_revenue
+	if doc.status == "Accepted" and not project.start_date:
+		from frappe.utils import getdate, today
+
+		project.start_date = getdate(today())
 	project.append(
 		"remarks",
 		{
@@ -143,7 +149,7 @@ def on_report_update(doc, method=None):
 		remarks=f"Customer link: {doc.public_url}",
 		dedupe_key={"linked_report": doc.name},
 	)
-	_set_project_status(quote.lead, quote.name, "In Delivery")
+	_set_project_status(quote.lead, quote.name, "Testing")
 
 
 def on_document_request_update(doc, method=None):
@@ -174,7 +180,40 @@ def on_document_request_update(doc, method=None):
 			},
 		)
 	if doc.status in {"Uploaded", "Final", "Needs More"}:
-		_set_project_status(quote.lead, quote.name, "Documents Pending" if doc.status != "Final" else "In Delivery")
+		_set_project_status(
+			quote.lead,
+			quote.name,
+			"Documents Pending" if doc.status != "Final" else "Documents Complete",
+		)
+
+
+def on_lead_update(doc, method=None):
+	"""When a lead is Won, ensure a project exists automatically."""
+	before = doc.get_doc_before_save()
+	old_status = before.status if before else None
+	if doc.status == old_status or doc.status != "WON":
+		return
+	from instacertify_crm.instacertify_crm.doctype.ic_customer_project.ic_customer_project import (
+		ensure_project_for_lead,
+	)
+
+	project = ensure_project_for_lead(doc.name)
+	if project.status in {"Not Started", "Quoted"}:
+		project.status = "Accepted"
+	if not project.start_date:
+		from frappe.utils import getdate, today
+
+		project.start_date = getdate(today())
+	project.append(
+		"remarks",
+		{
+			"remark_time": now_datetime(),
+			"user": frappe.session.user,
+			"stage": "Lead",
+			"remark": f"Lead {doc.name} marked WON — project created / activated",
+		},
+	)
+	project.save(ignore_permissions=True)
 
 
 def _set_project_status(lead: str | None, quote: str | None, status: str):
@@ -182,7 +221,7 @@ def _set_project_status(lead: str | None, quote: str | None, status: str):
 	if lead:
 		project_name = frappe.db.get_value(
 			"IC Customer Project",
-			{"lead": lead, "status": ["not in", ["Closed", "Lost", "Delivered"]]},
+			{"lead": lead, "status": ["not in", ["Closed", "Lost", "Completed"]]},
 			"name",
 		)
 	if not project_name and quote:
@@ -190,7 +229,7 @@ def _set_project_status(lead: str | None, quote: str | None, status: str):
 	if not project_name:
 		return
 	project = frappe.get_doc("IC Customer Project", project_name)
-	if project.status in {"Closed", "Lost", "Delivered"}:
+	if project.status in {"Closed", "Lost", "Completed"}:
 		return
 	if _status_rank(status) >= _status_rank(project.status):
 		project.status = status
@@ -200,12 +239,19 @@ def _set_project_status(lead: str | None, quote: str | None, status: str):
 
 def _status_rank(status: str) -> int:
 	order = [
-		"Open",
+		"Not Started",
+		"Open",  # legacy
 		"Quoted",
 		"Accepted",
 		"Documents Pending",
-		"In Delivery",
-		"Delivered",
+		"Documents Complete",
+		"Testing",
+		"Application/Certification",
+		"Authority/Lab Pending",
+		"Client Action Required",
+		"In Delivery",  # legacy
+		"Delivered",  # legacy
+		"Completed",
 		"Closed",
 		"Lost",
 	]

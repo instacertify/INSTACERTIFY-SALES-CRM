@@ -8,8 +8,8 @@ from frappe import _
 from frappe.utils import cint
 
 
-ACTIVE_STATUSES = ("NEW", "CONTACTED", "FOLLOW_UP", "QUOTE_SENT")
-ALL_STATUSES = ("NEW", "CONTACTED", "FOLLOW_UP", "QUOTE_SENT", "WON", "LOST")
+ACTIVE_STATUSES = ("NEW", "CONTACTED", "QUALIFIED", "QUOTATION", "NEGOTIATION")
+ALL_STATUSES = ("NEW", "CONTACTED", "QUALIFIED", "QUOTATION", "NEGOTIATION", "WON", "LOST")
 
 
 def execute(filters=None):
@@ -86,7 +86,7 @@ def _rows(filters, user_field: str):
 			COALESCE(NULLIF({user_field}, ''), 'Unassigned') AS user,
 			status,
 			COUNT(*) AS cnt,
-			SUM(CASE WHEN follow_up_on IS NOT NULL AND status IN ('NEW','CONTACTED','FOLLOW_UP','QUOTE_SENT') THEN 1 ELSE 0 END) AS followups
+			SUM(CASE WHEN follow_up_on IS NOT NULL AND status IN ('NEW','CONTACTED','QUALIFIED','QUOTATION','NEGOTIATION') THEN 1 ELSE 0 END) AS followups
 		FROM `tabIC Lead`
 		WHERE {where}
 		GROUP BY COALESCE(NULLIF({user_field}, ''), 'Unassigned'), status

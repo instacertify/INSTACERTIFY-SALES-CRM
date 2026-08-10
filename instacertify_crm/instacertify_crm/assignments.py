@@ -59,11 +59,14 @@ def assign_project(project: str, user: str | None = None):
 			frappe.PermissionError,
 		)
 
-	old = doc.assigned_to
+	old = doc.delivery_owner or doc.assigned_to
 	new = user or None
 	if new and (not frappe.db.exists("User", new) or not frappe.db.get_value("User", new, "enabled")):
 		frappe.throw(_("Select an enabled user"))
+	doc.delivery_owner = new
 	doc.assigned_to = new
+	if not doc.commercial_owner and new:
+		doc.commercial_owner = new
 	doc.last_activity_on = now_datetime()
 	doc.append(
 		"remarks",
@@ -72,27 +75,21 @@ def assign_project(project: str, user: str | None = None):
 			"user": frappe.session.user,
 			"stage": "Other",
 			"remark": (
-				f"Assigned to {frappe.db.get_value('User', new, 'full_name') or new}"
+				f"Delivery Owner set to {frappe.db.get_value('User', new, 'full_name') or new}"
 				if new
-				else "Unassigned"
+				else "Delivery Owner cleared"
 			),
 		},
 	)
 	doc.save(ignore_permissions=not can_write)
-
-	if doc.lead:
-		try:
-			frappe.db.set_value("IC Lead", doc.lead, "assigned_to", new, update_modified=True)
-		except Exception:
-			pass
 
 	if old != new:
 		label = frappe.db.get_value("User", new, "full_name") if new else _("Unassigned")
 		_notify_assignment(
 			doctype="IC Customer Project",
 			name=doc.name,
-			subject=_("Project assigned — {0}").format(doc.customer_name or doc.name),
-			message=_("{0} assigned to {1} by {2}").format(
+			subject=_("Delivery owner assigned — {0}").format(doc.customer_name or doc.name),
+			message=_("{0} delivery owner set to {1} by {2}").format(
 				doc.project_title or doc.name,
 				label or new or _("Unassigned"),
 				frappe.session.user,
@@ -100,7 +97,12 @@ def assign_project(project: str, user: str | None = None):
 			assignee=new,
 		)
 
-	return {"name": doc.name, "assigned_to": doc.assigned_to}
+	return {
+		"name": doc.name,
+		"assigned_to": doc.assigned_to,
+		"delivery_owner": doc.delivery_owner,
+		"commercial_owner": doc.commercial_owner,
+	}
 
 
 @frappe.whitelist(methods=["POST"])
@@ -124,12 +126,18 @@ def assign_lead(lead: str, user: str | None = None):
 
 	project = frappe.db.get_value(
 		"IC Customer Project",
-		{"lead": doc.name, "status": ["not in", ["Closed", "Lost"]]},
+		{"lead": doc.name, "status": ["not in", ["Closed", "Lost", "Completed"]]},
 		"name",
 	)
 	if project:
 		try:
-			frappe.db.set_value("IC Customer Project", project, "assigned_to", new, update_modified=True)
+			# Lead assignee is the commercial owner; do not force delivery owner
+			frappe.db.set_value(
+				"IC Customer Project",
+				project,
+				{"commercial_owner": new},
+				update_modified=True,
+			)
 		except Exception:
 			pass
 
@@ -152,30 +160,19 @@ def assign_lead(lead: str, user: str | None = None):
 
 
 def on_project_update(doc, method=None):
-	"""When Assigned To changes on the form, notify and keep lead in sync."""
+	"""When Delivery Owner changes on the form, notify."""
 	before = doc.get_doc_before_save()
-	if not before or (before.assigned_to or "") == (doc.assigned_to or ""):
+	if not before:
 		return
-	if doc.lead:
-		try:
-			frappe.db.set_value(
-				"IC Lead",
-				doc.lead,
-				"assigned_to",
-				doc.assigned_to,
-				update_modified=False,
-			)
-		except Exception:
-			pass
-	label = (
-		frappe.db.get_value("User", doc.assigned_to, "full_name")
-		if doc.assigned_to
-		else _("Unassigned")
-	)
+	old = before.delivery_owner or before.assigned_to
+	new = doc.delivery_owner or doc.assigned_to
+	if (old or "") == (new or ""):
+		return
+	label = frappe.db.get_value("User", new, "full_name") if new else _("Unassigned")
 	_notify_assignment(
 		doctype="IC Customer Project",
 		name=doc.name,
-		subject=_("Project assigned — {0}").format(doc.customer_name or doc.name),
-		message=_("{0} assigned to {1}").format(doc.project_title or doc.name, label),
-		assignee=doc.assigned_to,
+		subject=_("Delivery owner assigned — {0}").format(doc.customer_name or doc.name),
+		message=_("{0} delivery owner set to {1}").format(doc.project_title or doc.name, label),
+		assignee=new,
 	)
