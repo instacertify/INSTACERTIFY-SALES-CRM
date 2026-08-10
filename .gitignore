@@ -38,6 +38,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# next.js 16 auto-generated agent instruction files
+/AGENTS.md
+/CLAUDE.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
