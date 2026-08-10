@@ -13,5 +13,9 @@ frappe.ui.form.on("IC Quote Template", {
 				__("Bank details on templates can only be edited by IC Admin"),
 			);
 		}
+		frm.toggle_display("accreditation_html", frm.doc.quote_type === "Service");
+	},
+	quote_type(frm) {
+		frm.toggle_display("accreditation_html", frm.doc.quote_type === "Service");
 	},
 });

@@ -24,7 +24,7 @@ export async function GET(req: Request, { params }: Params) {
     url = quotePublicUrl(token);
   }
 
-  // QR codes are reliably scannable with Google Lens and open the unique URL.
+  // QR codes open the unique customer quote URL.
   const png = await QRCode.toBuffer(url, {
     type: "png",
     width: 280,

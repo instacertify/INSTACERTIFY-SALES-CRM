@@ -5,17 +5,24 @@ frappe.ui.form.on("IC Lead", {
 	refresh(frm) {
 		toggle_state(frm);
 		if (!frm.is_new()) {
-			frm.add_custom_button(__("Create Quote"), () => {
-				frappe.new_doc("IC Quote", {
-					lead: frm.doc.name,
-					customer_name: frm.doc.customer_name,
-					company: frm.doc.company,
-					email: frm.doc.email,
-					phone: frm.doc.phone,
-					country: frm.doc.country,
-					state: frm.doc.state,
-				});
-			}).addClass("btn-primary");
+			frm
+				.add_custom_button(__("Create Quote"), () => {
+					frappe.new_doc("IC Quote", {
+						lead: frm.doc.name,
+						customer_name: frm.doc.customer_name,
+						company: frm.doc.company,
+						email: frm.doc.email,
+						phone: frm.doc.phone,
+						country: frm.doc.country,
+						state: frm.doc.state,
+						quote_type: "Testing",
+					});
+				})
+				.addClass("btn-primary");
+			frm.add_custom_button(__("Customer History"), () => {
+				instacertify_crm.show_customer_history({ lead: frm.doc.name });
+			});
+			load_history_section(frm);
 		}
 	},
 	country(frm) {
@@ -29,8 +36,18 @@ function toggle_state(frm) {
 	frm.set_df_property(
 		"state",
 		"description",
-		india
-			? "Select / enter Indian state (required)"
-			: "Optional state / region",
+		india ? "Select / enter Indian state (required)" : "Optional state / region",
 	);
+}
+
+function load_history_section(frm) {
+	frappe.call({
+		method: "instacertify_crm.api.get_customer_history",
+		args: { lead: frm.doc.name },
+		callback(r) {
+			const html = instacertify_crm.render_customer_history(r.message || {});
+			frm.dashboard.clear_headline();
+			frm.dashboard.add_section(html, __("Past services, testing & reports"));
+		},
+	});
 }

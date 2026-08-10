@@ -14,10 +14,11 @@ Verified against:
 
 - **Leads** with sources (Consultant, Google Ads, Phone Call, IndiaMART, Referral), company size, India state
 - Roles **IC Admin** (export) and **IC Sales Ops** (no export)
-- **Quotes** with Instacertify letterhead print format + public `/q/<token>` (QR / Google Lens)
+- **Quotes** with Testing / Service templates, Instacertify letterhead + public `/q/<token>` (QR to open online quote)
 - Customer **Accept / Revise**
-- Quote templates (bank master admin-only)
-- Document checklist portal `/d/<token>`
+- Quote templates learned from Instacertify Testing & Service letter formats
+- Customer **past history** on lead/quote (services, testing, reports)
+- After accept: **select documents** and share upload link `/d/<token>`
 - Final report ready portal `/r/<token>`
 - Testing library — purchase price admin-only; customers only see selling price
 
@@ -66,7 +67,9 @@ Open the **Instacertify CRM** workspace from Desk.
 | Documents | `https://your-site/d/<public_token>` |
 | Report ready | `https://your-site/r/<public_token>` |
 
-On **IC Quote** use **Share / Reshare Quote**. After **Accepted**, create **IC Document Request** and/or **IC Report**.
+On **IC Quote** choose **Quote For = Testing or Service**, apply a template, then **Share / Reshare Quote**.
+After **Accepted**, use **Select Documents & Share** to pick the checklist and send the customer upload link.
+Use **Customer History** on Lead/Quote to see past testing, services and reports.
 
 ## Requirements
 

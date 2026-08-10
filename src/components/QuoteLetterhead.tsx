@@ -60,7 +60,7 @@ export function QuoteLetterhead({
                 height={140}
                 unoptimized
               />
-              <span className="muted">Scan with Google Lens</span>
+              <span className="muted">Open online quote</span>
             </div>
           ) : null}
         </div>

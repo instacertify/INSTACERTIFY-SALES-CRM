@@ -1,0 +1,39 @@
+{
+ "doctype": "DocType",
+ "name": "IC Document Request Item",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "istable": 1,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "document_name",
+  "description",
+  "required"
+ ],
+ "permissions": [],
+ "fields": [
+  {
+   "fieldname": "document_name",
+   "label": "Document",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "required",
+   "label": "Required",
+   "fieldtype": "Check",
+   "default": "1",
+   "in_list_view": 1
+  }
+ ]
+}

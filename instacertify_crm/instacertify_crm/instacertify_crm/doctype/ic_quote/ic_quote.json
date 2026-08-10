@@ -12,11 +12,13 @@
  "field_order": [
   "naming_series",
   "quote_number",
+  "quote_type",
   "public_token",
   "status",
   "column_break_1",
   "lead",
   "template",
+  "subject",
   "validity_date",
   "section_customer",
   "customer_name",
@@ -29,7 +31,10 @@
   "section_service",
   "service",
   "description",
-  "body_html",
+  "about_html",
+  "standards_html",
+  "accreditation_html",
+  "sample_requirements_html",
   "section_testing",
   "testing_items",
   "section_commercials",
@@ -39,6 +44,13 @@
   "column_break_3",
   "other_commercials_note",
   "total_revenue",
+  "section_terms",
+  "deliverables_html",
+  "timeline_html",
+  "payment_terms_html",
+  "sample_handling_html",
+  "policies_html",
+  "body_html",
   "section_bank",
   "bank_detail",
   "bank_snapshot",
@@ -52,7 +64,7 @@
  "autoname": "naming_series:",
  "naming_rule": "By \"Naming Series\" field",
  "title_field": "quote_number",
- "search_fields": "quote_number,customer_name,company,status,service",
+ "search_fields": "quote_number,customer_name,company,status,service,quote_type,subject",
  "fields": [
   {
    "fieldname": "naming_series",
@@ -68,6 +80,16 @@
    "fieldtype": "Data",
    "read_only": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "quote_type",
+   "label": "Quote For",
+   "fieldtype": "Select",
+   "options": "Testing\nService",
+   "default": "Testing",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Choose Testing or Service business before preparing the customer quotation."
   },
   {
    "fieldname": "public_token",
@@ -99,7 +121,14 @@
    "fieldname": "template",
    "label": "Template",
    "fieldtype": "Link",
-   "options": "IC Quote Template"
+   "options": "IC Quote Template",
+   "description": "Filtered by Quote For (Testing / Service)."
+  },
+  {
+   "fieldname": "subject",
+   "label": "Subject",
+   "fieldtype": "Data",
+   "in_list_view": 1
   },
   {
    "fieldname": "validity_date",
@@ -158,12 +187,12 @@
   },
   {
    "fieldname": "section_service",
-   "label": "Service & Scope",
+   "label": "Scope",
    "fieldtype": "Section Break"
   },
   {
    "fieldname": "service",
-   "label": "Service",
+   "label": "Service / Testing Category",
    "fieldtype": "Link",
    "options": "IC Service",
    "reqd": 1,
@@ -171,40 +200,60 @@
   },
   {
    "fieldname": "description",
-   "label": "Description",
+   "label": "Short Description",
    "fieldtype": "Small Text",
    "reqd": 1
   },
   {
-   "fieldname": "body_html",
-   "label": "Letter Body",
+   "fieldname": "about_html",
+   "label": "About",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "standards_html",
+   "label": "Applicable Standards",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "accreditation_html",
+   "label": "Accreditation",
+   "fieldtype": "Text Editor",
+   "depends_on": "eval:doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "sample_requirements_html",
+   "label": "Sample Requirements",
    "fieldtype": "Text Editor"
   },
   {
    "fieldname": "section_testing",
-   "label": "Testing Lines (Selling Price only)",
-   "fieldtype": "Section Break"
+   "label": "Commercial Line Items",
+   "fieldtype": "Section Break",
+   "depends_on": "eval:doc.quote_type=='Testing'",
+   "description": "Customers only see selling / total charges — never purchase price."
   },
   {
    "fieldname": "testing_items",
    "label": "Testing Items",
    "fieldtype": "Table",
-   "options": "IC Quote Testing Item"
+   "options": "IC Quote Testing Item",
+   "depends_on": "eval:doc.quote_type=='Testing'"
   },
   {
    "fieldname": "section_commercials",
-   "label": "Commercials",
+   "label": "Commercial Summary",
    "fieldtype": "Section Break"
   },
   {
    "fieldname": "consulting_price",
    "label": "Commercial Consulting Price",
    "fieldtype": "Currency",
-   "default": "0"
+   "default": "0",
+   "depends_on": "eval:doc.quote_type=='Service'"
   },
   {
    "fieldname": "testing_price",
-   "label": "Testing Price",
+   "label": "Testing / Service Charges",
    "fieldtype": "Currency",
    "default": "0"
   },
@@ -229,6 +278,41 @@
    "label": "Total Revenue",
    "fieldtype": "Currency",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_terms",
+   "label": "Deliverables & Terms",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "deliverables_html",
+   "label": "Deliverables",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "timeline_html",
+   "label": "Timeline",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "payment_terms_html",
+   "label": "Payment Terms",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "sample_handling_html",
+   "label": "Sample Handling & Disposal",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "policies_html",
+   "label": "Policies",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Extra Letter Body",
+   "fieldtype": "Text Editor"
   },
   {
    "fieldname": "section_bank",

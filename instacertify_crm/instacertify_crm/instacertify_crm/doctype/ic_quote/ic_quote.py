@@ -11,10 +11,16 @@ from frappe.utils import flt, get_url
 class ICQuote(Document):
 	def validate(self):
 		self.quote_number = self.quote_number or self.name
-		self.total_revenue = flt(self.consulting_price) + flt(self.testing_price) + flt(self.other_commercials)
+		self.quote_type = self.quote_type or "Testing"
 		if self.testing_items:
+			for row in self.testing_items:
+				units = flt(row.units) or 1
+				if flt(row.per_unit_charges):
+					row.selling_price = units * flt(row.per_unit_charges)
 			self.testing_price = sum(flt(row.selling_price) for row in self.testing_items)
-			self.total_revenue = flt(self.consulting_price) + flt(self.testing_price) + flt(self.other_commercials)
+		self.total_revenue = (
+			flt(self.consulting_price) + flt(self.testing_price) + flt(self.other_commercials)
+		)
 		if self.bank_detail and not self.bank_snapshot:
 			self.bank_snapshot = bank_detail_to_text(self.bank_detail)
 		if self.public_token:
@@ -33,13 +39,17 @@ class ICQuote(Document):
 def bank_detail_to_text(bank_name: str) -> str:
 	bank = frappe.get_doc("IC Bank Detail", bank_name)
 	lines = [
-		f"Account Name: {bank.account_name}",
-		f"Bank: {bank.bank_name}",
+		f"Beneficiary Name: {bank.account_name}",
+		f"Bank Name: {bank.bank_name}",
 		f"Account Number: {bank.account_number}",
-		f"IFSC: {bank.ifsc}",
+		f"IFSC Code: {bank.ifsc}",
 	]
+	if getattr(bank, "swift", None):
+		lines.append(f"SWIFT Code: {bank.swift}")
+	if getattr(bank, "gstin", None):
+		lines.append(f"GSTIN: {bank.gstin}")
 	if bank.branch:
-		lines.append(f"Branch: {bank.branch}")
+		lines.append(f"Branch Address: {bank.branch}")
 	if bank.upi:
 		lines.append(f"UPI: {bank.upi}")
 	if bank.notes:

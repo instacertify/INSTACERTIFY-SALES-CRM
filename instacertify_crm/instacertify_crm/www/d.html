@@ -17,11 +17,12 @@
 {% else %}
 <div class="ic-card">
   <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
-  <h1>Document checklist</h1>
+  <h1>Documents requested</h1>
   <p>Quote <strong>{{ docreq.quote_number }}</strong> · {{ docreq.company }} · {{ docreq.service }}</p>
+  <p class="notice">Please upload only the documents listed below for this accepted quote.</p>
   {% if docreq.questionnaire %}<div class="notice"><strong>Questionnaire / remarks</strong><p>{{ docreq.questionnaire }}</p></div>{% endif %}
   {% if docreq.team_remark %}<div class="notice warn"><strong>Update from Instacertify</strong><p>{{ docreq.team_remark }}</p></div>{% endif %}
-  <h3>Required documents</h3>
+  <h3>Selected checklist</h3>
   <ul>{% for d in docreq.documents %}<li>{{ d.document_name }}{% if d.required %} *{% endif %}{% if d.description %} — {{ d.description }}{% endif %}</li>{% endfor %}</ul>
   <form id="upload-form">
     <label>Document type

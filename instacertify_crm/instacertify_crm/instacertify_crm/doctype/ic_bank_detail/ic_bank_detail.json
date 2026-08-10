@@ -15,6 +15,8 @@
   "account_number",
   "ifsc",
   "column_break_1",
+  "swift",
+  "gstin",
   "branch",
   "upi",
   "is_default",
@@ -102,9 +104,19 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "branch",
-   "label": "Branch",
+   "fieldname": "swift",
+   "label": "SWIFT Code",
    "fieldtype": "Data"
+  },
+  {
+   "fieldname": "gstin",
+   "label": "GSTIN",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "branch",
+   "label": "Branch Address",
+   "fieldtype": "Small Text"
   },
   {
    "fieldname": "upi",
