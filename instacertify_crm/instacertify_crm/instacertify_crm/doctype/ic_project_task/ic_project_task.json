@@ -1,0 +1,165 @@
+{
+ "doctype": "DocType",
+ "name": "IC Project Task",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "autoname": "format:TSK-{YYYY}-{#####}",
+ "title_field": "task_title",
+ "search_fields": "task_title,project,status,assigned_to,waiting_for",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "task_title",
+  "project",
+  "status",
+  "column_break_1",
+  "assigned_to",
+  "due_date",
+  "sequence",
+  "section_waiting",
+  "waiting_for",
+  "waiting_expected_on",
+  "waiting_note",
+  "section_notes",
+  "notes",
+  "completed_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "task_title",
+   "label": "Task",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "Link",
+   "options": "IC Customer Project",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "To Do\nIn Progress\nWaiting\nCompleted",
+   "default": "To Do",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "assigned_to",
+   "label": "Person",
+   "fieldtype": "Link",
+   "options": "User",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "due_date",
+   "label": "Due Date",
+   "fieldtype": "Date",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "sequence",
+   "label": "Sequence",
+   "fieldtype": "Int",
+   "default": "10"
+  },
+  {
+   "fieldname": "section_waiting",
+   "label": "Waiting (external dependency)",
+   "fieldtype": "Section Break",
+   "depends_on": "eval:doc.status=='Waiting'",
+   "description": "Use Waiting when work is blocked by client, lab, government, payment, sample, etc."
+  },
+  {
+   "fieldname": "waiting_for",
+   "label": "Waiting For",
+   "fieldtype": "Select",
+   "options": "\nClient\nLab\nGovernment\nPayment\nSample\nInternal\nOther",
+   "depends_on": "eval:doc.status=='Waiting'",
+   "in_standard_filter": 1,
+   "mandatory_depends_on": "eval:doc.status=='Waiting'"
+  },
+  {
+   "fieldname": "waiting_expected_on",
+   "label": "Expected Unblock Date",
+   "fieldtype": "Date",
+   "depends_on": "eval:doc.status=='Waiting'"
+  },
+  {
+   "fieldname": "waiting_note",
+   "label": "Waiting Note",
+   "fieldtype": "Small Text",
+   "depends_on": "eval:doc.status=='Waiting'"
+  },
+  {
+   "fieldname": "section_notes",
+   "label": "Notes",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notes",
+   "label": "Notes",
+   "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "completed_on",
+   "label": "Completed On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}

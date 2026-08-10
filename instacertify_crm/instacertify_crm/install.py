@@ -116,6 +116,7 @@ def after_migrate():
 	ensure_roles()
 	seed_masters()
 	_backfill_lead_costs()
+	_backfill_project_centric_fields()
 	frappe.clear_cache()
 
 
@@ -194,6 +195,46 @@ def _backfill_lead_costs():
 		""",
 		{"cost": default_cost},
 	)
+
+
+def _backfill_project_centric_fields():
+	"""Map legacy statuses/owners into the project-centric model."""
+	if frappe.db.exists("DocType", "IC Lead") and frappe.db.has_column("IC Lead", "status"):
+		frappe.db.sql("UPDATE `tabIC Lead` SET status='QUALIFIED' WHERE status='FOLLOW_UP'")
+		frappe.db.sql("UPDATE `tabIC Lead` SET status='QUOTATION' WHERE status='QUOTE_SENT'")
+
+	if not frappe.db.exists("DocType", "IC Customer Project"):
+		return
+
+	status_map = {
+		"Open": "Not Started",
+		"In Delivery": "Testing",
+		"Delivered": "Completed",
+	}
+	if frappe.db.has_column("IC Customer Project", "status"):
+		for old, new in status_map.items():
+			frappe.db.sql(
+				"UPDATE `tabIC Customer Project` SET status=%(new)s WHERE status=%(old)s",
+				{"old": old, "new": new},
+			)
+
+	if frappe.db.has_column("IC Customer Project", "delivery_owner"):
+		frappe.db.sql(
+			"""
+			UPDATE `tabIC Customer Project`
+			SET delivery_owner = assigned_to
+			WHERE IFNULL(delivery_owner, '') = '' AND IFNULL(assigned_to, '') != ''
+			"""
+		)
+	if frappe.db.has_column("IC Customer Project", "commercial_owner"):
+		frappe.db.sql(
+			"""
+			UPDATE `tabIC Customer Project` p
+			LEFT JOIN `tabIC Lead` l ON l.name = p.lead
+			SET p.commercial_owner = COALESCE(NULLIF(p.commercial_owner, ''), l.assigned_to, p.assigned_to)
+			WHERE IFNULL(p.commercial_owner, '') = ''
+			"""
+		)
 
 
 def _seed_settings():

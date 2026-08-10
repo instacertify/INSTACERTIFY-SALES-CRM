@@ -45,6 +45,9 @@ doc_events = {
 			"instacertify_crm.lifecycle.on_quote_update",
 		],
 	},
+	"IC Lead": {
+		"on_update": "instacertify_crm.lifecycle.on_lead_update",
+	},
 	"IC Report": {
 		"on_update": "instacertify_crm.lifecycle.on_report_update",
 		"after_insert": "instacertify_crm.lifecycle.on_report_update",

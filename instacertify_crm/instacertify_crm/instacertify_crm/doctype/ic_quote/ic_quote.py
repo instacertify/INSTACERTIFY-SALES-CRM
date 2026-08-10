@@ -79,5 +79,5 @@ def bank_detail_to_text(bank_name: str) -> str:
 
 def on_update(doc, method=None):
 	if doc.lead and doc.status in {"Shared", "Accepted"}:
-		status = "QUOTE_SENT" if doc.status == "Shared" else "WON"
+		status = "QUOTATION" if doc.status == "Shared" else "WON"
 		frappe.db.set_value("IC Lead", doc.lead, "status", status, update_modified=False)

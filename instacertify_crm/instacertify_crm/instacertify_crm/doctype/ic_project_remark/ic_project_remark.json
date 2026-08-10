@@ -35,7 +35,7 @@
    "fieldname": "stage",
    "label": "Stage",
    "fieldtype": "Select",
-   "options": "\nLead\nQuote\nDocuments\nDelivery\nReport\nFollow-up\nOther",
+   "options": "\nLead\nQuote\nDocuments\nTesting\nLab\nGovernment\nDelivery\nReport\nPayment\nFollow-up\nOther",
    "in_list_view": 1
   },
   {
