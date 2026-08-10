@@ -37,17 +37,27 @@ def _notify_admins_on_assignment_change(doc):
 	if old_assignee == new_assignee and old_status == new_status:
 		return
 
-	admins = {
-		row.parent
-		for row in frappe.get_all(
+	admins = set(
+		frappe.get_all(
 			"Has Role",
-			filters={"role": ["in", ["IC Admin", "System Manager"]]},
-			fields=["parent"],
+			filters={
+				"role": ["in", ["IC Admin", "System Manager"]],
+				"parenttype": "User",
+			},
+			pluck="parent",
 		)
-	}
+	)
 	admins.discard("Administrator")
 	admins.discard("Guest")
 	admins.discard(frappe.session.user)
+	admins = {
+		user
+		for user in admins
+		if frappe.db.exists(
+			"User",
+			{"name": user, "enabled": 1, "user_type": "System User"},
+		)
+	}
 
 	if not admins:
 		return
@@ -64,11 +74,14 @@ def _notify_admins_on_assignment_change(doc):
 	message = " · ".join(parts)
 
 	for user in admins:
-		note = frappe.new_doc("Notification Log")
-		note.for_user = user
-		note.type = "Alert"
-		note.document_type = "IC Lead"
-		note.document_name = doc.name
-		note.subject = subject
-		note.email_content = message
-		note.insert(ignore_permissions=True)
+		try:
+			note = frappe.new_doc("Notification Log")
+			note.for_user = user
+			note.type = "Alert"
+			note.document_type = "IC Lead"
+			note.document_name = doc.name
+			note.subject = subject
+			note.email_content = message
+			note.insert(ignore_permissions=True)
+		except Exception:
+			frappe.log_error(title=f"IC Lead admin notify failed for {user}")
