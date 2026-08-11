@@ -40,13 +40,19 @@ after_migrate = "instacertify_crm.install.after_migrate"
 
 doc_events = {
 	"IC Quote": {
+		"after_insert": "instacertify_crm.customers.sync_from_quote",
 		"on_update": [
 			"instacertify_crm.instacertify_crm.doctype.ic_quote.ic_quote.on_update",
 			"instacertify_crm.lifecycle.on_quote_update",
+			"instacertify_crm.customers.sync_from_quote",
 		],
 	},
 	"IC Lead": {
-		"on_update": "instacertify_crm.lifecycle.on_lead_update",
+		"after_insert": "instacertify_crm.customers.sync_from_lead",
+		"on_update": [
+			"instacertify_crm.lifecycle.on_lead_update",
+			"instacertify_crm.customers.sync_from_lead",
+		],
 	},
 	"IC Report": {
 		"on_update": "instacertify_crm.lifecycle.on_report_update",
@@ -56,7 +62,11 @@ doc_events = {
 		"on_update": "instacertify_crm.lifecycle.on_document_request_update",
 	},
 	"IC Customer Project": {
-		"on_update": "instacertify_crm.assignments.on_project_update",
+		"after_insert": "instacertify_crm.customers.sync_from_project",
+		"on_update": [
+			"instacertify_crm.assignments.on_project_update",
+			"instacertify_crm.customers.sync_from_project",
+		],
 	},
 }
 
