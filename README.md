@@ -1,21 +1,24 @@
-# Instacertify CRM — Fast Standalone Modular Monolith
+# Instacertify ERP — Cert + Testing Modular Monolith
 
-Standalone CRM for **selling certification consulting** that **bundles testing and other services**, with a strong focus on **testing sales**.
+Standalone **ERP** for certification consulting that **bundles testing**: CRM, delivery, finance, vendors and light HR.
 
-**ERPNext / Frappe has been removed.** This repo is Next.js + NestJS + PostgreSQL only.
+**Stack:** Next.js + NestJS + PostgreSQL (no ERPNext / Docker).
 
-**Deploy:** Hostinger VPS with PM2 + Nginx — **no Docker**.
+**Deploy:** Hostinger VPS with PM2 + Nginx, or Hostinger Node (`server.mjs`).
 
-## Product focus
+## Product modules
 
 | Area | What employees get |
 |---|---|
-| Testing catalog | Search **lab scope**, see **purchase price** vs **sell-at price** |
-| Customer journey | Quotes **shared → revised → testing opted → accepted** |
-| Document portal | Collect **service document checklists** from customers |
-| Test request portal | Customer fills **test request form**; employee **downloads lab pack** |
-| Work library | Interactive map of work done for each client |
-| Dashboard | **Pie charts** + **sales value by person** |
+| Customers | Account master, contacts, journey, portals |
+| Leads → Opportunities → Quotations | Convert lead; accept quote → **project + invoice** |
+| Testing catalog | Lab scope, purchase vs sell price, margin |
+| Projects / Tasks / Samples | Delivery control tower + sample logistics |
+| Documents | File registry + customer checklist portals |
+| Finance | Invoices, payments, AR aging, expenses, POs |
+| Vendors | Labs, couriers, suppliers |
+| Team / HR | Users, roles, department, light CTC |
+| Reports | Sales by person, testing margin, AR, expenses |
 
 ```text
 LEAD → CUSTOMER → OPPORTUNITY → QUOTATION (consulting + testing lines)

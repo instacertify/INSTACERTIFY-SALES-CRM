@@ -252,6 +252,166 @@ export class QuotationsService {
     return updated;
   }
 
+  /**
+   * Accept quote → mark ACCEPTED, ensure Customer, create Project + TestingOrders,
+   * optionally draft Invoice.
+   */
+  async accept(
+    id: string,
+    createdById: string,
+    opts?: { createInvoice?: boolean; note?: string },
+  ) {
+    const quote = await this.get(id);
+    if (quote.status === 'ACCEPTED' && quote.projects.length) {
+      return {
+        quotation: quote,
+        project: quote.projects[0],
+        invoice: quote.invoices[0] || null,
+      };
+    }
+
+    let customerId = quote.customerId;
+    if (!customerId) {
+      const existing = await this.prisma.customer.findUnique({
+        where: { email: quote.email },
+      });
+      const customer =
+        existing ||
+        (await this.prisma.customer.create({
+          data: {
+            company: quote.company,
+            email: quote.email,
+            phone: quote.phone,
+            country: quote.country,
+            state: quote.state,
+          },
+        }));
+      customerId = customer.id;
+    }
+
+    const projectValue =
+      quote.consultingPrice +
+      quote.testingPrice +
+      quote.otherCommercials +
+      quote.governmentFees;
+
+    const year = new Date().getFullYear();
+    const pCount = await this.prisma.project.count({
+      where: { projectNumber: { startsWith: `IC-${year}-` } },
+    });
+    const projectNumber = `IC-${year}-${String(pCount + 1).padStart(5, '0')}`;
+
+    const project = await this.prisma.project.create({
+      data: {
+        projectNumber,
+        title: `${quote.serviceName} — ${quote.company}`,
+        status: 'ACCEPTED',
+        serviceName: quote.serviceName,
+        projectValue,
+        consultingFees: quote.consultingPrice,
+        governmentFees: quote.governmentFees,
+        testingFees: quote.testingPrice,
+        customerName: quote.customerName,
+        company: quote.company,
+        email: quote.email,
+        phone: quote.phone,
+        country: quote.country,
+        state: quote.state,
+        scopeSummary: quote.description,
+        customerId,
+        leadId: quote.leadId,
+        quotationId: quote.id,
+        commercialOwnerId: quote.createdById,
+        deliveryOwnerId: createdById,
+        startDate: new Date(),
+      },
+    });
+
+    const testingLines = quote.lineItems.filter((l) => l.kind === 'TESTING');
+    for (const line of testingLines) {
+      await this.prisma.testingOrder.create({
+        data: {
+          projectId: project.id,
+          testName: line.title,
+          status: 'PLANNED',
+          purchasePrice: line.purchasePrice,
+          salesPrice: line.unitPrice,
+          catalogItemId: line.catalogItemId,
+          partnerLabId: line.catalogItem?.partnerLabId,
+          notes: line.description || undefined,
+        },
+      });
+    }
+
+    let invoice = null as Awaited<
+      ReturnType<typeof this.prisma.invoice.create>
+    > | null;
+    if (opts?.createInvoice !== false && projectValue > 0) {
+      const iCount = await this.prisma.invoice.count({
+        where: { invoiceNumber: { startsWith: `INV-${year}-` } },
+      });
+      const invoiceNumber = `INV-${year}-${String(iCount + 1).padStart(5, '0')}`;
+      const taxAmount = Math.round(projectValue * 0.18);
+      invoice = await this.prisma.invoice.create({
+        data: {
+          invoiceNumber,
+          status: 'DRAFT',
+          subtotal: projectValue,
+          taxAmount,
+          total: projectValue + taxAmount,
+          customerId,
+          projectId: project.id,
+          quotationId: quote.id,
+          createdById,
+          notes: `Auto-created from ${quote.quoteNumber}`,
+        },
+      });
+    }
+
+    const quotation = await this.prisma.quotation.update({
+      where: { id },
+      data: {
+        status: 'ACCEPTED',
+        acceptedAt: new Date(),
+        customerId,
+      },
+      include: {
+        customer: true,
+        projects: true,
+        invoices: true,
+        lineItems: true,
+      },
+    });
+    await this.addEvent(
+      id,
+      'ACCEPTED',
+      opts?.note || `Accepted → project ${project.projectNumber}`,
+      { projectId: project.id, invoiceId: invoice?.id },
+    );
+
+    if (quote.leadId) {
+      await this.prisma.lead.update({
+        where: { id: quote.leadId },
+        data: { status: 'WON', customerId },
+      });
+    }
+    if (quote.opportunityId) {
+      await this.prisma.opportunity.update({
+        where: { id: quote.opportunityId },
+        data: { stage: 'WON', amount: projectValue },
+      });
+    }
+    await this.prisma.customer.update({
+      where: { id: customerId },
+      data: {
+        lifetimeValue: { increment: projectValue },
+        lastActivityAt: new Date(),
+      },
+    });
+
+    return { quotation, project, invoice };
+  }
+
   async addLineItem(
     id: string,
     body: {

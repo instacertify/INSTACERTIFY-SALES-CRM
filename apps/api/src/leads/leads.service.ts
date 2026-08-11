@@ -198,4 +198,107 @@ export class LeadsService {
       orderBy: { name: 'asc' },
     });
   }
+
+  /**
+   * Convert lead → Customer + Opportunity (+ optional draft Quotation).
+   */
+  async convert(
+    id: string,
+    createdById: string,
+    opts?: { createQuotation?: boolean; serviceName?: string },
+  ) {
+    const lead = await this.get(id);
+
+    let customer = lead.customer;
+    if (!customer) {
+      const existing = await this.prisma.customer.findUnique({
+        where: { email: lead.email },
+      });
+      customer =
+        existing ||
+        (await this.prisma.customer.create({
+          data: {
+            company: lead.company,
+            email: lead.email,
+            phone: lead.phone,
+            country: lead.country,
+            state: lead.state,
+            notes: lead.notes,
+          },
+        }));
+    }
+
+    const opportunity = await this.prisma.opportunity.create({
+      data: {
+        title: `${lead.serviceName || lead.product || 'Certification'} — ${lead.company}`,
+        stage: 'QUALIFIED',
+        amount: lead.expectedValue,
+        probability: 40,
+        expectedClose: lead.expectedClose,
+        serviceName: lead.serviceName,
+        notes: lead.notes,
+        customerId: customer.id,
+        leadId: lead.id,
+        ownerId: lead.assignedToId || createdById,
+      },
+    });
+
+    let quotation = null as Awaited<
+      ReturnType<typeof this.prisma.quotation.create>
+    > | null;
+    if (opts?.createQuotation !== false) {
+      const year = new Date().getFullYear();
+      const count = await this.prisma.quotation.count({
+        where: { quoteNumber: { startsWith: `Q-${year}-` } },
+      });
+      const quoteNumber = `Q-${year}-${String(count + 1).padStart(5, '0')}`;
+      const validity = new Date();
+      validity.setDate(validity.getDate() + 30);
+      const { randomBytes } = await import('crypto');
+      quotation = await this.prisma.quotation.create({
+        data: {
+          quoteNumber,
+          publicToken: randomBytes(16).toString('hex'),
+          customerName: lead.customerName,
+          company: lead.company,
+          email: lead.email,
+          phone: lead.phone,
+          country: lead.country,
+          state: lead.state,
+          serviceName:
+            opts?.serviceName || lead.serviceName || 'Certification consulting',
+          description: `Converted from lead ${lead.company}`,
+          validityDate: validity,
+          consultingPrice: lead.expectedValue || 0,
+          leadId: lead.id,
+          customerId: customer.id,
+          opportunityId: opportunity.id,
+          createdById,
+        },
+      });
+      await this.prisma.quotationEvent.create({
+        data: {
+          quotationId: quotation.id,
+          event: 'CREATED',
+          note: 'Created from lead conversion',
+        },
+      });
+    }
+
+    const updatedLead = await this.prisma.lead.update({
+      where: { id },
+      data: {
+        status: 'QUOTATION',
+        customerId: customer.id,
+        lastContactAt: new Date(),
+      },
+      include: {
+        customer: true,
+        opportunities: true,
+        quotations: true,
+      },
+    });
+
+    return { lead: updatedLead, customer, opportunity, quotation };
+  }
 }

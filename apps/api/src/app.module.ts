@@ -23,6 +23,9 @@ import { CatalogModule } from './catalog/catalog.module';
 import { PortalsModule } from './portals/portals.module';
 import { WorkLibraryModule } from './work-library/work-library.module';
 import { StorageModule } from './storage/storage.module';
+import { VendorsModule } from './vendors/vendors.module';
+import { ExpensesModule } from './expenses/expenses.module';
+import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 
 const redisEnabled = process.env.ENABLE_REDIS === 'true';
 
@@ -68,6 +71,9 @@ const redisEnabled = process.env.ENABLE_REDIS === 'true';
     CatalogModule,
     PortalsModule,
     WorkLibraryModule,
+    VendorsModule,
+    ExpensesModule,
+    PurchaseOrdersModule,
   ],
 })
 export class AppModule {}

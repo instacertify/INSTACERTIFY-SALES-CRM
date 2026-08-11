@@ -134,3 +134,50 @@ export function Stat({
     </div>
   );
 }
+
+export function Button({
+  children,
+  className,
+  variant = "primary",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary" | "danger";
+}) {
+  const variants = {
+    primary: "bg-brand-teal text-white hover:opacity-95",
+    secondary:
+      "border border-brand-line bg-white text-brand-teal hover:bg-brand-soft",
+    danger: "bg-rose-600 text-white hover:opacity-95",
+  };
+  return (
+    <button
+      className={cn(
+        "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-50",
+        variants[variant],
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block text-sm">
+      <span className="mb-1 block font-semibold text-brand-ink/80">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+export const inputClass =
+  "w-full rounded-xl border border-brand-line bg-white px-3 py-2 text-sm outline-none ring-brand-teal/30 focus:ring-2";
+
