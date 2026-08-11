@@ -14,7 +14,8 @@ node_modules
 # testing
 /coverage
 
-# next.js
+# next.js (including Hostinger root symlink from postbuild)
+.next
 /.next/
 **/.next/
 /out/

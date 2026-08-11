@@ -2,6 +2,7 @@
   "name": "instacertify-crm",
   "version": "1.0.0",
   "private": true,
+  "description": "Standalone Instacertify CRM (Next.js + NestJS + PostgreSQL) — certification consulting & testing sales. No ERPNext.",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -10,9 +11,12 @@
     "dev": "npm run dev:api & npm run dev:web",
     "dev:api": "npm run start:dev -w @instacertify/api",
     "dev:web": "npm run dev -w @instacertify/web",
-    "build": "npm run generate -w @instacertify/database && npm run build -w @instacertify/api && npm run build -w @instacertify/web",
+    "build": "npm run generate -w @instacertify/database && npm run build -w @instacertify/api && npm run build -w @instacertify/web && node scripts/hostinger-postbuild.mjs",
     "build:api": "npm run build -w @instacertify/api",
     "build:web": "npm run build -w @instacertify/web",
+    "start": "node server.mjs",
+    "start:web": "npm run start -w @instacertify/web",
+    "start:api": "npm run start:prod -w @instacertify/api",
     "db:generate": "npm run generate -w @instacertify/database",
     "db:push": "npm run db:push -w @instacertify/database",
     "db:seed": "npm run db:seed -w @instacertify/database",
