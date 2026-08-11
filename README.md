@@ -1,50 +1,124 @@
-# INSTACERTIFY-SALES-CRM
+# Instacertify CRM — Modular Monolith
 
-Instacertify sales & operations CRM built on **ERPNext 16**.
+Project-centric certification CRM for Instacertify.
 
-## Production: official ERPNext framework
+**Deploy target: Hostinger VPS with PM2 + Nginx — no Docker.**
 
-This project installs as a Frappe custom app on top of:
+## Architecture
 
 ```text
-https://github.com/frappe/erpnext.git  (branch: version-16)
+CRM (modular monolith)
+├── apps/web     Next.js + TypeScript + Tailwind (UI)
+├── apps/api     NestJS + TypeScript (business logic)
+└── packages/database   Prisma + PostgreSQL schema
 ```
 
-Verified locally with **Frappe 16.30.0** + **ERPNext 16.31.1**.
+One NestJS app + one PostgreSQL database. Redis is **optional** (`ENABLE_REDIS=false` by default) so Hostinger stays simple.
 
-### Quick install
+### Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js + TypeScript + Tailwind |
+| Backend | NestJS modular monolith |
+| Database | PostgreSQL (apt on VPS) |
+| ORM | Prisma |
+| Auth | JWT |
+| Process manager | PM2 |
+| Reverse proxy | Nginx (+ Cloudflare DNS optional) |
+| Deploy | **Hostinger VPS — no Docker** |
+
+### Domain flow
+
+```text
+LEAD → CUSTOMER → OPPORTUNITY → QUOTATION → PROJECT
+  → TESTING / SAMPLES / DOCUMENTS → CERTIFICATION → DELIVERY → PAYMENT
+```
+
+## Hostinger deployment (recommended)
+
+Use a **Hostinger VPS** (Ubuntu 22.04/24.04). Shared hosting is not suitable for NestJS + PostgreSQL.
+
+### 1) One-time server setup
 
 ```bash
-# From a machine with Python 3.14+, Node 24+, MariaDB, Redis
-./scripts/setup_erpnext16_bench.sh
+# SSH into your Hostinger VPS, then:
+sudo apt-get update
+git clone <your-repo-url> /var/www/instacertify-crm
+cd /var/www/instacertify-crm
+bash scripts/hostinger-setup.sh
 ```
 
-Or manually:
+This installs Node 22, PostgreSQL, Nginx, and PM2 (**not Docker**), creates the DB, and configures Nginx:
+
+- `https://your-domain/` → Next.js (`:3000`)
+- `https://your-domain/api/` → NestJS (`:4000`)
+
+### 2) Configure env
 
 ```bash
-bench init --frappe-branch version-16 frappe-bench
-cd frappe-bench
-bench get-app erpnext --branch version-16 https://github.com/frappe/erpnext.git
-bench new-site instacertify.local --admin-password 'Admin@123' --set-default
-bench --site instacertify.local install-app erpnext
-
-bench get-app /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
-bench --site instacertify.local install-app instacertify_crm
-bench --site instacertify.local migrate
-bench serve --port 8000
+cd /var/www/instacertify-crm
+cp .env.example .env
+nano .env
 ```
 
-App docs: [`instacertify_crm/README.md`](./instacertify_crm/README.md)
+Set at least:
 
-### Login
-- Desk: `Administrator` / password you set at site creation
-- Assign roles: `IC Admin` or `IC Sales Ops`
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `CORS_ORIGIN=https://your-domain`
+- `NEXT_PUBLIC_API_URL=https://your-domain/api/v1`
+- `ENABLE_REDIS=false`
 
-### Customer portals
-- `/q/<token>` quote accept/revise/print  
-- `/d/<token>` document uploads  
-- `/r/<token>` report ready download  
+### 3) Deploy / update
 
-## Optional Next.js prototype
+```bash
+cd /var/www/instacertify-crm
+git pull
+bash scripts/hostinger-deploy.sh
+```
 
-The repo root still contains an earlier standalone Next.js prototype. Prefer the ERPNext app for production on `instacertify.in`.
+### 4) SSL (Let's Encrypt)
+
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d crm.instacertify.in
+```
+
+### Useful PM2 commands
+
+```bash
+pm2 status
+pm2 logs
+pm2 restart all
+```
+
+## Local development (also no Docker)
+
+```bash
+# PostgreSQL running locally (apt / Hostinger remote DB)
+cp .env.example .env
+npm install
+npm run db:setup
+npm run dev:api   # http://localhost:4000/api/v1
+npm run dev:web   # http://localhost:3000
+```
+
+### Seed logins
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@instacertify.in` | `Admin@123` |
+| Sales | `sales@instacertify.in` | `Sales@123` |
+
+## API modules
+
+`auth` · `users` · `leads` · `customers` · `opportunities` · `quotations` · `projects` · `tasks` · `certification` · `testing` · `samples` · `documents` · `invoices` · `notifications` · `reports` · `admin`
+
+Health: `GET /api/v1/admin/health`
+
+## Notes
+
+- **Do not use Docker** for this project’s Hostinger path — PM2 + Nginx is enough for a 3–10 person team.
+- Redis/BullMQ can be enabled later with `ENABLE_REDIS=true` if you need background jobs.
+- Legacy `instacertify_crm/` ERPNext folder is not used for production.
