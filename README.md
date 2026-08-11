@@ -76,8 +76,12 @@ In hPanel → Websites → Node.js / Web Apps, set:
 | Root directory | `/` |
 | Node.js version | **20+** |
 | Build script | `build` |
-| Output directory | `.next` |
-| Entry file | **`server.js`** (required — Hostinger LiteSpeed `require()`s this file) |
+| Output directory | **`hostinger-run`** |
+| Entry file | **`server.js`** |
+
+Hostinger publishes **only** the Output directory to `hbuilds/current/nodejs/`.  
+That is why Entry `server.js` failed before — it lived at the repo root, not inside `.next`.  
+`npm run build` now builds `hostinger-run/server.js` + Next standalone + API.
 
 **Environment variables (critical):**
 

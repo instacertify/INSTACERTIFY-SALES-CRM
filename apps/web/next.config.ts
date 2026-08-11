@@ -12,6 +12,8 @@ const apiProxy =
   `http://127.0.0.1:${process.env.API_PORT || process.env.PORT_API || "4000"}`;
 
 const nextConfig: NextConfig = {
+  // Required for Hostinger: runtime folder is the Output directory only.
+  output: "standalone",
   images: {
     localPatterns: [
       {

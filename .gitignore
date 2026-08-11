@@ -19,6 +19,8 @@ node_modules
 /.next/
 **/.next/
 /out/
+/hostinger-run/
+hostinger-run
 apps/**/.env
 apps/**/.env.local
 packages/**/.env
