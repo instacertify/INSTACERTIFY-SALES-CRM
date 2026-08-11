@@ -4,7 +4,7 @@ import type { NextConfig } from "next";
  * Do not set `distDir` to a parent path — Next.js forbids output outside the app.
  * Hostinger root `.next` is created by `scripts/hostinger-postbuild.mjs` (copy).
  *
- * /api proxy is handled in server.mjs for Hostinger. Rewrites below help local
+ * /api proxy is handled in server.js for Hostinger. Rewrites below help local
  * `next start` when API runs separately.
  */
 const apiProxy =
@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    // When using server.mjs, it proxies /api before Next — these are a fallback.
+    // When using server.js, it proxies /api before Next — these are a fallback.
     if (process.env.HOSTINGER_CUSTOM_SERVER === "1") return [];
     return [
       {

@@ -4,7 +4,7 @@ Standalone **ERP** for certification consulting that **bundles testing**: CRM, d
 
 **Stack:** Next.js + NestJS + PostgreSQL (no ERPNext / Docker).
 
-**Deploy:** Hostinger VPS with PM2 + Nginx, or Hostinger Node (`server.mjs`).
+**Deploy:** Hostinger VPS with PM2 + Nginx, or Hostinger Node (`server.js`).
 
 ## Product modules
 
@@ -91,7 +91,7 @@ In hPanel → Websites → Node.js / Web Apps, set:
 | `ENABLE_REDIS` | `false` |
 | ~~`PORT`~~ | **Do not set** — Hostinger injects it |
 
-`server.mjs` listens on Hostinger’s `PORT`, serves Next, and proxies `/api/*` → Nest on `API_PORT`.
+`server.js` listens on Hostinger’s `PORT`, serves Next, and proxies `/api/*` → Nest on `API_PORT`.
 
 After deploy: open **Runtime Logs**. You should see `[hostinger] Listening on http://0.0.0.0:<port>`. Run `npm run db:setup` once (SSH or one-off) if the DB is empty.
 
