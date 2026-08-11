@@ -66,22 +66,34 @@ instacertify-crm/
 
 ### Option A — Hostinger Node.js Application (hPanel)
 
-Next.js writes to `apps/web/.next`. Root `npm run build` **copies** that folder to a real root **`.next`** directory (not a symlink) so Hostinger’s output check passes. `apps/web/next.config.ts` does **not** override `distDir`.
+**503 cause (fixed):** Hostinger only proxies to `process.env.PORT` on `0.0.0.0`. The old starter ran Next/Nest incorrectly and/or used `PORT=4000` from `.env`, so the proxy could not reach the app.
 
-In hPanel → Websites → Node.js, set:
+In hPanel → Websites → Node.js / Web Apps, set:
 
 | Setting | Value |
 |---|---|
-| Application type | **`other`** (not `next` — monorepo entry is custom) |
-| Root directory | `/` (repo root) |
-| Node.js version | **20** (or newer) |
+| Application type | **`other`** |
+| Root directory | `/` |
+| Node.js version | **20+** |
 | Build script | `build` |
 | Output directory | `.next` |
-| Entry file | `server.mjs` |
+| Entry file | **`server.mjs`** |
 
-Alternative if you keep Application type `next`: set **Output directory** to `apps/web/.next` (where Next actually writes). Entry/start still won’t run the Nest API unless you use `server.mjs` / type `other`.
+**Environment variables (critical):**
 
-`server.mjs` boots Nest API (**4000**) + Next (**3000** / `PORT`). Set env vars in hPanel (`DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`, …). Run once: `npm run db:setup`.
+| Key | Value |
+|---|---|
+| `DATABASE_URL` | your Postgres URL |
+| `JWT_SECRET` | long random string |
+| `API_PORT` | `4000` |
+| `NEXT_PUBLIC_API_URL` | `/api/v1` |
+| `CORS_ORIGIN` | `https://your-domain` |
+| `ENABLE_REDIS` | `false` |
+| ~~`PORT`~~ | **Do not set** — Hostinger injects it |
+
+`server.mjs` listens on Hostinger’s `PORT`, serves Next, and proxies `/api/*` → Nest on `API_PORT`.
+
+After deploy: open **Runtime Logs**. You should see `[hostinger] Listening on http://0.0.0.0:<port>`. Run `npm run db:setup` once (SSH or one-off) if the DB is empty.
 
 Deprecation warnings for `glob` / `inflight` are harmless.
 

@@ -1,5 +1,5 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+/** Same-origin `/api/v1` on Hostinger (server.mjs proxies to Nest). */
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
 
 export type ApiUser = {
   id: string;
