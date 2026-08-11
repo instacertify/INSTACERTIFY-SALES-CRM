@@ -690,7 +690,83 @@ async function main() {
     }
   }
 
-  console.log("Seed complete (PostgreSQL modular CRM).");
+  // ERP masters: vendor linked to lab, sample PO/expense, HR CTC
+  await prisma.employeeProfile.update({
+    where: { userId: sales.id },
+    data: {
+      employeeCode: "IC-SALES-01",
+      monthlyCtc: 75000,
+      joinDate: new Date("2024-01-15"),
+    },
+  });
+
+  const vendorLab = await prisma.vendor.upsert({
+    where: { partnerLabId: lab.id },
+    update: { name: lab.name, type: "LAB", active: true, city: lab.city },
+    create: {
+      name: lab.name,
+      type: "LAB",
+      city: lab.city || "Gurugram",
+      country: "India",
+      email: "billing@nabl-lab-a.example",
+      partnerLabId: lab.id,
+      notes: "Primary NABL partner for EMI/Safety",
+    },
+  });
+
+  await prisma.vendor.upsert({
+    where: { id: "seed-vendor-courier" },
+    update: { active: true },
+    create: {
+      id: "seed-vendor-courier",
+      name: "BlueDart Courier",
+      type: "COURIER",
+      city: "Delhi",
+      phone: "+91-9999900001",
+    },
+  });
+
+  const existingPo = await prisma.purchaseOrder.findFirst({
+    where: { poNumber: { startsWith: "PO-" }, vendorId: vendorLab.id },
+  });
+  if (!existingPo) {
+    const year = new Date().getFullYear();
+    await prisma.purchaseOrder.create({
+      data: {
+        poNumber: `PO-${year}-00001`,
+        description: "EMI/EMC + Safety lab package — Midea",
+        amount: 45000,
+        taxAmount: 8100,
+        total: 53100,
+        status: "CONFIRMED",
+        vendorId: vendorLab.id,
+        partnerLabId: lab.id,
+        projectId: (await prisma.project.findFirst({
+          where: { company: { contains: "Midea" } },
+        }))?.id,
+        createdById: admin.id,
+      },
+    });
+  }
+
+  const existingExpense = await prisma.expense.findFirst({
+    where: { title: "Sample courier to NABL Lab A" },
+  });
+  if (!existingExpense) {
+    await prisma.expense.create({
+      data: {
+        title: "Sample courier to NABL Lab A",
+        category: "COURIER",
+        amount: 1850,
+        status: "PAID",
+        vendorId: "seed-vendor-courier",
+        createdById: sales.id,
+        notes: "Seed ERP expense",
+      },
+    });
+  }
+
+  console.log("Seed complete (PostgreSQL modular ERP).");
   console.log("Admin: admin@instacertify.in / Admin@123");
   console.log("Sales: sales@instacertify.in / Sales@123");
 }

@@ -9,4 +9,9 @@ export class ReportsController {
   dashboard() {
     return this.reportsService.dashboard();
   }
+
+  @Get('finance')
+  finance() {
+    return this.reportsService.finance();
+  }
 }

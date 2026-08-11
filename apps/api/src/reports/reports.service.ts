@@ -152,4 +152,92 @@ export class ReportsService {
       salesByPerson,
     };
   }
+
+  /** AR aging + testing margin + expense totals for ERP finance view */
+  async finance() {
+    const now = new Date();
+    const invoices = await this.prisma.invoice.findMany({
+      where: { status: { notIn: ['VOID'] } },
+      include: {
+        payments: true,
+        customer: { select: { id: true, company: true } },
+      },
+    });
+
+    const aging = {
+      current: 0,
+      days30: 0,
+      days60: 0,
+      days90: 0,
+      older: 0,
+      totalOutstanding: 0,
+    };
+
+    const openInvoices = [];
+    for (const inv of invoices) {
+      const paid = inv.payments.reduce((s, p) => s + p.amount, 0);
+      const due = Math.max(0, inv.total - paid);
+      if (due <= 0 || inv.status === 'PAID') continue;
+      const dueDate = inv.dueDate || inv.issuedAt || inv.createdAt;
+      const days = Math.floor(
+        (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      if (days <= 0) aging.current += due;
+      else if (days <= 30) aging.days30 += due;
+      else if (days <= 60) aging.days60 += due;
+      else if (days <= 90) aging.days90 += due;
+      else aging.older += due;
+      aging.totalOutstanding += due;
+      openInvoices.push({
+        id: inv.id,
+        invoiceNumber: inv.invoiceNumber,
+        customer: inv.customer.company,
+        total: inv.total,
+        paid,
+        due,
+        status: inv.status,
+        dueDate: inv.dueDate,
+        daysOverdue: Math.max(0, days),
+      });
+    }
+
+    const testingOrders = await this.prisma.testingOrder.findMany({
+      select: { purchasePrice: true, salesPrice: true, status: true },
+    });
+    const testingMargin = testingOrders.reduce(
+      (acc, t) => {
+        acc.sales += t.salesPrice;
+        acc.cost += t.purchasePrice;
+        return acc;
+      },
+      { sales: 0, cost: 0, margin: 0 },
+    );
+    testingMargin.margin = testingMargin.sales - testingMargin.cost;
+
+    const expenses = await this.prisma.expense.groupBy({
+      by: ['category'],
+      _sum: { amount: true },
+      where: { status: { in: ['SUBMITTED', 'APPROVED', 'PAID'] } },
+    });
+    const expenseTotal = expenses.reduce(
+      (s, e) => s + (e._sum.amount || 0),
+      0,
+    );
+
+    const poOpen = await this.prisma.purchaseOrder.aggregate({
+      _sum: { total: true },
+      where: { status: { notIn: ['CANCELLED', 'BILLED'] } },
+    });
+
+    return {
+      aging,
+      openInvoices: openInvoices.sort((a, b) => b.daysOverdue - a.daysOverdue),
+      testingMargin,
+      expensesByCategory: Object.fromEntries(
+        expenses.map((e) => [e.category, e._sum.amount || 0]),
+      ),
+      expenseTotal,
+      openPurchaseOrders: poOpen._sum.total || 0,
+    };
+  }
 }

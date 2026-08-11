@@ -89,6 +89,15 @@ export class LeadsController {
     return this.leadsService.update(id, body);
   }
 
+  @Post(':id/convert')
+  convert(
+    @Param('id') id: string,
+    @Body() body: { createQuotation?: boolean; serviceName?: string },
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.leadsService.convert(id, user.id, body);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.leadsService.remove(id);

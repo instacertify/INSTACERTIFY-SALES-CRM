@@ -113,6 +113,15 @@ export class QuotationsController {
     return this.quotationsService.optTesting(id, body.note);
   }
 
+  @Post(':id/accept')
+  accept(
+    @Param('id') id: string,
+    @Body() body: { createInvoice?: boolean; note?: string },
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.quotationsService.accept(id, user.id, body);
+  }
+
   @Post(':id/line-items')
   addLine(
     @Param('id') id: string,

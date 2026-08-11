@@ -151,6 +151,20 @@ export class InvoicesService {
       where: { id: invoiceId },
       data: { status },
     });
+    if (invoice.projectId) {
+      await this.prisma.project.update({
+        where: { id: invoice.projectId },
+        data: {
+          paymentStatus:
+            status === 'PAID'
+              ? 'PAID'
+              : status === 'PARTIAL'
+                ? 'PARTIAL'
+                : 'PENDING',
+          lastActivityAt: new Date(),
+        },
+      });
+    }
     return payment;
   }
 
