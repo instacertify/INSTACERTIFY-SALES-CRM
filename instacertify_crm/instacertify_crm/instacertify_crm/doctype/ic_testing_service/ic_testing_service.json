@@ -1,0 +1,228 @@
+{
+ "doctype": "DocType",
+ "name": "IC Testing Service",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "test_name",
+  "lab",
+  "lab_name",
+  "selling_price",
+  "column_break_1",
+  "purchase_price",
+  "active",
+  "section_lab_info",
+  "lab_city",
+  "lab_contact",
+  "lab_phone",
+  "section_desc",
+  "description"
+ ],
+ "autoname": "format:TEST-{####}",
+ "title_field": "test_name",
+ "search_fields": "test_name,lab_name,lab",
+ "fields": [
+  {
+   "fieldname": "test_name",
+   "label": "Test Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "lab",
+   "label": "Lab (Library)",
+   "fieldtype": "Link",
+   "options": "IC Lab",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Pick from Lab Library \u2014 contacts, location, scope and certificates live on the lab."
+  },
+  {
+   "fieldname": "lab_name",
+   "label": "Lab Name",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "in_list_view": 1,
+   "fetch_from": "lab.lab_name"
+  },
+  {
+   "fieldname": "selling_price",
+   "label": "Selling Price",
+   "fieldtype": "Currency",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "purchase_price",
+   "label": "Purchase Price",
+   "fieldtype": "Currency",
+   "reqd": 1,
+   "permlevel": 1,
+   "description": "Visible to IC Admin / System Manager only"
+  },
+  {
+   "fieldname": "active",
+   "label": "Active",
+   "fieldtype": "Check",
+   "default": "1"
+  },
+  {
+   "fieldname": "section_lab_info",
+   "label": "Lab Snapshot",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "lab_city",
+   "label": "Lab City",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "fetch_from": "lab.city"
+  },
+  {
+   "fieldname": "lab_contact",
+   "label": "Lab Contact",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "fetch_from": "lab.primary_contact"
+  },
+  {
+   "fieldname": "lab_phone",
+   "label": "Lab Phone",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "fetch_from": "lab.primary_phone"
+  },
+  {
+   "fieldname": "section_desc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Small Text"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "System Manager",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "IC Admin",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "IC All Ops Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Operations Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Person",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}

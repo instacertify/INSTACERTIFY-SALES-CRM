@@ -1,0 +1,56 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote Consulting Item",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "istable": 1,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "field_order": [
+  "consulting_type",
+  "description",
+  "amount",
+  "payable_to",
+  "counts_as_revenue"
+ ],
+ "permissions": [],
+ "fields": [
+  {
+   "fieldname": "consulting_type",
+   "label": "Consulting Type",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "e.g. Documentation, Application filing, Gap assessment"
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "amount",
+   "label": "Amount",
+   "fieldtype": "Currency",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "payable_to",
+   "label": "Payable To",
+   "fieldtype": "Select",
+   "options": "Instacertify\nGovernment Portal\nLab Direct",
+   "default": "Instacertify",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "counts_as_revenue",
+   "label": "Our Revenue",
+   "fieldtype": "Check",
+   "default": 1,
+   "read_only": 1,
+   "in_list_view": 1
+  }
+ ]
+}

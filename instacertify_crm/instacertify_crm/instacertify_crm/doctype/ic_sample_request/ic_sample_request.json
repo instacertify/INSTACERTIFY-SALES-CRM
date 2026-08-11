@@ -1,0 +1,337 @@
+{
+ "doctype": "DocType",
+ "name": "IC Sample Request",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "naming_series",
+  "sample_label",
+  "tracking_code",
+  "public_token",
+  "column_break_1",
+  "status",
+  "quote",
+  "project",
+  "section_customer",
+  "customer_name",
+  "company",
+  "column_break_2",
+  "email",
+  "phone",
+  "section_test",
+  "lab",
+  "testing_service",
+  "standard_code",
+  "column_break_3",
+  "no_of_samples",
+  "accreditation",
+  "testing_timeline",
+  "section_dates",
+  "received_on",
+  "dispatched_on",
+  "testing_started_on",
+  "column_break_4",
+  "report_ready_on",
+  "report_file",
+  "shared_on",
+  "public_url",
+  "qr_html",
+  "notes"
+ ],
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "sample_label",
+ "search_fields": "sample_label,company,status,tracking_code",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC All Ops Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Operations Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Person",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "label": "Series",
+   "fieldtype": "Select",
+   "options": "IC-SMP-.YYYY.-",
+   "default": "IC-SMP-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sample_label",
+   "label": "Sample Label",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tracking_code",
+   "label": "Tracking Code",
+   "fieldtype": "Data",
+   "unique": 1,
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "public_token",
+   "label": "Public Token",
+   "fieldtype": "Data",
+   "unique": 1,
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "\nAwaiting Sample\nSample Received\nDispatched to Lab\nTesting In Process\nReport Available\nReport Uploaded\nShared with Customer\nClosed",
+   "default": "Awaiting Sample",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "quote",
+   "label": "Quote",
+   "fieldtype": "Link",
+   "options": "IC Quote"
+  },
+  {
+   "fieldname": "project",
+   "label": "Customer Project",
+   "fieldtype": "Link",
+   "options": "IC Customer Project"
+  },
+  {
+   "fieldname": "section_customer",
+   "label": "Customer",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer_name",
+   "label": "Customer Name",
+   "fieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "label": "Email",
+   "fieldtype": "Data",
+   "options": "Email"
+  },
+  {
+   "fieldname": "phone",
+   "label": "Phone",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_test",
+   "label": "Testing",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lab",
+   "label": "Lab",
+   "fieldtype": "Link",
+   "options": "IC Lab"
+  },
+  {
+   "fieldname": "testing_service",
+   "label": "Testing Service",
+   "fieldtype": "Link",
+   "options": "IC Testing Service"
+  },
+  {
+   "fieldname": "standard_code",
+   "label": "Applicable Standard",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "no_of_samples",
+   "label": "No. of Samples",
+   "fieldtype": "Int",
+   "default": 1
+  },
+  {
+   "fieldname": "accreditation",
+   "label": "Lab Accreditation",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "testing_timeline",
+   "label": "Testing Timeline",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_dates",
+   "label": "Logistics",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "received_on",
+   "label": "Sample Received On",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "dispatched_on",
+   "label": "Dispatched to Lab On",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "testing_started_on",
+   "label": "Testing Started On",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "report_ready_on",
+   "label": "Report Available On",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "report_file",
+   "label": "Report File",
+   "fieldtype": "Attach"
+  },
+  {
+   "fieldname": "shared_on",
+   "label": "Shared with Customer On",
+   "fieldtype": "Datetime"
+  },
+  {
+   "fieldname": "public_url",
+   "label": "Customer / Courier Link",
+   "fieldtype": "Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qr_html",
+   "label": "Sample QR",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "notes",
+   "label": "Notes",
+   "fieldtype": "Small Text"
+  }
+ ]
+}

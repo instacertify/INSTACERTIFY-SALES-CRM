@@ -1,0 +1,253 @@
+{
+ "doctype": "Workspace",
+ "name": "Instacertify CRM",
+ "label": "Instacertify CRM",
+ "title": "Instacertify CRM",
+ "module": "Instacertify CRM",
+ "public": 1,
+ "is_hidden": 0,
+ "sequence_id": 20.0,
+ "content": "[{\"id\": \"ic_hdr\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\" style=\\\"color:#0A4A6C\\\">Instacertify ERP</span> <span style=\\\"color:#EB7D2D\\\">\\u00b7 blue &amp; orange desk</span>\", \"col\": 12}}, {\"id\": \"ic_sub\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"text-muted\\\">Greeting \\u00b7 pending tasks \\u00b7 quotes \\u00b7 samples \\u00b7 HR \\u00b7 assets</span>\", \"col\": 12}}, {\"id\": \"ic_s0\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"IC Leads\", \"col\": 3}}, {\"id\": \"ic_s1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"IC Quotes\", \"col\": 3}}, {\"id\": \"ic_s2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Quote Templates\", \"col\": 3}}, {\"id\": \"ic_s3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customer Projects\", \"col\": 3}}, {\"id\": \"ic_s4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sample Tracking\", \"col\": 3}}, {\"id\": \"ic_s5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Working Hours\", \"col\": 3}}, {\"id\": \"ic_s6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Delivery Records\", \"col\": 3}}, {\"id\": \"ic_s7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Incidents / Commitments\", \"col\": 3}}, {\"id\": \"ic_s8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Document Requests\", \"col\": 3}}, {\"id\": \"ic_s9\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"IC Reports\", \"col\": 3}}, {\"id\": \"ic_s10\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Lab Library\", \"col\": 3}}, {\"id\": \"ic_s11\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Testing Library\", \"col\": 3}}, {\"id\": \"ic_s12\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Consultant Library\", \"col\": 3}}, {\"id\": \"ic_s13\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Asset Register\", \"col\": 3}}, {\"id\": \"ic_s14\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Holiday Calendar\", \"col\": 3}}, {\"id\": \"ic_s15\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"My Profile / HR\", \"col\": 3}}, {\"id\": \"ic_s16\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Salary Slips\", \"col\": 3}}, {\"id\": \"ic_s17\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Attendance\", \"col\": 3}}, {\"id\": \"ic_s18\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Renewal Reminders\", \"col\": 3}}, {\"id\": \"ic_s19\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Branding / Logo\", \"col\": 3}}, {\"id\": \"ic_s20\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Team Workload\", \"col\": 3}}, {\"id\": \"ic_s21\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Lead Cost Spend\", \"col\": 3}}]",
+ "shortcuts": [
+  {
+   "label": "IC Leads",
+   "link_to": "IC Lead",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "IC Quotes",
+   "link_to": "IC Quote",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Quote Templates",
+   "link_to": "IC Quote Template",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Customer Projects",
+   "link_to": "IC Customer Project",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Sample Tracking",
+   "link_to": "IC Sample Request",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Working Hours",
+   "link_to": "IC Working Hour Log",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Delivery Records",
+   "link_to": "IC Delivery Record",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Incidents / Commitments",
+   "link_to": "IC Customer Incident",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Document Requests",
+   "link_to": "IC Document Request",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "IC Reports",
+   "link_to": "IC Report",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Lab Library",
+   "link_to": "IC Lab",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Testing Library",
+   "link_to": "IC Testing Service",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Consultant Library",
+   "link_to": "IC Consultant",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Asset Register",
+   "link_to": "IC Asset Register",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Holiday Calendar",
+   "link_to": "IC Holiday",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "My Profile / HR",
+   "link_to": "IC Employee Profile",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Salary Slips",
+   "link_to": "IC Salary Slip",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Attendance",
+   "link_to": "IC Attendance",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Renewal Reminders",
+   "link_to": "IC Renewal Reminder",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Branding / Logo",
+   "link_to": "IC Settings",
+   "type": "DocType",
+   "doc_view": "List"
+  },
+  {
+   "label": "Team Workload",
+   "link_to": "IC Team Lead Workload",
+   "type": "Report",
+   "doc_view": "Report"
+  },
+  {
+   "label": "Lead Cost Spend",
+   "link_to": "IC Lead Cost Spend",
+   "type": "Report",
+   "doc_view": "Report"
+  }
+ ],
+ "links": [
+  {
+   "label": "CRM",
+   "type": "Card Break"
+  },
+  {
+   "label": "IC Lead",
+   "link_to": "IC Lead",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Quote",
+   "link_to": "IC Quote",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Quote Template",
+   "link_to": "IC Quote Template",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Consultant",
+   "link_to": "IC Consultant",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Delivery",
+   "type": "Card Break"
+  },
+  {
+   "label": "IC Customer Project",
+   "link_to": "IC Customer Project",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Sample Request",
+   "link_to": "IC Sample Request",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Working Hour Log",
+   "link_to": "IC Working Hour Log",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Customer Incident",
+   "link_to": "IC Customer Incident",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "Libraries",
+   "type": "Card Break"
+  },
+  {
+   "label": "IC Lab",
+   "link_to": "IC Lab",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Testing Service",
+   "link_to": "IC Testing Service",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Asset Register",
+   "link_to": "IC Asset Register",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "People",
+   "type": "Card Break"
+  },
+  {
+   "label": "IC Employee Profile",
+   "link_to": "IC Employee Profile",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Salary Slip",
+   "link_to": "IC Salary Slip",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Attendance",
+   "link_to": "IC Attendance",
+   "link_type": "DocType",
+   "type": "Link"
+  },
+  {
+   "label": "IC Holiday",
+   "link_to": "IC Holiday",
+   "link_type": "DocType",
+   "type": "Link"
+  }
+ ]
+}
