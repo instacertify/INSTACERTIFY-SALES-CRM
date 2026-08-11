@@ -14,7 +14,7 @@
     "build": "npm run generate -w @instacertify/database && npm run build -w @instacertify/api && npm run build -w @instacertify/web && node scripts/hostinger-postbuild.mjs",
     "build:api": "npm run build -w @instacertify/api",
     "build:web": "npm run build -w @instacertify/web",
-    "start": "node scripts/hostinger-start.mjs",
+    "start": "node server.mjs",
     "start:web": "npm run start -w @instacertify/web",
     "start:api": "npm run start:prod -w @instacertify/api",
     "db:generate": "npm run generate -w @instacertify/database",

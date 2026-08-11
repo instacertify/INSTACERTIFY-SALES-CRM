@@ -63,20 +63,24 @@ instacertify-crm/
 
 ### Option A — Hostinger Node.js Application (hPanel)
 
-The monorepo builds Next into `apps/web/.next`. Root `npm run build` also links that output to **`.next`** at the repo root so Hostinger’s “output directory” check passes.
+Next.js writes to `apps/web/.next`. Root `npm run build` **copies** that folder to a real root **`.next`** directory (not a symlink) so Hostinger’s output check passes. `apps/web/next.config.ts` does **not** override `distDir`.
 
 In hPanel → Websites → Node.js, set:
 
 | Setting | Value |
 |---|---|
+| Application type | **`other`** (not `next` — monorepo entry is custom) |
+| Root directory | `/` (repo root) |
 | Node.js version | **20** (or newer) |
-| Build command | `npm run build` |
+| Build script | `build` |
 | Output directory | `.next` |
-| Start command | `npm start` |
+| Entry file | `server.mjs` |
 
-`npm start` boots the Nest API (port **4000**) and Next.js (port **3000** / `PORT`). Set env vars in hPanel (at least `DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`). Run DB setup once over SSH or a one-off job: `npm run db:setup`.
+Alternative if you keep Application type `next`: set **Output directory** to `apps/web/.next` (where Next actually writes). Entry/start still won’t run the Nest API unless you use `server.mjs` / type `other`.
 
-Deprecation warnings for `glob` / `inflight` during install are harmless and not the deploy failure.
+`server.mjs` boots Nest API (**4000**) + Next (**3000** / `PORT`). Set env vars in hPanel (`DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`, …). Run once: `npm run db:setup`.
+
+Deprecation warnings for `glob` / `inflight` are harmless.
 
 ### Option B — VPS + PM2 + Nginx (recommended)
 
