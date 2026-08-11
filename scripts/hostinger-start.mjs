@@ -1,4 +1,5 @@
 /**
- * Backward-compatible launcher — real Hostinger entry is ../server.mjs
+ * Backward-compatible launcher — real Hostinger entry is ../server.js
  */
-import "../server.mjs";
+import { createRequire } from "node:module";
+createRequire(import.meta.url)("../server.js");

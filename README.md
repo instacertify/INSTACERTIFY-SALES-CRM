@@ -77,7 +77,7 @@ In hPanel → Websites → Node.js / Web Apps, set:
 | Node.js version | **20+** |
 | Build script | `build` |
 | Output directory | `.next` |
-| Entry file | **`server.mjs`** |
+| Entry file | **`server.js`** (required — Hostinger LiteSpeed `require()`s this file) |
 
 **Environment variables (critical):**
 
