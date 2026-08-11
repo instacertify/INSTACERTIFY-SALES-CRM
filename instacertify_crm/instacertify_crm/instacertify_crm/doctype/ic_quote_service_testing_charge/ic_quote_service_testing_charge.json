@@ -1,0 +1,90 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote Service Testing Charge",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "istable": 1,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "field_order": [
+  "testing_service",
+  "charge_type",
+  "description",
+  "amount",
+  "payable_to",
+  "counts_as_revenue",
+  "no_of_samples",
+  "accreditation",
+  "standard_code",
+  "testing_timeline"
+ ],
+ "permissions": [],
+ "fields": [
+  {
+   "fieldname": "testing_service",
+   "label": "From Testing Library",
+   "fieldtype": "Link",
+   "options": "IC Testing Service",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "charge_type",
+   "label": "Testing Charge Type",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "e.g. IP69 testing, EMC suite, Safety testing"
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "amount",
+   "label": "Amount",
+   "fieldtype": "Currency",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "payable_to",
+   "label": "Payable To",
+   "fieldtype": "Select",
+   "options": "Instacertify\nGovernment Portal\nLab Direct",
+   "default": "Instacertify",
+   "in_list_view": 1,
+   "description": "Lab charges paid to us count as revenue"
+  },
+  {
+   "fieldname": "counts_as_revenue",
+   "label": "Our Revenue",
+   "fieldtype": "Check",
+   "default": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "no_of_samples",
+   "label": "No. of Samples",
+   "fieldtype": "Int",
+   "default": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "accreditation",
+   "label": "Lab Accreditation",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "standard_code",
+   "label": "Applicable Standard",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "testing_timeline",
+   "label": "Testing Timeline",
+   "fieldtype": "Data"
+  }
+ ]
+}

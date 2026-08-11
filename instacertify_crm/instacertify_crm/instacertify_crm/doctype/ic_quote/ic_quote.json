@@ -1,0 +1,676 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "naming_series",
+  "quote_number",
+  "quote_type",
+  "public_token",
+  "status",
+  "column_break_1",
+  "lead",
+  "template",
+  "subject",
+  "validity_date",
+  "section_customer",
+  "customer_name",
+  "company",
+  "email",
+  "column_break_2",
+  "phone",
+  "country",
+  "state",
+  "section_service",
+  "service",
+  "description",
+  "section_about",
+  "about_header",
+  "about_html",
+  "section_standards",
+  "standards_header",
+  "standards_html",
+  "accreditation_html",
+  "section_timeline",
+  "timeline_header",
+  "timeline_html",
+  "section_commercials",
+  "commercials_header",
+  "testing_items",
+  "consulting_items",
+  "government_fees",
+  "service_testing_charges",
+  "consulting_price",
+  "government_fees_total",
+  "testing_price",
+  "other_commercials",
+  "column_break_3",
+  "other_commercials_note",
+  "total_revenue",
+  "section_payment",
+  "payment_terms_header",
+  "payment_terms_html",
+  "section_bank",
+  "banking_header",
+  "bank_detail",
+  "bank_snapshot",
+  "section_sample_req",
+  "sample_requirements_header",
+  "sample_requirements_html",
+  "section_sample_handling",
+  "sample_handling_header",
+  "sample_handling_html",
+  "section_cancellation",
+  "cancellation_header",
+  "cancellation_refund_html",
+  "section_force_majeure",
+  "force_majeure_header",
+  "force_majeure_html",
+  "section_confidentiality",
+  "confidentiality_header",
+  "confidentiality_html",
+  "section_extra",
+  "deliverables_header",
+  "deliverables_html",
+  "policies_html",
+  "body_html",
+  "section_customer_response",
+  "customer_remark",
+  "revision_message",
+  "shared_on",
+  "accepted_on",
+  "public_url"
+ ],
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "quote_number",
+ "search_fields": "quote_number,customer_name,company,status,service,quote_type,subject",
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "label": "Series",
+   "fieldtype": "Select",
+   "options": "ICQ-.YYYY.-",
+   "default": "ICQ-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quote_number",
+   "label": "Quote Number",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "quote_type",
+   "label": "Quote For",
+   "fieldtype": "Select",
+   "options": "Testing\nService",
+   "default": "Testing",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Testing and Service each use customisable section headers. Service commercials support multiple consulting, government fees and testing charges."
+  },
+  {
+   "fieldname": "public_token",
+   "label": "Public Token",
+   "fieldtype": "Data",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "Draft\nShared\nRevision Requested\nAccepted\nDelivered\nSuperseded",
+   "default": "Draft",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lead",
+   "label": "Lead",
+   "fieldtype": "Link",
+   "options": "IC Lead"
+  },
+  {
+   "fieldname": "template",
+   "label": "Template",
+   "fieldtype": "Link",
+   "options": "IC Quote Template",
+   "description": "Filtered by Quote For (Testing / Service)."
+  },
+  {
+   "fieldname": "subject",
+   "label": "Subject",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "validity_date",
+   "label": "Validity Date",
+   "fieldtype": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_customer",
+   "label": "Customer",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer_name",
+   "label": "Customer Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email",
+   "label": "Email",
+   "fieldtype": "Data",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "phone",
+   "label": "Phone",
+   "fieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "country",
+   "label": "Country",
+   "fieldtype": "Link",
+   "options": "Country",
+   "default": "India",
+   "reqd": 1
+  },
+  {
+   "fieldname": "state",
+   "label": "State",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_service",
+   "label": "Scope",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "service",
+   "label": "Service / Testing Category",
+   "fieldtype": "Link",
+   "options": "IC Service",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "description",
+   "label": "Short Description",
+   "fieldtype": "Small Text",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_about",
+   "label": "About",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "about_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "About",
+   "description": "Customer-facing heading (customisable)"
+  },
+  {
+   "fieldname": "about_html",
+   "label": "About Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_standards",
+   "label": "Applicable Standard",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "standards_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Applicable Standard"
+  },
+  {
+   "fieldname": "standards_html",
+   "label": "Applicable Standard Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "accreditation_html",
+   "label": "Accreditation",
+   "fieldtype": "Text Editor",
+   "depends_on": "eval:doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "section_timeline",
+   "label": "Timeline",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "timeline_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Timeline"
+  },
+  {
+   "fieldname": "timeline_html",
+   "label": "Timeline Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_commercials",
+   "label": "Commercials",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'",
+   "description": "Testing: line items. Service: consulting (multiple), government fees (multiple), testing charges (multiple)."
+  },
+  {
+   "fieldname": "commercials_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Commercials"
+  },
+  {
+   "fieldname": "testing_items",
+   "label": "Testing Line Items",
+   "fieldtype": "Table",
+   "options": "IC Quote Testing Item",
+   "depends_on": "eval:doc.quote_type=='Testing'"
+  },
+  {
+   "fieldname": "consulting_items",
+   "label": "Consulting (multiple types)",
+   "fieldtype": "Table",
+   "options": "IC Quote Consulting Item",
+   "depends_on": "eval:doc.quote_type=='Service'",
+   "description": "Add one row per consulting type."
+  },
+  {
+   "fieldname": "government_fees",
+   "label": "Government Fees (multiple types)",
+   "fieldtype": "Table",
+   "options": "IC Quote Government Fee",
+   "depends_on": "eval:doc.quote_type=='Service'",
+   "description": "Add multiple government fee rows as needed."
+  },
+  {
+   "fieldname": "service_testing_charges",
+   "label": "Testing Charges (multiple types)",
+   "fieldtype": "Table",
+   "options": "IC Quote Service Testing Charge",
+   "depends_on": "eval:doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "consulting_price",
+   "label": "Consulting Total",
+   "fieldtype": "Currency",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "government_fees_total",
+   "label": "Government Fees Total",
+   "fieldtype": "Currency",
+   "default": "0",
+   "read_only": 1,
+   "depends_on": "eval:doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "testing_price",
+   "label": "Testing Charges Total",
+   "fieldtype": "Currency",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "other_commercials",
+   "label": "Other Commercials",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_commercials_note",
+   "label": "Other Commercials Note",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "total_revenue",
+   "label": "Total Revenue",
+   "fieldtype": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_payment",
+   "label": "Payment Terms",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "payment_terms_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Payment Terms"
+  },
+  {
+   "fieldname": "payment_terms_html",
+   "label": "Payment Terms Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_bank",
+   "label": "Our Banking Details",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "banking_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Our Banking Details"
+  },
+  {
+   "fieldname": "bank_detail",
+   "label": "Bank Profile",
+   "fieldtype": "Link",
+   "options": "IC Bank Detail"
+  },
+  {
+   "fieldname": "bank_snapshot",
+   "label": "Banking Text on Quote",
+   "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "section_sample_req",
+   "label": "Sample Required",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "sample_requirements_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Sample Required"
+  },
+  {
+   "fieldname": "sample_requirements_html",
+   "label": "Sample Required Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_sample_handling",
+   "label": "Sample Handling and Disposal Policy",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "sample_handling_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Sample Handling and Disposal Policy"
+  },
+  {
+   "fieldname": "sample_handling_html",
+   "label": "Sample Handling Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_cancellation",
+   "label": "Cancellation and Refund Policy",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "cancellation_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Cancellation and Refund Policy"
+  },
+  {
+   "fieldname": "cancellation_refund_html",
+   "label": "Cancellation and Refund Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_force_majeure",
+   "label": "Force Majeure",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "force_majeure_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Force Majeure"
+  },
+  {
+   "fieldname": "force_majeure_html",
+   "label": "Force Majeure Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_confidentiality",
+   "label": "Confidentiality and Data Protection",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.quote_type=='Testing' || doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "confidentiality_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Confidentiality and Data Protection"
+  },
+  {
+   "fieldname": "confidentiality_html",
+   "label": "Confidentiality Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_extra",
+   "label": "Extra / Legacy",
+   "fieldtype": "Section Break",
+   "collapsible": 1,
+   "collapsible_depends_on": "1"
+  },
+  {
+   "fieldname": "deliverables_header",
+   "label": "Deliverable Header",
+   "fieldtype": "Data",
+   "default": "Deliverable"
+  },
+  {
+   "fieldname": "deliverables_html",
+   "label": "Deliverable Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "policies_html",
+   "label": "Legacy Combined Policies",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Extra Letter Body",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_customer_response",
+   "label": "Customer Response",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "customer_remark",
+   "label": "Customer Remark",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "revision_message",
+   "label": "Revision Message",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "shared_on",
+   "label": "Shared On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accepted_on",
+   "label": "Accepted On",
+   "fieldtype": "Datetime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "public_url",
+   "label": "Public URL",
+   "fieldtype": "Small Text",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC All Ops Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Operations Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Person",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}

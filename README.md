@@ -1,145 +1,106 @@
-# Instacertify ERP — Cert + Testing Modular Monolith
+# Instacertify ERP — pure ERPNext 16
 
-Standalone **ERP** for certification consulting that **bundles testing**: CRM, delivery, finance, vendors and light HR.
+Consulting + testing operations ERP for **Instacertify**, built as a Frappe custom app on official **ERPNext `version-16`**.
 
-**Stack:** Next.js + NestJS + PostgreSQL (no ERPNext / Docker).
+No NestJS / Next.js runtime. Desk, workflows, print formats, and customer portals are native ERPNext.
 
-**Deploy:** Hostinger VPS with PM2 + Nginx, or Hostinger Node (`server.js`).
+## Stack
 
-## Product modules
+| Layer | Source |
+|-------|--------|
+| Framework | [Frappe](https://github.com/frappe/frappe) `version-16` |
+| ERP | [ERPNext](https://github.com/frappe/erpnext) `version-16` |
+| Custom app | `instacertify_crm/` (this repo) |
 
-| Area | What employees get |
-|---|---|
-| Customers | Account master, contacts, journey, portals |
-| Leads → Opportunities → Quotations | Convert lead; accept quote → **project + invoice** |
-| Testing catalog | Lab scope, purchase vs sell price, margin |
-| Projects / Tasks / Samples | Delivery control tower + sample logistics |
-| Documents | File registry + customer checklist portals |
-| Finance | Invoices, payments, AR aging, expenses, POs |
-| Vendors | Labs, couriers, suppliers |
-| Team / HR | Users, roles, department, light CTC |
-| Reports | Sales by person, testing margin, AR, expenses |
+Verified target: **Frappe 16.x + ERPNext 16.x** (Python 3.14+, Node 24+, MariaDB, Redis).
+
+## Quick install
+
+```bash
+./scripts/setup_erpnext16_bench.sh
+```
+
+Or manually:
+
+```bash
+bench init --frappe-branch version-16 frappe-bench
+cd frappe-bench
+bench get-app erpnext --branch version-16 https://github.com/frappe/erpnext.git
+bench new-site instacertify.local --admin-password 'Admin@123' --set-default
+bench --site instacertify.local install-app erpnext
+
+# from this repo
+bench get-app /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm
+# or: ln -s /path/to/INSTACERTIFY-SALES-CRM/instacertify_crm apps/instacertify_crm && ./env/bin/pip install -e apps/instacertify_crm
+bench --site instacertify.local install-app instacertify_crm
+bench --site instacertify.local migrate
+bench build --app instacertify_crm
+bench serve --port 8000
+```
+
+Open Desk → **Instacertify CRM** workspace. Assign roles to users.
+
+## Roles
+
+| Role | Purpose |
+|------|---------|
+| **IC Admin** | Oversees all data; Excel / export wherever permissions allow |
+| **IC All Ops Manager** | Views everything; authorises operations users |
+| **IC Operations Manager** | Projects, working hours, customer records, samples |
+| **IC Sales Person** | Quotes from templates, assigned customers & closed-deal progress |
+| **IC Sales Ops** | Legacy alias (still seeded for older sites) |
+
+## What the app covers
+
+**CRM & quotes**
+- Leads with company size, India→state, request type (Service / Testing / Certificate Renewal), lead source (Google, Direct Call, Lead Generated, Referral, IndiaMART, Consultant library), GST, address, expected timeline
+- Quotation templates (reuse finalized formats from dropdown)
+- Service quotes: certification timeline, consulting rows, government fees, testing charges with **Payable To** (Instacertify / Government Portal / Lab Direct)
+- Revenue = consulting + lab/testing (gov fees only if marked)
+- Force majeure, T&Cs, banking, unique QR / barcode on public quote
+- Share via `/q/<token>` → customer Accept or request revision with remarks → notifies owner + IC Admin
+- Accept → start **IC Customer Project** mapped to customer
+
+**Labs & testing**
+- Lab Library (contacts, location, accreditation, scope, certificates)
+- Testing catalog with purchase vs sell price
+- Sample Request lifecycle + QR tracking link `/s/<token>`
+- Report share portals `/r/<token>`
+
+**Customer records**
+- Projects, delivery records, progress remarks, deliverable uploads
+- Portal login credentials, commitments / incidents
+- Document checklist portal `/d/<token>` after quote confirm
+- Past quotes / reports on lead & quote
+
+**Org**
+- Asset Register (auto asset code, custodian, value)
+- Holiday calendar
+- Employee Profile (joining letter + QR `/emp/<token>`), salary slips download, attendance
+- Admin approves HR profiles
+
+**Desk**
+- Colorful Instacertify **blue (#0A4A6C) + orange (#EB7D2D)** greeting strip with personal pending counts
+- Workspace shortcuts for CRM, delivery, libraries, HR, assets
+- Admin reports: Team Workload, Lead Cost Spend (exportable)
+
+## Customer portals
+
+| Flow | URL |
+|------|-----|
+| Quote accept / revise / print | `/q/<public_token>` |
+| Document checklist upload | `/d/<public_token>` |
+| Report ready | `/r/<public_token>` |
+| Sample tracking (QR) | `/s/<public_token>` |
+| Joining letter QR | `/emp/<public_token>` |
+
+## Repo layout
 
 ```text
-LEAD → CUSTOMER → OPPORTUNITY → QUOTATION (consulting + testing lines)
-  → PROJECT → DOCUMENTS / TEST REQUEST → LAB → CERTIFICATION → PAYMENT
+instacertify_crm/          Frappe app (install this on the bench)
+scripts/setup_erpnext16_bench.sh
+scripts/generate_frappe_doctypes.py
+scripts/extend_erpnext16_doctypes.py
 ```
 
-## Stack (standalone)
-
-| Layer | Technology | Why |
-|---|---|---|
-| Frontend | Next.js + TypeScript | Fast modern UI |
-| UI | Tailwind CSS (+ shadcn-style primitives) | Clean admin screens, rapid UI |
-| Backend | NestJS + TypeScript | Structured APIs, scalable business rules |
-| Database | PostgreSQL | Relational CRM / project data |
-| ORM | Prisma | Easy schema + migrations |
-| Authentication | Nest JWT (Auth.js / Keycloak ready) | Role & session management |
-| File storage | Local now; **S3-compatible** when configured | Certificates, reports, invoices, docs |
-| Cache / Queue | Redis + BullMQ (**optional**) | Notifications, reminders, jobs |
-| Search | PostgreSQL (`contains` / indexes) | Fast catalog & customer search; Meilisearch later |
-| Notifications | In-app now; Email + WhatsApp API hooks | Client follow-ups |
-| Monitoring | Sentry env hooks | Errors |
-| Analytics | PostHog env hooks | Product / user activity |
-| Version control | GitHub | Code, CI/CD, issues |
-| Deploy | Hostinger VPS + PM2 + Nginx | Simple, no Docker |
-
-```text
-instacertify-crm/
-├── apps/web                 Next.js UI + customer portals
-├── apps/api                 NestJS modular monolith API
-├── packages/database        Prisma schema + seed
-├── ecosystem.config.cjs     PM2
-└── scripts/hostinger-*.sh   VPS setup / deploy
-```
-
-## Key screens
-
-- `/dashboard` — pie charts + person sales value  
-- `/testing` — lab scope & sell prices  
-- `/customers/[id]` — journey, checklists, test requests, work done  
-- `/work-library` — interactive client work map  
-- `/portal/docs/:token` — customer document checklist  
-- `/portal/test-request/:token` — customer test request form  
-
-## Hostinger deploy (no Docker)
-
-### Option A — Hostinger Node.js Application (hPanel)
-
-**503 cause (fixed):** Hostinger only proxies to `process.env.PORT` on `0.0.0.0`. The old starter ran Next/Nest incorrectly and/or used `PORT=4000` from `.env`, so the proxy could not reach the app.
-
-In hPanel → Websites → Node.js / Web Apps, set:
-
-| Setting | Value |
-|---|---|
-| Application type | **`other`** |
-| Root directory | `/` |
-| Node.js version | **20+** |
-| Build script | `build` |
-| Output directory | **`hostinger-run`** |
-| Entry file | **`server.js`** |
-
-Hostinger publishes **only** the Output directory to `hbuilds/current/nodejs/`.  
-That is why Entry `server.js` failed before — it lived at the repo root, not inside `.next`.  
-`npm run build` now builds `hostinger-run/server.js` + Next standalone + API.
-
-**Environment variables (critical):**
-
-| Key | Value |
-|---|---|
-| `DATABASE_URL` | your Postgres URL |
-| `JWT_SECRET` | long random string |
-| `API_PORT` | `4000` |
-| `NEXT_PUBLIC_API_URL` | `/api/v1` |
-| `CORS_ORIGIN` | `https://your-domain` |
-| `ENABLE_REDIS` | `false` |
-| ~~`PORT`~~ | **Do not set** — Hostinger injects it |
-
-`server.js` listens on Hostinger’s `PORT`, serves Next, and proxies `/api/*` → Nest on `API_PORT`.
-
-After deploy: open **Runtime Logs**. You should see `[hostinger] Listening on http://0.0.0.0:<port>`. Run `npm run db:setup` once (SSH or one-off) if the DB is empty.
-
-Deprecation warnings for `glob` / `inflight` are harmless.
-
-### Option B — VPS + PM2 + Nginx (recommended)
-
-```bash
-git clone <repo> /var/www/instacertify-crm
-cd /var/www/instacertify-crm
-bash scripts/hostinger-setup.sh
-cp .env.example .env && nano .env
-bash scripts/hostinger-deploy.sh
-sudo certbot --nginx -d crm.instacertify.in
-```
-
-Nginx: `/` → web `:3000`, `/api/` → API `:4000`.
-
-## Local development
-
-```bash
-cp .env.example .env
-npm install
-npm run db:setup
-npm run dev:api   # :4000/api/v1
-npm run dev:web   # :3000
-```
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | `admin@instacertify.in` | `Admin@123` |
-| Sales | `sales@instacertify.in` | `Sales@123` |
-
-## API surface (high level)
-
-`auth` · `catalog` (labs/testing/services) · `customers` (+ `/journey`) · `quotations` · `projects` · `document-requests` · `test-requests` · `work-library` · `reports/dashboard` · `public/*` portals
-
-Health: `GET /api/v1/admin/health`
-
-## Optional production switches
-
-```bash
-ENABLE_REDIS=true          # BullMQ jobs
-FILE_STORAGE=s3            # S3-compatible uploads
-SENTRY_DSN=...             # error tracking
-NEXT_PUBLIC_POSTHOG_KEY=...
-```
+App docs: [`instacertify_crm/README.md`](./instacertify_crm/README.md)

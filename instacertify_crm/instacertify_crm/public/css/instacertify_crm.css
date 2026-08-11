@@ -1,0 +1,89 @@
+:root {
+  --ic-teal: #0a4a6c;
+  --ic-orange: #eb7d2d;
+  --ic-soft: #f3f7fa;
+  --ic-line: #d7e2ea;
+  --ic-ink: #12233a;
+}
+
+.ic-brand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.ic-brand-chip .a {
+  color: var(--ic-teal);
+}
+
+.ic-brand-chip .b {
+  color: var(--ic-orange);
+}
+
+/* Colorful desk greeting strip */
+.ic-greeting {
+  margin: 8px 0 16px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(235, 125, 45, 0.22), transparent 42%),
+    linear-gradient(120deg, #0a4a6c 0%, #12648a 45%, #eb7d2d 140%);
+  color: #fff;
+  box-shadow: 0 14px 36px rgba(10, 74, 108, 0.18);
+}
+
+.ic-greeting h2 {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.ic-greeting p {
+  margin: 0;
+  opacity: 0.92;
+}
+
+.ic-greeting-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.ic-greeting-stats .chip {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Workspace shortcut polish */
+[data-page-container="Instacertify CRM"] .shortcut-widget-box,
+.desk-sidebar .standard-sidebar-item.selected {
+  border-radius: 12px;
+}
+
+.ic-status-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.ic-status-bar span {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(10, 74, 108, 0.08);
+  color: var(--ic-teal);
+}
+
+.ic-status-bar span.warn {
+  background: rgba(235, 125, 45, 0.16);
+  color: #9a4a12;
+}

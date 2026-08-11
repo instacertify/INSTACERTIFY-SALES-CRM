@@ -1,0 +1,451 @@
+{
+ "doctype": "DocType",
+ "name": "IC Quote Template",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "field_order": [
+  "template_name",
+  "quote_type",
+  "service",
+  "subject",
+  "column_break_1",
+  "validity_days",
+  "consulting_price",
+  "testing_price",
+  "other_commercials",
+  "other_commercials_note",
+  "section_about",
+  "about_header",
+  "about_html",
+  "section_standards",
+  "standards_header",
+  "standards_html",
+  "accreditation_html",
+  "section_timeline",
+  "timeline_header",
+  "timeline_html",
+  "section_commercials",
+  "commercials_header",
+  "section_payment",
+  "payment_terms_header",
+  "payment_terms_html",
+  "section_bank",
+  "banking_header",
+  "bank_detail",
+  "section_sample_req",
+  "sample_requirements_header",
+  "sample_requirements_html",
+  "section_sample_handling",
+  "sample_handling_header",
+  "sample_handling_html",
+  "section_cancellation",
+  "cancellation_header",
+  "cancellation_refund_html",
+  "section_force_majeure",
+  "force_majeure_header",
+  "force_majeure_html",
+  "section_confidentiality",
+  "confidentiality_header",
+  "confidentiality_html",
+  "section_deliverables",
+  "deliverables_header",
+  "deliverables_html",
+  "section_extra",
+  "policies_html",
+  "body_html"
+ ],
+ "autoname": "field:template_name",
+ "naming_rule": "By fieldname",
+ "title_field": "template_name",
+ "search_fields": "template_name,quote_type,service,subject",
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "label": "Template Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "quote_type",
+   "label": "Quote Type",
+   "fieldtype": "Select",
+   "options": "Testing\nService",
+   "default": "Testing",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "service",
+   "label": "Default Service",
+   "fieldtype": "Link",
+   "options": "IC Service"
+  },
+  {
+   "fieldname": "subject",
+   "label": "Subject",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "validity_days",
+   "label": "Validity Days",
+   "fieldtype": "Int",
+   "default": "30"
+  },
+  {
+   "fieldname": "consulting_price",
+   "label": "Consulting Price",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "testing_price",
+   "label": "Testing Price",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "other_commercials",
+   "label": "Other Commercials",
+   "fieldtype": "Currency",
+   "default": "0"
+  },
+  {
+   "fieldname": "other_commercials_note",
+   "label": "Other Commercials Note",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "section_about",
+   "label": "1. About",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "about_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "About"
+  },
+  {
+   "fieldname": "about_html",
+   "label": "About Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_standards",
+   "label": "2. Applicable Standard",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "standards_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Applicable Standard"
+  },
+  {
+   "fieldname": "standards_html",
+   "label": "Applicable Standard Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "accreditation_html",
+   "label": "Accreditation",
+   "fieldtype": "Text Editor",
+   "depends_on": "eval:doc.quote_type=='Service'"
+  },
+  {
+   "fieldname": "section_timeline",
+   "label": "3. Timeline",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "timeline_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Timeline"
+  },
+  {
+   "fieldname": "timeline_html",
+   "label": "Timeline Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_commercials",
+   "label": "4. Commercials",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "commercials_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Commercials"
+  },
+  {
+   "fieldname": "section_payment",
+   "label": "5. Payment Terms",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "payment_terms_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Payment Terms"
+  },
+  {
+   "fieldname": "payment_terms_html",
+   "label": "Payment Terms Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_bank",
+   "label": "6. Our Banking Details",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "banking_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Our Banking Details"
+  },
+  {
+   "fieldname": "bank_detail",
+   "label": "Bank Detail",
+   "fieldtype": "Link",
+   "options": "IC Bank Detail"
+  },
+  {
+   "fieldname": "section_sample_req",
+   "label": "7. Samples Required",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "sample_requirements_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Samples Required"
+  },
+  {
+   "fieldname": "sample_requirements_html",
+   "label": "Samples Required Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_sample_handling",
+   "label": "8. Sample Handling and Disposal Policy",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "sample_handling_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Sample Handling and Disposal Policy"
+  },
+  {
+   "fieldname": "sample_handling_html",
+   "label": "Sample Handling Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_cancellation",
+   "label": "9. Cancellation and Refund Policy",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "cancellation_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Cancellation and Refund Policy"
+  },
+  {
+   "fieldname": "cancellation_refund_html",
+   "label": "Cancellation and Refund Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_force_majeure",
+   "label": "10. Force Majeure",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "force_majeure_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Force Majeure"
+  },
+  {
+   "fieldname": "force_majeure_html",
+   "label": "Force Majeure Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_confidentiality",
+   "label": "11. Confidentiality and Data Protection",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "confidentiality_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Confidentiality and Data Protection"
+  },
+  {
+   "fieldname": "confidentiality_html",
+   "label": "Confidentiality Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_deliverables",
+   "label": "Deliverable (optional)",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "deliverables_header",
+   "label": "Section Header",
+   "fieldtype": "Data",
+   "default": "Deliverable"
+  },
+  {
+   "fieldname": "deliverables_html",
+   "label": "Deliverable Content",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "section_extra",
+   "label": "Extra / Legacy",
+   "fieldtype": "Section Break",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "policies_html",
+   "label": "Legacy Combined Policies",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "body_html",
+   "label": "Extra Letter Body",
+   "fieldtype": "Text Editor",
+   "description": "Optional free-form content appended after the structured sections."
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 0,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC All Ops Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 1,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Operations Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Person",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 0,
+   "cancel": 0,
+   "amend": 0,
+   "report": 1,
+   "export": 0,
+   "import": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  }
+ ]
+}

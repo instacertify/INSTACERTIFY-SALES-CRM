@@ -1,0 +1,297 @@
+{
+ "doctype": "DocType",
+ "name": "IC Delivery Record",
+ "module": "Instacertify CRM",
+ "engine": "InnoDB",
+ "is_submittable": 0,
+ "istable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "autoname": "format:DEL-{YYYY}-{#####}",
+ "title_field": "title",
+ "search_fields": "title,customer_name,company,delivery_type,direction,quote,project",
+ "field_order": [
+  "title",
+  "delivery_type",
+  "direction",
+  "status",
+  "column_break_1",
+  "delivered_on",
+  "delivered_by",
+  "service",
+  "section_links",
+  "project",
+  "lead",
+  "quote",
+  "column_break_2",
+  "customer_name",
+  "company",
+  "email",
+  "section_details",
+  "details",
+  "attachment",
+  "linked_report",
+  "linked_document_request",
+  "section_renewal",
+  "remind_6_months",
+  "remind_1_year",
+  "custom_renewal_on",
+  "section_remarks",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "label": "Title",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "delivery_type",
+   "label": "Record Type",
+   "fieldtype": "Select",
+   "options": "Service Delivered\nQuote Service Delivered\nReport Shared\nCustomer Data Received\nCertificate / Deliverable\nOther",
+   "default": "Service Delivered",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "direction",
+   "label": "Direction",
+   "fieldtype": "Select",
+   "options": "To Customer\nFrom Customer",
+   "default": "To Customer",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "Logged\nShared\nAcknowledged\nSuperseded",
+   "default": "Logged",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "delivered_on",
+   "label": "Date",
+   "fieldtype": "Datetime",
+   "default": "Now",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "delivered_by",
+   "label": "Logged By",
+   "fieldtype": "Link",
+   "options": "User",
+   "default": "__user"
+  },
+  {
+   "fieldname": "service",
+   "label": "Service",
+   "fieldtype": "Link",
+   "options": "IC Service",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "section_links",
+   "label": "Customer Links",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "project",
+   "label": "Customer Project",
+   "fieldtype": "Link",
+   "options": "IC Customer Project",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "lead",
+   "label": "Lead",
+   "fieldtype": "Link",
+   "options": "IC Lead",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "quote",
+   "label": "Quote",
+   "fieldtype": "Link",
+   "options": "IC Quote",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_name",
+   "label": "Customer Name",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email",
+   "label": "Email",
+   "fieldtype": "Data",
+   "options": "Email"
+  },
+  {
+   "fieldname": "section_details",
+   "label": "Details & Files",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "details",
+   "label": "What was delivered / received",
+   "fieldtype": "Text Editor"
+  },
+  {
+   "fieldname": "attachment",
+   "label": "Attachment",
+   "fieldtype": "Attach"
+  },
+  {
+   "fieldname": "linked_report",
+   "label": "Linked Report",
+   "fieldtype": "Link",
+   "options": "IC Report",
+   "read_only": 1
+  },
+  {
+   "fieldname": "linked_document_request",
+   "label": "Linked Document Request",
+   "fieldtype": "Link",
+   "options": "IC Document Request",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_renewal",
+   "label": "Certification Renewal Reminders",
+   "fieldtype": "Section Break",
+   "description": "Set when marking service delivered \u2014 remind for next certification / renewal cycle."
+  },
+  {
+   "fieldname": "remind_6_months",
+   "label": "Remind in 6 Months",
+   "fieldtype": "Check",
+   "default": "0"
+  },
+  {
+   "fieldname": "remind_1_year",
+   "label": "Remind in 1 Year",
+   "fieldtype": "Check",
+   "default": "1"
+  },
+  {
+   "fieldname": "custom_renewal_on",
+   "label": "Custom Reminder Date",
+   "fieldtype": "Date",
+   "description": "Optional extra date (in addition to 6 months / 1 year)."
+  },
+  {
+   "fieldname": "section_remarks",
+   "label": "Remarks",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remarks",
+   "label": "Internal Remarks",
+   "fieldtype": "Small Text"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "import": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC Sales Ops",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1
+  },
+  {
+   "role": "IC All Ops Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1,
+   "import": 0
+  },
+  {
+   "role": "IC Operations Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1,
+   "import": 0
+  },
+  {
+   "role": "IC Sales Person",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 0,
+   "share": 1,
+   "print": 1,
+   "email": 1,
+   "import": 0
+  }
+ ]
+}

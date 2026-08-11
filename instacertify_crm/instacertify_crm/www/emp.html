@@ -1,0 +1,23 @@
+{% extends "templates/web.html" %}
+{% block title %}Joining letter | Instacertify{% endblock %}
+{% block page_content %}
+<style>
+  .ic-card{max-width:720px;margin:32px auto;background:#fff;border:1px solid #d7e2ea;border-radius:18px;padding:28px;box-shadow:0 18px 50px rgba(10,74,108,.08)}
+  .ic-brand{font-weight:800;font-size:26px}.ic-brand .a{color:#0A4A6C}.ic-brand .b{color:#EB7D2D}
+  .ic-btn{display:inline-block;border:0;border-radius:12px;padding:11px 16px;font-weight:700;background:#EB7D2D;color:#fff;text-decoration:none}
+</style>
+{% if not profile %}
+<div class="ic-card"><p>Employee record not found or not active.</p></div>
+{% else %}
+<div class="ic-card">
+  <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
+  <h1 style="color:#0A4A6C">{{ profile.employee_name }}</h1>
+  <p><strong>Code:</strong> {{ profile.employee_code }}</p>
+  <p><strong>Department:</strong> {{ profile.department or '—' }} · <strong>Designation:</strong> {{ profile.designation or '—' }}</p>
+  <p><strong>Date of joining:</strong> {{ profile.date_of_joining or '—' }}</p>
+  {% if profile.joining_letter %}
+  <p><a class="ic-btn" href="{{ profile.joining_letter }}" target="_blank" rel="noopener">Download joining letter</a></p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "templates/web.html" %}
+{% block title %}Sample tracking | Instacertify{% endblock %}
+{% block page_content %}
+<style>
+  :root { --ic-teal:#0A4A6C; --ic-orange:#EB7D2D; }
+  .ic-card{max-width:760px;margin:32px auto;background:linear-gradient(180deg,#fff 0%,#F3F7FA 100%);border:1px solid #d7e2ea;border-radius:18px;padding:28px;box-shadow:0 18px 50px rgba(10,74,108,.08)}
+  .ic-brand{font-weight:800;font-size:26px}.ic-brand .a{color:var(--ic-teal)}.ic-brand .b{color:var(--ic-orange)}
+  .ic-logo{display:block;max-height:56px;max-width:200px;object-fit:contain;margin-bottom:8px}
+  .pill{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(235,125,45,.15);color:var(--ic-teal);font-weight:700}
+  .steps{display:grid;gap:8px;margin:18px 0}
+  .step{padding:10px 12px;border-radius:12px;border:1px solid #d7e2ea;background:#fff}
+  .step.on{border-color:var(--ic-orange);background:rgba(235,125,45,.08)}
+  .ic-btn{display:inline-block;border:0;border-radius:12px;padding:11px 16px;font-weight:700;background:var(--ic-orange);color:#fff;text-decoration:none}
+  .ic-qr{margin-top:12px}
+</style>
+{% if not sample %}
+<div class="ic-card"><p>Sample tracking link not found.</p></div>
+{% else %}
+<div class="ic-card">
+  {% if branding and (branding.company_logo_url or branding.letterhead_logo_url) %}
+  <img class="ic-logo" src="{{ branding.letterhead_logo_url or branding.company_logo_url }}" alt="{{ branding.brand_name }}" />
+  {% endif %}
+  <div class="ic-brand"><span class="a">Insta</span><span class="b">certify</span></div>
+  <p>{{ branding.legal_name if branding else 'Instacertify Labs Pvt Ltd' }}</p>
+  <h1 style="margin:12px 0 4px;color:var(--ic-teal)">{{ sample.sample_label }}</h1>
+  <p><span class="pill">{{ sample.status }}</span> · <strong>{{ sample.tracking_code }}</strong></p>
+  <p><strong>Customer:</strong> {{ sample.customer_name }} · {{ sample.company }}</p>
+  {% if sample.lab %}<p><strong>Lab:</strong> {{ sample.lab }}</p>{% endif %}
+  {% if sample.standard_code %}<p><strong>Standard:</strong> {{ sample.standard_code }}</p>{% endif %}
+  {% if sample.accreditation %}<p><strong>Accreditation:</strong> {{ sample.accreditation }}</p>{% endif %}
+  {% if sample.no_of_samples %}<p><strong>Samples:</strong> {{ sample.no_of_samples }}</p>{% endif %}
+  {% if sample.testing_timeline %}<p><strong>Timeline:</strong> {{ sample.testing_timeline }}</p>{% endif %}
+
+  <div class="steps">
+    {% set flow = ['Awaiting Sample','Sample Received','Dispatched to Lab','Testing In Process','Report Available','Report Uploaded','Shared with Customer'] %}
+    {% for s in flow %}
+    <div class="step {% if sample.status == s %}on{% endif %}">{{ s }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="ic-qr">
+    <img alt="Sample QR" width="120" height="120"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={{ sample.public_url | urlencode }}" />
+    <p class="text-muted">Scan to track this sample</p>
+  </div>
+
+  {% if sample.report_file %}
+  <p style="margin-top:16px"><a class="ic-btn" href="{{ sample.report_file }}" target="_blank" rel="noopener">Download report</a></p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
