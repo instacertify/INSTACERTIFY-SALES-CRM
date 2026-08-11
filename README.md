@@ -61,6 +61,25 @@ instacertify-crm/
 
 ## Hostinger deploy (no Docker)
 
+### Option A — Hostinger Node.js Application (hPanel)
+
+The monorepo builds Next into `apps/web/.next`. Root `npm run build` also links that output to **`.next`** at the repo root so Hostinger’s “output directory” check passes.
+
+In hPanel → Websites → Node.js, set:
+
+| Setting | Value |
+|---|---|
+| Node.js version | **20** (or newer) |
+| Build command | `npm run build` |
+| Output directory | `.next` |
+| Start command | `npm start` |
+
+`npm start` boots the Nest API (port **4000**) and Next.js (port **3000** / `PORT`). Set env vars in hPanel (at least `DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`). Run DB setup once over SSH or a one-off job: `npm run db:setup`.
+
+Deprecation warnings for `glob` / `inflight` during install are harmless and not the deploy failure.
+
+### Option B — VPS + PM2 + Nginx (recommended)
+
 ```bash
 git clone <repo> /var/www/instacertify-crm
 cd /var/www/instacertify-crm
