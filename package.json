@@ -2,6 +2,7 @@
   "name": "instacertify-crm",
   "version": "1.0.0",
   "private": true,
+  "description": "Standalone Instacertify CRM (Next.js + NestJS + PostgreSQL) — certification consulting & testing sales. No ERPNext.",
   "workspaces": [
     "apps/*",
     "packages/*"

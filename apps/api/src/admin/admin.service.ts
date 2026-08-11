@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+    private readonly storage: StorageService,
+  ) {}
 
   async health() {
     let database: 'up' | 'down' = 'down';
@@ -16,8 +22,13 @@ export class AdminService {
     return {
       status: database === 'up' ? 'ok' : 'degraded',
       service: '@instacertify/api',
+      architecture: 'standalone-modular-monolith',
+      erpnext: false,
       timestamp: new Date().toISOString(),
       database,
+      redis: this.config.get('ENABLE_REDIS') === 'true' ? 'enabled' : 'disabled',
+      fileStorage: this.storage.mode(),
+      s3Ready: this.storage.s3Configured(),
     };
   }
 

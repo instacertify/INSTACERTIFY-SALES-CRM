@@ -22,6 +22,7 @@ import { AdminModule } from './admin/admin.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { PortalsModule } from './portals/portals.module';
 import { WorkLibraryModule } from './work-library/work-library.module';
+import { StorageModule } from './storage/storage.module';
 
 const redisEnabled = process.env.ENABLE_REDIS === 'true';
 
@@ -46,6 +47,7 @@ const redisEnabled = process.env.ENABLE_REDIS === 'true';
         ]
       : []),
     PrismaModule,
+    StorageModule,
     CommonModule,
     AuthModule,
     UsersModule,
